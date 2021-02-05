@@ -1,0 +1,45 @@
+Bestemt gruppenavn --> 5H 5 stykker med H i navnet
+
+Lager spørreundersøkelse for å kartlegge ferdigheter og bestemme hvem
+som har hvilke roller
+Kartlegging av kunnskap:
+Håkon: Java, Python, Haskell, SQL
+Jonas : Python, litt Java, datastrukturer, databaser.
+Emil: Python, Java, Haskell, SQL, datastrukturer
+Hans Albert: Python, Haskell
+Henrik: Python, litt Haskell, SQL, HTML
+
+Rollene vi har lagt frem:
+- Teamlead
+- Kundeansvarlig
+- Java ansvarlig
+- Libgdx ansvarlig
+- Test ansvarlig
+- Brukerhistorie/spesifikasjons ansvarlig
+
+Vi bruker spørreundersøkelsen for å se hvilke roller folk ønsker.
+
+Jonas --> Teamlead
+Henrik --> Kundeansvarlig /kontakt
+Skjalg --> Java
+Håkon --> Libgdx
+Emil --> Test
+Hans Albert --> Brukerhistorie
+
+Vi vil fokusere på projectboardet vårt i stor grad og har dermed en 
+projektmetodikk som følger kanban i en stor grad. Vi har også lyst å
+bruke parprogrammering og testdrevet utvikling der det kan være hensiktsmessig.
+Vi bruker standup møte fra scrim på hver gruppetime.
+
+Vi har bestemt oss for å prøve å ha 1-2 ekstra møter per uke hvor alle samles
+og vi går igjennom hva som har blitt gjort/skal gjøres. Man jobber imellom møtene 
+med å lage deliverables etc. Parprogrammering kan settes opp etter ønske. 
+
+Vi vil bruke github som primært fillager både av kodebase men også felles dokumenter
+f.eks. referat, spesifikasjoner osv.
+For å unngå merge konflikter og andre problemer skal projectboardet sine posts
+inneholde hvilken kode man jobber med slik at man vet om andre jobber med en gitt fil
+hvis man da trenger tilgang skal man spørre den ansvarlige personen om dette.
+Hvis man må bruke en fil som ingen andre bruker men du ikke er oppført med så skriver du inn i 
+projectboardet at du har bruker filen.
+
