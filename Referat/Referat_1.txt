@@ -34,6 +34,7 @@ Vi bruker standup møte fra scrim på hver gruppetime.
 Vi har bestemt oss for å prøve å ha 1-2 ekstra møter per uke hvor alle samles
 og vi går igjennom hva som har blitt gjort/skal gjøres. Man jobber imellom møtene 
 med å lage deliverables etc. Parprogrammering kan settes opp etter ønske. 
+Vi har satt opp ett fast møte som skal gå hver uke mandag 12-14.
 
 Vi vil bruke github som primært fillager både av kodebase men også felles dokumenter
 f.eks. referat, spesifikasjoner osv.
@@ -42,4 +43,8 @@ inneholde hvilken kode man jobber med slik at man vet om andre jobber med en git
 hvis man da trenger tilgang skal man spørre den ansvarlige personen om dette.
 Hvis man må bruke en fil som ingen andre bruker men du ikke er oppført med så skriver du inn i 
 projectboardet at du har bruker filen.
+
+
+Frem til Neste gruppemøte vil hver av oss lage en (eller flere) user stories passende til ett
+av kriteriene til MVP.
 
