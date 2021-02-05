@@ -1,0 +1,12 @@
+h h h h f f f f f f f f
+f f h f f f f f f f f f
+f h f f f f f f f f f f
+h h h h f f f f f f f f
+f f f f f f f f f f f f
+h h h h f f f p f f f f
+f f f f f f f f f f f f
+h h h h f f f f f f f f
+h f f h f f f f f f f f
+f f f f f f f f f f f f
+h h h h h f f f f f f f
+h f h f h f f f f f f f

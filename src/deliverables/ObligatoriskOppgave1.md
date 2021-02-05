@@ -6,4 +6,4 @@ Gruppemedlemmers kode kompetanse og roller:
 * [Teamlead] **Jonas**: Python, litt Java, datastrukturer, databaser
 * [Testansvarlig] **Emil**: Python, Java, Haskell, SQL, datastrukturer
 * [Brukerhistorier] **Hans Albert**: Python, Haskell
-* [Kundeansvarlig /kontakt] Henrik: Python, litt Haskell, SQL, HTML
+* [Kundeansvarlig /kontakt] **Henrik**: Python, litt Haskell, SQL, HTML
