@@ -12,6 +12,6 @@ public class Main {
         cfg.useVsync(true);
         cfg.setIdleFPS(60);
 
-        new Lwjgl3Application(new Board(), cfg);
+        new Lwjgl3Application(new Game(), cfg);
     }
 }
