@@ -13,25 +13,30 @@ import java.util.Scanner;
  * Class for the Board, updates the board and provides necessary info for Game.java
  */
 public class Board {
-    private final String[][] boardInfo;
-    private final HashMap<String, Sprite> spriteMap;
-    private final int boardSize = 12;
+    private final ArrayList<ArrayList<AbstractSprite>> boardInfo;
+    private ArrayList<ArrayList<AbstractSprite>> originalBoard;
+    private final HashMap<String, AbstractSprite> spriteMap;
+    private int playerNum;
+    private int flagNum;
     private final ArrayList<Player> playerList;
+    private final ArrayList<Flag> flagList;
 
-    public Board(ArrayList<Player> playerList){
-        Sprite ground = new Sprite(new Texture("src\\main\\tex\\ground.png"));
-        Sprite hole = new Sprite(new Texture("src\\main\\tex\\hole.png"));
-        Sprite flag = new Sprite(new Texture("src\\main\\tex\\flag.png"));
+    public Board(int boardNum){
+        //Only need one instance of each of these classes per map, rest of items initialized in readBoard()
+        Ground ground = new Ground(new Texture("src\\main\\tex\\ground.png"));
+        Hole hole = new Hole(new Texture("src\\main\\tex\\hole.png"));
+        Wall wall = new Wall(new Texture("src\\main\\tex\\wall.png"));
         spriteMap = new HashMap<>();
         spriteMap.put("g", ground);
         spriteMap.put("h", hole);
-        spriteMap.put("f", flag);
-        spriteMap.put("p1", playerList.get(0));
-        spriteMap.put("p2", playerList.get(1));
-        spriteMap.put("p3", playerList.get(2));
-        spriteMap.put("p4", playerList.get(3));
-        this.playerList = playerList;
-        boardInfo = new String[boardSize][boardSize];
+        spriteMap.put("w", wall);
+
+        playerList = new ArrayList<>(); //List of players
+        flagList = new ArrayList<>(); //List of flags
+        boardInfo = new ArrayList<>(); //List of list of objects on board
+        originalBoard = new ArrayList<>();
+
+        readBoard(boardNum);
     }
 
     /**
@@ -39,8 +44,6 @@ public class Board {
      * This exists so creating new boards is as simple as editing a .txt. During runtime boardInfo will be edited as opposed to the
      * .txt to preserve the original board layout.
      * @param boardNum The board to play on, calling this with 1 will play Board1.txt, 2 -> Board2.txt and so forth.
-     *
-     * @author Skjalg
      */
     public void readBoard(int boardNum) {
         try{
@@ -50,24 +53,32 @@ public class Board {
             while(scanner.hasNextLine()){
                 String line = scanner.nextLine();
                 String[] items = line.split(" ");
+                ArrayList<AbstractSprite> lineSprites = new ArrayList<>();
                 for(int i=0; i<items.length; i++){
-                    if(items[i].equals("p1")){
-                        playerList.get(0).setCoordinates(k, i);
+                    if(items[i].matches("p\\d+")) {
+                        playerNum += 1;
+                        Player player = new Player(k, i, new Texture("src\\main\\tex\\player" + playerNum + "up.png"), playerNum);
+                        spriteMap.put(player.getShortName(), player);
+                        playerList.add(player);
+                        lineSprites.add(player);
                     }
-                    if(items[i].equals("p2")){
-                        playerList.get(1).setCoordinates(k, i);
+                    else if(items[i].matches("f\\d+")) {
+                        flagNum += 1;
+                        int num = Integer.parseInt(items[i].substring(1));
+                        Flag flag = new Flag(k, i, new Texture("src\\main\\tex\\flag" + num +".png"), num);
+                        spriteMap.put(items[i], flag);
+                        flagList.add(flag);
+                        lineSprites.add(flag);
                     }
-                    if(items[i].equals("p3")){
-                        playerList.get(2).setCoordinates(k, i);
-                    }
-                    if(items[i].equals("p4")){
-                        playerList.get(3).setCoordinates(k, i);
+                    else{
+                        lineSprites.add(spriteMap.get(items[i]));
                     }
                 }
-                boardInfo[k] = items;
                 k ++;
+                boardInfo.add(lineSprites);
             }
             scanner.close();
+            originalBoard.addAll(boardInfo);
         }
         catch(FileNotFoundException e){
             System.out.println("Board does not exist");
@@ -87,23 +98,32 @@ public class Board {
             System.err.println("Illegal object");
             return;
         }
-        boardInfo[y][x] = sprite;
+        AbstractSprite theSprite = spriteMap.get(sprite);
+        boardInfo.get(x).set(y, theSprite);
     }
 
     public int getSize() {
-        return boardSize;
+        return 12;
     }
 
-    public HashMap<String, Sprite> getSpriteMap() {
+    public HashMap<String, AbstractSprite> getSpriteMap() {
         return spriteMap;
     }
 
-    public String getPosition(int x, int y) {
-        return boardInfo[x][y];
+    public Sprite getPosition(int x, int y) {
+        return boardInfo.get(x).get(y);
     }
 
-    public Object info(int updatedX, int updatedY) {
-        return boardInfo[updatedX][updatedY];
+    public AbstractSprite info(int updatedX, int updatedY) {
+        return boardInfo.get(updatedX).get(updatedY);
+    }
+
+    public ArrayList<Player> getPlayerList(){
+        return playerList;
+    }
+
+    public ArrayList<Flag> getFlagList(){
+        return flagList;
     }
 
 }

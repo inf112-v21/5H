@@ -1,12 +1,8 @@
 package inf112.skeleton.app;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 
-public class Player extends Sprite {
-    private Pair coordinates;
-    private final String name;
-    private final String shortName;
+public class Player extends AbstractSprite {
     private int points;
     private int hp;
 
@@ -17,63 +13,95 @@ public class Player extends Sprite {
      */
     public Player(int x, int y, Texture tex, int number){
         super(tex);
-        shortName = "p"+number;
-        coordinates = new Pair(x, y);
-        this.name = "player"+number;
+        setShortName("p"+number);
+        setCoordinates(x,y);
+        setName("Player"+number);
         points = 0;
         hp = 7;
     }
 
-    public void setCoordinates(int x, int y){
-        coordinates = new Pair(x, y);
-    }
-
-    public Pair getCoordinates(){
-        return coordinates;
-    }
-
-    public String getName(){
-        return name;
-    }
-
-
+    /**
+     * Function for moving a player on the board.
+     * @param x Number of units to move in x direction
+     * @param y Number of units to move in y direction
+     * @param board the active board
+     * @return true if move is valid, false otherwise.
+     */
     public boolean move(int x, int y, Board board) {
-        int currentX = coordinates.getKey();
-        int currentY = coordinates.getValue();
+        //Coordinates for current location of player
+        int currentX = getCoordinates().getX();
+        int currentY = getCoordinates().getY();
+        //Coordinates where player wants to move
         int updatedX = currentX + x;
         int updatedY = currentY + y;
         if(updatedX > board.getSize()-1 || updatedX < 0){
             System.err.println("Out of bounds");
-            return false;
+            return true;
         }
         else if(updatedY > board.getSize()-1 || updatedY < 0){
             System.err.println("Out of bounds");
-            return false;
+            return true;
         }
-        else if(board.info(updatedX, updatedY).equals("h")){
+        else if(board.info(updatedX, updatedY).getName().equals("Hole")){
             System.err.println("HP LOST");
             damage();
-            return false;
+            if(hp == 0){
+                System.err.println(getName() + " is dead");//placeholder
+            }
+            return true;
         }
-        else if(board.info(updatedX, updatedY).equals("f")){
-            updateScore(1);
-            System.out.println("+1 point, " + points + " total.");
+        else if(board.info(updatedX, updatedY).getName().equals("Wall")){
+            System.out.println("Hit a wall.");
+            return true;
         }
-        setCoordinates(updatedX, updatedY); //Ignore this warning, its inverted in Board so therefore in this class it looks wrong
-        board.updateCoordinate(shortName, updatedY, updatedX);
-        board.updateCoordinate("g", currentY, currentX); //Ignore this warning, its inverted in Board so therefore in this class it looks wrong
-        return true;
+        else if(board.info(updatedX, updatedY).getName().matches("Flag\\d+")){
+            Flag flag = (Flag) board.getPosition(updatedX, updatedY);
+            if(flag.pickUp(this)){
+                addScore(1);
+                System.out.println("+1 point, " + points + " total.");
+            }
+            else{
+                System.out.println("Flag already picked up!");
+            }
+        }
+        setCoordinates(updatedX, updatedY);
+        board.updateCoordinate(getShortName(), updatedX, updatedY); //Ignore this warning, its inverted in Board so therefore in this class it looks wrong
+        for(Flag flag : board.getFlagList()){
+            if(flag.getCoordinates().getX() == currentX && flag.getCoordinates().getY() == currentY){
+                board.updateCoordinate(flag.getShortName(), currentX, currentY);
+                return false;
+            }
+        }
+        board.updateCoordinate("g", currentX, currentY);
+        return false;
     }
 
+    /**
+     * When a player is hit by laser or falls in hole, use this function to deal damage.
+     */
     public void damage(){
         hp --;
     }
+
+    /**
+     * @return Player's hp
+     */
     public int getHp(){
         return hp;
     }
-    public void updateScore(int score){
-        points += score;
+
+    /**
+     * Function for updating the score of the player.
+     * @param points Amount of points to add to score
+     */
+    public void addScore(int points){
+        this.points += points;
     }
+
+
+    /**
+     * @return Player's score
+     */
     public int getScore(){
         return points;
     }

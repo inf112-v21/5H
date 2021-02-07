@@ -11,11 +11,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import org.lwjgl.opengl.GL20;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Class for handling GUI and game setup/logic
- * @author Skjalg
  */
 public class Game implements ApplicationListener {
     private SpriteBatch batch;
@@ -24,6 +22,7 @@ public class Game implements ApplicationListener {
     private Board board;
     private int boardSize;
     private ArrayList<Player> playerList;
+    private ArrayList<Flag> flagList;
     private int turn;
     private Player winner;
     private boolean pause;
@@ -32,13 +31,9 @@ public class Game implements ApplicationListener {
     public void create() {
         batch = new SpriteBatch();
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        playerList = new ArrayList<>();
-        for(int i=1; i<5;i++){
-            Texture tex = new Texture("src\\main\\tex\\player"+i+".png");
-            playerList.add(new Player(0,0, tex, i));
-        }
-        board = new Board(playerList);
-        board.readBoard(1);
+        board = new Board(1);
+        playerList = board.getPlayerList();
+        flagList = board.getFlagList();
         boardSize = board.getSize();
         isFinished = false;
         turn = 1;
@@ -57,20 +52,22 @@ public class Game implements ApplicationListener {
         checkInput();
         batch.begin();
         if(isFinished){ //If the game is over
+            winner.setSize(camera.viewportWidth, camera.viewportHeight);
+            winner.setX(1);
+            winner.setY(1);
+            winner.draw(batch);
             Sprite text = new Sprite(new Texture("src\\main\\tex\\win.png"));
             text.setX(camera.viewportWidth/5);
             text.setY(camera.viewportHeight/5);
             text.draw(batch);
-            winner.setX(camera.viewportWidth/2);
-            winner.setY(camera.viewportHeight/3);
-            winner.draw(batch);
             batch.end();
+            pause();
             return;
         }
         for(int x = 0; x < boardSize; x++){
             for(int y = 0; y < boardSize; y++){
-                HashMap<String, Sprite> spriteMap = board.getSpriteMap();
-                Sprite sprite = spriteMap.get(board.getPosition(x, y));
+                //HashMap<String, Sprite> spriteMap = board.getSpriteMap();
+                Sprite sprite = board.getPosition(x, y);
                 sprite.setSize(camera.viewportWidth/boardSize, camera.viewportWidth/boardSize);
                 sprite.setX(x*(camera.viewportWidth/boardSize));
                 sprite.setY(y*(camera.viewportHeight/boardSize));
@@ -82,44 +79,47 @@ public class Game implements ApplicationListener {
 
     /**
      * Handles input logic
-     * @author Skjalg
      */
     private void checkInput() {
+        if(pause){
+            if(Gdx.input.isKeyPressed(Input.Keys.R)){ //Debug win mode
+                dispose();
+                create();
+            }
+            return;
+        }
         Player playerTurn = playerList.get(turn-1);
         if(Gdx.input.isKeyPressed(Input.Keys.F)){ //Debug win mode
-            playerTurn.updateScore(3);
-            if(!playerTurn.move(0, 1, board)){
-                return;
-            }
+            playerTurn.addScore(3);
         }
-        else if(Gdx.input.isKeyPressed(Input.Keys.R)){ //Debug win mode
+        else if(Gdx.input.isKeyPressed(Input.Keys.R)){ //Debug restart
             dispose();
             create();
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.UP)){
             playerTurn.setTexture(new Texture("src\\main\\tex\\"+playerTurn.getName()+"up.png"));
-            if(!playerTurn.move(0,1,board)){
+            if(playerTurn.move(0, 1, board)){
                 return;
             }
             endTurn();
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
             playerTurn.setTexture(new Texture("src\\main\\tex\\" + playerTurn.getName() +"right.png"));
-            if(!playerTurn.move(1,0,board)){
+            if(playerTurn.move(1, 0, board)){
                 return;
             }
             endTurn();
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
             playerTurn.setTexture(new Texture("src\\main\\tex\\" + playerTurn.getName() +"left.png"));
-            if(!playerTurn.move(-1,0,board)){
+            if(playerTurn.move(-1, 0, board)){
                 return;
             }
             endTurn();
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
             playerTurn.setTexture(new Texture("src\\main\\tex\\" + playerTurn.getName() + "down.png"));
-            if(!playerTurn.move(0,-1,board)){
+            if(playerTurn.move(0, -1, board)){
                 return;
             }
             endTurn();
@@ -133,7 +133,6 @@ public class Game implements ApplicationListener {
 
     /**
      * Called after each move, adds a small pause between turns to prevent accidental moves.
-     * @author Skjalg
      */
     private void endTurn(){
         System.out.println("Turn: " + turn + " finished");

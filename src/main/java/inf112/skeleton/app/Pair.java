@@ -1,27 +1,30 @@
 package inf112.skeleton.app;
 
 public class Pair {
-    private int key;
-    private int value;
+    private int x;
+    private int y;
 
-    public Pair(int k, int v){
-        key = k;
-        value = v;
+    public Pair(int x, int y){
+        this.x = x;
+        this.y = y;
     }
 
-    public void setKey(int k){
-        key = k;
+    /**
+     * @param x Update x value of Pair.
+     */
+    public void setX(int x){
+        this.x = x;
     }
 
-    public void setValue(int v){
-        value = v;
+    public void setY(int y){
+        this.y = y;
     }
 
-    public int getKey(){
-        return key;
+    public int getX(){
+        return x;
     }
 
-    public int getValue(){
-        return value;
+    public int getY(){
+        return y;
     }
 }
