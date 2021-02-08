@@ -24,6 +24,7 @@ public class Game implements ApplicationListener {
     private Board board;
     private int boardSize;
     private ArrayList<Player> playerList;
+    private ArrayList<Player> alivePlayerList;
     private ArrayList<Flag> flagList;
     private int turn;
     private Player winner;
@@ -42,6 +43,8 @@ public class Game implements ApplicationListener {
 
         board = new Board(1);
         playerList = board.getPlayerList();
+        alivePlayerList = new ArrayList<>();
+        alivePlayerList.addAll(playerList);
         flagList = board.getFlagList();
         boardSize = board.getSize();
         isFinished = false;
@@ -92,13 +95,16 @@ public class Game implements ApplicationListener {
      */
     private void checkInput() {
         if(pause){
-            if(Gdx.input.isKeyPressed(Input.Keys.R)){ //Debug win mode
+            if(Gdx.input.isKeyPressed(Input.Keys.R)){ //Debug restart
                 dispose();
                 create();
             }
             return;
         }
         Player playerTurn = playerList.get(turn-1);
+        if(playerTurn.isDead()){
+            return;
+        }
         if(Gdx.input.isKeyPressed(Input.Keys.F)){ //Debug win mode
             playerTurn.addScore(3);
         }
@@ -106,30 +112,37 @@ public class Game implements ApplicationListener {
             dispose();
             create();
         }
+        else if(Gdx.input.isKeyPressed(Input.Keys.D)){ //Debug restart
+            playerTurn.damage();
+            System.out.println("PC:" + playerTurn.getPc() + "| HP: " + playerTurn.getHp());
+            if(playerTurn.isDead()){
+                endTurn();
+            }
+        }
         else if(Gdx.input.isKeyPressed(Input.Keys.UP)){
             playerTurn.setTexture(new Texture("src\\main\\tex\\"+playerTurn.getName()+"up.png"));
-            if(playerTurn.move(0, 1, board)){
+            if(playerTurn.move(0, 1)){
                 return;
             }
             endTurn();
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
             playerTurn.setTexture(new Texture("src\\main\\tex\\" + playerTurn.getName() +"right.png"));
-            if(playerTurn.move(1, 0, board)){
+            if(playerTurn.move(1, 0)){
                 return;
             }
             endTurn();
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
             playerTurn.setTexture(new Texture("src\\main\\tex\\" + playerTurn.getName() +"left.png"));
-            if(playerTurn.move(-1, 0, board)){
+            if(playerTurn.move(-1, 0)){
                 return;
             }
             endTurn();
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
             playerTurn.setTexture(new Texture("src\\main\\tex\\" + playerTurn.getName() + "down.png"));
-            if(playerTurn.move(0, -1, board)){
+            if(playerTurn.move(0, -1)){
                 return;
             }
             endTurn();
@@ -146,15 +159,33 @@ public class Game implements ApplicationListener {
      */
     private void endTurn(){
         System.out.println("Turn: " + turn + " finished");
+        Player playerHasMoved = playerList.get(turn-1);
+        if(playerHasMoved.isDead()){
+            alivePlayerList.remove(playerHasMoved);
+            System.out.println(playerHasMoved.getName() + " died!");
+            if(alivePlayerList.size() == 1){
+                winner = alivePlayerList.get(0);
+                isFinished = true;
+            }
+        }
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        turn++;
-        if(turn > 4){
-            turn = 1;
+        boolean foundNext = false;
+        while(!foundNext){
+            turn++;
+            if(turn > 4){   //This should be changed from hardcoded value to amount of players in the game
+                turn = 1;
+            }
+            Player playerToMove = playerList.get(turn-1);
+            if(playerToMove.isDead()){
+                continue;
+            }
+            foundNext = true;
         }
+
         System.out.println("---------------------------");
         System.out.println("Player " + turn + " to move");
     }

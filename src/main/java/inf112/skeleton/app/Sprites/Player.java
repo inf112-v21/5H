@@ -2,33 +2,41 @@ package inf112.skeleton.app.Sprites;
 
 import com.badlogic.gdx.graphics.Texture;
 import inf112.skeleton.app.Board;
+import inf112.skeleton.app.Pair;
 
 public class Player extends AbstractSprite {
     private int points;
     private int hp;
+    private int pc;
+    private final Pair savePoint;
+    private final Board board;
+    private boolean dead;
 
     /**
      * @param x X spawn location
      * @param y Y spawn location
      * @param number the player number (i.e. 1 for player1, 2 for player2...)
      */
-    public Player(int x, int y, Texture tex, int number){
+    public Player(int x, int y, Texture tex, int number, Board board){
         super(tex);
         setShortName("p"+number);
         setCoordinates(x,y);
         setName("Player"+number);
         points = 0;
-        hp = 7;
+        hp = 3;
+        pc = 9;
+        dead = false;
+        savePoint = new Pair(x, y); //Initialize save point
+        this.board = board;
     }
 
     /**
      * Function for moving a player on the board.
      * @param x Number of units to move in x direction
      * @param y Number of units to move in y direction
-     * @param board the active board
      * @return true if move is valid, false otherwise.
      */
-    public boolean move(int x, int y, Board board) {
+    public boolean move(int x, int y) {
         //Coordinates for current location of player
         int currentX = getCoordinates().getX();
         int currentY = getCoordinates().getY();
@@ -36,20 +44,21 @@ public class Player extends AbstractSprite {
         int updatedX = currentX + x;
         int updatedY = currentY + y;
         if(updatedX > board.getSize()-1 || updatedX < 0){
-            System.err.println("Out of bounds");
-            return true;
+            resetTile(currentX, currentY);
+            die();
+            System.out.println("HP:" + hp + " | " + "PC: " + pc);
+            return false;
         }
         else if(updatedY > board.getSize()-1 || updatedY < 0){
-            System.err.println("Out of bounds");
-            return true;
+            resetTile(currentX, currentY);
+            die();
+            return false;
         }
         else if(board.info(updatedX, updatedY).getName().equals("Hole")){
-            System.err.println("HP LOST");
-            damage();
-            if(hp == 0){
-                System.err.println(getName() + " is dead");//placeholder
-            }
-            return true;
+            setCoordinates(updatedX, updatedY);
+            resetTile(currentX, currentY);
+            die();
+            return false;
         }
         else if(board.info(updatedX, updatedY).getName().equals("Wall")){
             System.out.println("Hit a wall.");
@@ -58,7 +67,6 @@ public class Player extends AbstractSprite {
         else if(board.info(updatedX, updatedY).getName().matches("Flag\\d+")){
             Flag flag = (Flag) board.getPosition(updatedX, updatedY);
             if(flag.pickUp(this)){
-                addScore(1);
                 System.out.println("+1 point, " + points + " total.");
             }
             else{
@@ -66,22 +74,61 @@ public class Player extends AbstractSprite {
             }
         }
         setCoordinates(updatedX, updatedY);
-        board.updateCoordinate(getShortName(), updatedX, updatedY); //Ignore this warning, its inverted in Board so therefore in this class it looks wrong
-        for(Flag flag : board.getFlagList()){
-            if(flag.getCoordinates().getX() == currentX && flag.getCoordinates().getY() == currentY){
-                board.updateCoordinate(flag.getShortName(), currentX, currentY);
-                return false;
-            }
+        board.updateCoordinate(getShortName(), updatedX, updatedY);
+        return resetTile(currentX, currentY);
+    }
+
+    /**
+     * Resets the tile in position (x,y) to its original state
+     * @param x coordinate
+     * @param y coordinate
+     * @return false (why?)
+     */
+    private boolean resetTile(int x, int y) {
+        AbstractSprite tile = board.getOriginalPosition(x,y);
+        if(tile.getShortName().matches("p\\d+")){
+            board.updateCoordinate("g", x, y);
+            return false;
         }
-        board.updateCoordinate("g", currentX, currentY);
+        board.updateCoordinate(tile.getShortName(), x, y);
         return false;
     }
 
     /**
-     * When a player is hit by laser or falls in hole, use this function to deal damage.
+     * When a player is hit by laser, use this function to deal damage.
      */
-    public void damage(){
+    public void damage() {
+        if (pc == 0) {
+            die();
+        }
+        else{
+            pc --;
+        }
+    }
+
+    /**
+     * Updates player hp, resets pc, and moves player to save point.
+     * Called when going OOB or falling in hole or when PC reaches 0.
+     */
+    public void die() {
         hp --;
+        if(hp == 0){
+            //If player is out of hp it makes sure the player is not spawned again.
+            resetTile(getCoordinates().getX(), getCoordinates().getY());
+            dead = true;
+            return;
+        }
+        resetPosition();
+        pc = 9;
+    }
+
+    /**
+     * Sets the played back to the last save point, called when player dies.
+     */
+    private void resetPosition() {
+        resetTile(getCoordinates().getX(), getCoordinates().getY());
+        setCoordinates(savePoint.getX(), savePoint.getY());
+        board.updateCoordinate(getShortName(), savePoint.getX(), savePoint.getY());
     }
 
     /**
@@ -89,6 +136,13 @@ public class Player extends AbstractSprite {
      */
     public int getHp(){
         return hp;
+    }
+
+    /**
+     * @return Player's pc - pc being the amount of program cards the person can use
+     */
+    public int getPc(){
+        return pc;
     }
 
     /**
@@ -105,5 +159,24 @@ public class Player extends AbstractSprite {
      */
     public int getScore(){
         return points;
+    }
+
+    /**
+     *  Set player's savepoint
+     */
+    public void setSavepoint(int x, int y){
+        savePoint.setX(x);
+        savePoint.setY(y);
+    }
+
+    /**
+     *  Set player's savepoint
+     */
+    public Pair getSavepoint(){
+        return savePoint;
+    }
+
+    public boolean isDead(){
+        return dead;
     }
 }
