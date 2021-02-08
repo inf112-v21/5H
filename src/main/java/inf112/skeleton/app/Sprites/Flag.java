@@ -6,7 +6,7 @@ import inf112.skeleton.app.Pair;
 import java.util.LinkedList;
 
 public class Flag extends AbstractSprite {
-    private LinkedList<Player> visitedBy;
+    private final LinkedList<Player> visitedBy;
     private Pair coordinates;
 
     public Flag(int x, int y, Texture tex, int number){

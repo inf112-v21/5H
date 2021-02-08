@@ -29,10 +29,17 @@ public class Game implements ApplicationListener {
     private Player winner;
     private boolean pause;
 
+    //Enum to keep track of current game phase (card select, move, ...)
+    private enum phase {
+        CARD_SELECT,
+        MOVE,
+    }
+
     @Override
     public void create() {
         batch = new SpriteBatch();
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
         board = new Board(1);
         playerList = board.getPlayerList();
         flagList = board.getFlagList();
@@ -51,6 +58,7 @@ public class Game implements ApplicationListener {
         camera.update();
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         checkInput();
         batch.begin();
         if(isFinished){ //If the game is over

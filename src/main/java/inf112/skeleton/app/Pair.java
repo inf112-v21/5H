@@ -8,7 +8,6 @@ public class Pair {
         this.x = x;
         this.y = y;
     }
-
     /**
      * @param x Update x value of Pair.
      */
