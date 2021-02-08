@@ -1,7 +1,6 @@
 package inf112.skeleton.app;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import inf112.skeleton.app.Sprites.*;
 
 import java.io.File;
@@ -15,6 +14,7 @@ import java.util.Scanner;
  */
 public class Board {
     private final ArrayList<ArrayList<AbstractSprite>> boardInfo;
+    private final ArrayList<ArrayList<AbstractSprite>> originalBoard;
     private final HashMap<String, AbstractSprite> spriteMap;
     private int playerNum;
     private int flagNum;
@@ -34,6 +34,7 @@ public class Board {
         playerList = new ArrayList<>(); //List of players
         flagList = new ArrayList<>(); //List of flags
         boardInfo = new ArrayList<>(); //List of list of objects on board
+        originalBoard = new ArrayList<>(); //List for saving the original state of the board.
 
         readBoard(boardNum);
     }
@@ -56,7 +57,7 @@ public class Board {
                 for(int i=0; i<items.length; i++){
                     if(items[i].matches("p\\d+")) {
                         playerNum += 1;
-                        Player player = new Player(k, i, new Texture("src\\main\\tex\\player" + playerNum + "up.png"), playerNum);
+                        Player player = new Player(k, i, new Texture("src\\main\\tex\\player" + playerNum + "up.png"), playerNum, this);
                         spriteMap.put(player.getShortName(), player);
                         playerList.add(player);
                         lineSprites.add(player);
@@ -75,6 +76,10 @@ public class Board {
                 }
                 k ++;
                 boardInfo.add(lineSprites);
+            }
+            //Make a safe clone of board
+            for( ArrayList<AbstractSprite> sublist : boardInfo) {
+                originalBoard.add(new ArrayList<>(sublist));
             }
             scanner.close();
         }
@@ -108,8 +113,12 @@ public class Board {
         return spriteMap;
     }
 
-    public Sprite getPosition(int x, int y) {
+    public AbstractSprite getPosition(int x, int y) {
         return boardInfo.get(x).get(y);
+    }
+
+    public AbstractSprite getOriginalPosition(int x, int y) {
+        return originalBoard.get(x).get(y);
     }
 
     public AbstractSprite info(int updatedX, int updatedY) {

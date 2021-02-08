@@ -37,6 +37,7 @@ public class Flag extends AbstractSprite {
         }
         else{
             visitedBy.add(player);
+            player.addScore(1);
             return true;
         }
     }
