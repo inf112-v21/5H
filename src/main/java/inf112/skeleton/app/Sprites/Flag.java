@@ -1,6 +1,7 @@
-package inf112.skeleton.app;
+package inf112.skeleton.app.Sprites;
 
 import com.badlogic.gdx.graphics.Texture;
+import inf112.skeleton.app.Pair;
 
 import java.util.LinkedList;
 

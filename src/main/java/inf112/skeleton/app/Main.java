@@ -8,7 +8,7 @@ public class Main {
         Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
         cfg.setTitle("TestGrid");
         cfg.setWindowedMode(900, 900);
-        cfg.setResizable(false);
+        cfg.setResizable(true);
         cfg.useVsync(true);
         cfg.setIdleFPS(60);
 

@@ -2,6 +2,7 @@ package inf112.skeleton.app;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import inf112.skeleton.app.Sprites.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,7 +15,6 @@ import java.util.Scanner;
  */
 public class Board {
     private final ArrayList<ArrayList<AbstractSprite>> boardInfo;
-    private ArrayList<ArrayList<AbstractSprite>> originalBoard;
     private final HashMap<String, AbstractSprite> spriteMap;
     private int playerNum;
     private int flagNum;
@@ -34,7 +34,6 @@ public class Board {
         playerList = new ArrayList<>(); //List of players
         flagList = new ArrayList<>(); //List of flags
         boardInfo = new ArrayList<>(); //List of list of objects on board
-        originalBoard = new ArrayList<>();
 
         readBoard(boardNum);
     }
@@ -78,7 +77,6 @@ public class Board {
                 boardInfo.add(lineSprites);
             }
             scanner.close();
-            originalBoard.addAll(boardInfo);
         }
         catch(FileNotFoundException e){
             System.out.println("Board does not exist");

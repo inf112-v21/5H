@@ -1,6 +1,7 @@
-package inf112.skeleton.app;
+package inf112.skeleton.app.Sprites;
 
 import com.badlogic.gdx.graphics.Texture;
+import inf112.skeleton.app.Board;
 
 public class Player extends AbstractSprite {
     private int points;

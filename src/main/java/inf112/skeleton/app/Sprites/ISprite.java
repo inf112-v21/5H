@@ -1,4 +1,6 @@
-package inf112.skeleton.app;
+package inf112.skeleton.app.Sprites;
+
+import inf112.skeleton.app.Pair;
 
 /**
  * Interface for sprites
