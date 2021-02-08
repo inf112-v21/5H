@@ -1,5 +1,2 @@
-# INF112 Maven template 
-Simple skeleton with libgdx. 
-
-
-## Known bugs
+# INF112 G5-2
+Robo Rally coded in java using libGDX
