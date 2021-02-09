@@ -9,7 +9,7 @@ public class Player extends AbstractSprite {
     private int hp;
     private int pc;
     private final Pair savePoint;
-    private final Board board;
+    private Board board;
     private boolean dead;
 
     /**
@@ -17,7 +17,7 @@ public class Player extends AbstractSprite {
      * @param y Y spawn location
      * @param number the player number (i.e. 1 for player1, 2 for player2...)
      */
-    public Player(int x, int y, Texture tex, int number, Board board){
+    public Player(int x, int y, Texture tex, int number){
         super(tex);
         setShortName("p"+number);
         setCoordinates(x,y);
@@ -27,6 +27,9 @@ public class Player extends AbstractSprite {
         pc = 9;
         dead = false;
         savePoint = new Pair(x, y); //Initialize save point
+    }
+
+    public void setBoard(Board board){
         this.board = board;
     }
 

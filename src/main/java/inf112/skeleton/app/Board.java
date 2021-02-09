@@ -21,7 +21,7 @@ public class Board {
     private final ArrayList<Player> playerList;
     private final ArrayList<Flag> flagList;
 
-    public Board(int boardNum){
+    public Board(){
         //Only need one instance of each of these classes per map, rest of items initialized in readBoard()
         Ground ground = new Ground(new Texture("src\\main\\tex\\ground.png"));
         Hole hole = new Hole(new Texture("src\\main\\tex\\hole.png"));
@@ -35,8 +35,6 @@ public class Board {
         flagList = new ArrayList<>(); //List of flags
         boardInfo = new ArrayList<>(); //List of list of objects on board
         originalBoard = new ArrayList<>(); //List for saving the original state of the board.
-
-        readBoard(boardNum);
     }
 
     /**
@@ -57,7 +55,8 @@ public class Board {
                 for(int i=0; i<items.length; i++){
                     if(items[i].matches("p\\d+")) {
                         playerNum += 1;
-                        Player player = new Player(k, i, new Texture("src\\main\\tex\\player" + playerNum + "up.png"), playerNum, this);
+                        Player player = new Player(k, i, new Texture("src\\main\\tex\\player" + playerNum + "up.png"), playerNum);
+                        player.setBoard(this);
                         spriteMap.put(player.getShortName(), player);
                         playerList.add(player);
                         lineSprites.add(player);
@@ -94,7 +93,7 @@ public class Board {
      * they will be used opposite due to the boardInfo[][] layout.
      * @param x x-coordinate
      * @param y y-coordinate
-     * @param sprite the object that should be placed in (x,y)
+     * @param sprite the short name of the sprite that should be placed in (x,y), example p1 => (AbstractSprite) Player1
      */
     public void updateCoordinate(String sprite, int x, int y){
         if(!spriteMap.containsKey(sprite)) {
