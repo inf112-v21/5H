@@ -21,7 +21,7 @@ public class Game implements ApplicationListener {
     private SpriteBatch batch;
     private Camera camera;
     private boolean isFinished;
-    private Board board;
+    public Board board;
     private int boardSize;
     private ArrayList<Player> playerList;
     private ArrayList<Player> alivePlayerList;
@@ -41,7 +41,8 @@ public class Game implements ApplicationListener {
         batch = new SpriteBatch();
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        board = new Board(1);
+        board = new Board();
+        board.readBoard(1);
         playerList = board.getPlayerList();
         alivePlayerList = new ArrayList<>();
         alivePlayerList.addAll(playerList);
@@ -79,7 +80,6 @@ public class Game implements ApplicationListener {
         }
         for(int x = 0; x < boardSize; x++){
             for(int y = 0; y < boardSize; y++){
-                //HashMap<String, Sprite> spriteMap = board.getSpriteMap();
                 Sprite sprite = board.getPosition(x, y);
                 sprite.setSize(camera.viewportWidth/boardSize, camera.viewportWidth/boardSize);
                 sprite.setX(x*(camera.viewportWidth/boardSize));
