@@ -27,6 +27,7 @@ public class Player extends AbstractSprite {
         pc = 9;
         dead = false;
         savePoint = new Pair(x, y); //Initialize save point
+        dir = Direction.NORTH;
     }
 
     public void setBoard(Board board){
