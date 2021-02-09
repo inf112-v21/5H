@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.Texture;
 import inf112.skeleton.app.Board;
 import inf112.skeleton.app.Pair;
 
+import java.util.HashMap;
+
 public class Player extends AbstractSprite {
     private int points;
     private int hp;
@@ -11,6 +13,9 @@ public class Player extends AbstractSprite {
     private final Pair savePoint;
     private Board board;
     private boolean dead;
+    private Direction dir;
+
+
 
     /**
      * @param x X spawn location
@@ -27,6 +32,7 @@ public class Player extends AbstractSprite {
         pc = 9;
         dead = false;
         savePoint = new Pair(x, y); //Initialize save point
+        dir = Direction.NORTH;
     }
 
     public void setBoard(Board board){
@@ -177,6 +183,20 @@ public class Player extends AbstractSprite {
      */
     public Pair getSavepoint(){
         return savePoint;
+    }
+
+    /**
+     * @return the direction the player is facing
+     */
+    public Direction getDirection(){
+        return dir;
+    }
+
+    /**
+     * @param newDir the direction player should now be facing
+     */
+    public void setDirection(Direction newDir){
+        dir = newDir;
     }
 
     public boolean isDead(){

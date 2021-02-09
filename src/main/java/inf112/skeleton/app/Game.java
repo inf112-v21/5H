@@ -8,11 +8,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import inf112.skeleton.app.Sprites.Direction;
 import inf112.skeleton.app.Sprites.Flag;
 import inf112.skeleton.app.Sprites.Player;
 import org.lwjgl.opengl.GL20;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Class for handling GUI and game setup/logic
@@ -29,6 +31,12 @@ public class Game implements ApplicationListener {
     private int turn;
     private Player winner;
     private boolean pause;
+    private final HashMap<Direction, Pair> dirMap = new HashMap<>(){{
+        put(Direction.NORTH, new Pair(0, 1));
+        put(Direction.WEST, new Pair(-1, 0));
+        put(Direction.EAST, new Pair(1, 0));
+        put(Direction.SOUTH, new Pair(0, -1));
+    }};
 
     //Enum to keep track of current game phase (card select, move, ...)
     private enum phase {
@@ -120,31 +128,21 @@ public class Game implements ApplicationListener {
             }
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.UP)){
-            playerTurn.setTexture(new Texture("src\\main\\tex\\"+playerTurn.getName()+"up.png"));
-            if(playerTurn.move(0, 1)){
+            Direction dir = playerTurn.getDirection();
+            Pair pair = dirMap.get(dir);
+            if(playerTurn.move(pair.getX(), pair.getY())){
                 return;
             }
             endTurn();
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
-            playerTurn.setTexture(new Texture("src\\main\\tex\\" + playerTurn.getName() +"right.png"));
-            if(playerTurn.move(1, 0)){
-                return;
-            }
+            playerTurn.rotate90(true);
+            playerTurn.setDirection(getNewDirection(playerTurn.getDirection(), true));
             endTurn();
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
-            playerTurn.setTexture(new Texture("src\\main\\tex\\" + playerTurn.getName() +"left.png"));
-            if(playerTurn.move(-1, 0)){
-                return;
-            }
-            endTurn();
-        }
-        else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-            playerTurn.setTexture(new Texture("src\\main\\tex\\" + playerTurn.getName() + "down.png"));
-            if(playerTurn.move(0, -1)){
-                return;
-            }
+            playerTurn.rotate90(false);
+            playerTurn.setDirection(getNewDirection(playerTurn.getDirection(), false));
             endTurn();
         }
         if(playerTurn.getScore() >= 3){
@@ -152,6 +150,38 @@ public class Game implements ApplicationListener {
             winner = playerTurn;
         }
 
+    }
+
+    private Direction getNewDirection(Direction dir, boolean clockwise){
+        if(clockwise){
+            if(dir.equals(Direction.NORTH)){
+                return Direction.EAST;
+            }
+            if(dir.equals(Direction.EAST)){
+                return Direction.SOUTH;
+            }
+            if(dir.equals(Direction.SOUTH)){
+                return Direction.WEST;
+            }
+            if(dir.equals(Direction.WEST)){
+                return Direction.NORTH;
+            }
+        }
+        else{
+            if(dir.equals(Direction.NORTH)){
+                return Direction.WEST;
+            }
+            if(dir.equals(Direction.EAST)){
+                return Direction.NORTH;
+            }
+            if(dir.equals(Direction.SOUTH)){
+                return Direction.EAST;
+            }
+            if(dir.equals(Direction.WEST)){
+                return Direction.SOUTH;
+            }
+        }
+        return Direction.NORTH; //will never reach this
     }
 
     /**
