@@ -16,6 +16,7 @@ public class Player extends AbstractSprite {
     private Direction dir;
 
 
+
     /**
      * @param x X spawn location
      * @param y Y spawn location

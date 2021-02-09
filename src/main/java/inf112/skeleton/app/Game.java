@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import inf112.skeleton.app.Sprites.Direction;
 import inf112.skeleton.app.Sprites.Flag;
 import inf112.skeleton.app.Sprites.Player;
 import org.lwjgl.opengl.GL20;
