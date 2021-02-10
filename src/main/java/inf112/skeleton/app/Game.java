@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import inf112.skeleton.app.Sprites.AbstractSprite;
 import inf112.skeleton.app.Sprites.Direction;
 import inf112.skeleton.app.Sprites.Flag;
 import inf112.skeleton.app.Sprites.Player;
@@ -88,14 +89,26 @@ public class Game implements ApplicationListener {
         }
         for(int x = 0; x < boardSize; x++){
             for(int y = 0; y < boardSize; y++){
-                Sprite sprite = board.getPosition(x, y);
-                sprite.setSize(camera.viewportWidth/boardSize, camera.viewportWidth/boardSize);
-                sprite.setX(x*(camera.viewportWidth/boardSize));
-                sprite.setY(y*(camera.viewportHeight/boardSize));
-                sprite.draw(batch);
+                //render ground under whole board
+                AbstractSprite ground = board.getSpriteMap().get("g");
+                renderSprite(ground, x, y);
+                ground.draw(batch);
+
+                //Render anything on top of ground
+                AbstractSprite sprite = board.getPosition(x, y);
+                if(!sprite.getShortName().equals("g")){
+                    renderSprite(sprite, x , y);
+                    sprite.draw(batch);
+                }
             }
         }
         batch.end();
+    }
+
+    private void renderSprite(AbstractSprite sprite, int x, int y) {
+        sprite.setSize(camera.viewportWidth/boardSize, camera.viewportWidth/boardSize);
+        sprite.setX(x*(camera.viewportWidth/boardSize));
+        sprite.setY(y*(camera.viewportHeight/boardSize));
     }
 
     /**

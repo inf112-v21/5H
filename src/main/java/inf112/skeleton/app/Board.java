@@ -55,7 +55,7 @@ public class Board {
                 for(int i=0; i<items.length; i++){
                     if(items[i].matches("p\\d+")) {
                         playerNum += 1;
-                        Player player = new Player(k, i, new Texture("src\\main\\tex\\player" + playerNum + "up.png"), playerNum);
+                        Player player = new Player(k, i, new Texture("src\\main\\tex\\player" + playerNum + ".png"), playerNum);
                         player.setBoard(this);
                         spriteMap.put(player.getShortName(), player);
                         playerList.add(player);
