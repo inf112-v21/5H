@@ -1,10 +1,8 @@
 package inf112.skeleton.app.Sprites;
 
-import com.badlogic.gdx.graphics.Texture;
-
-public class Wall extends AbstractSprite{
-    public Wall(Texture tex) {
-        super(tex);
+public class Wall extends AbstractGameObject {
+    public Wall(String texturePath) {
+        super(texturePath);
         setName("Wall");
         setShortName("w");
     }

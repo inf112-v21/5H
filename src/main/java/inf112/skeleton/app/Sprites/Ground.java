@@ -1,10 +1,8 @@
 package inf112.skeleton.app.Sprites;
 
-import com.badlogic.gdx.graphics.Texture;
-
-public class Ground extends AbstractSprite {
-    public Ground(Texture tex) {
-        super(tex);
+public class Ground extends AbstractGameObject {
+    public Ground(String texturePath) {
+        super(texturePath);
         setName("Ground");
         setShortName("g");
     }

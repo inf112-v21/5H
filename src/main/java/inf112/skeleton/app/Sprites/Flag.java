@@ -1,12 +1,11 @@
 package inf112.skeleton.app.Sprites;
 
-import com.badlogic.gdx.graphics.Texture;
 import inf112.skeleton.app.Pair;
 
 import java.util.LinkedList;
 
-public class Flag extends AbstractSprite {
-    private final LinkedList<Player> visitedBy;
+public class Flag extends AbstractGameObject {
+    private final LinkedList<Player> visitedBy; //Keeps track of what players have visited this flag
     private Pair coordinates;
 
     public Flag(int x, int y, Texture tex, int number){
@@ -17,10 +16,18 @@ public class Flag extends AbstractSprite {
         visitedBy = new LinkedList<>();
     }
 
+    /**
+     * Set the Flag coordinate to (x,y)
+     * @param x coordinate
+     * @param y coordinate
+     */
     public void setCoordinates(int x, int y){
         coordinates = new Pair(x, y);
     }
 
+    /**
+     * @return coordinates as Pair
+     */
     public Pair getCoordinates(){
         return coordinates;
     }

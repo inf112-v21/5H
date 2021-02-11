@@ -1,19 +1,16 @@
 package inf112.skeleton.app.Sprites;
 
-import com.badlogic.gdx.graphics.Texture;
 import inf112.skeleton.app.Board;
 import inf112.skeleton.app.Pair;
 
-import java.util.HashMap;
-
-public class Player extends AbstractSprite {
+public class Player extends AbstractGameObject {
     private int points;
     private int hp;
     private int pc;
-    private final Pair savePoint;
+    private final Pair savePoint;   //Last registered savepoint coordinates
     private Board board;
     private boolean dead;
-    private Direction dir;
+    private Direction dir;  //Facing direction
 
 
 
@@ -22,8 +19,8 @@ public class Player extends AbstractSprite {
      * @param y Y spawn location
      * @param number the player number (i.e. 1 for player1, 2 for player2...)
      */
-    public Player(int x, int y, Texture tex, int number){
-        super(tex);
+    public Player(int x, int y, String texturePath, int number){
+        super(texturePath);
         setShortName("p"+number);
         setCoordinates(x,y);
         setName("Player"+number);
@@ -32,7 +29,7 @@ public class Player extends AbstractSprite {
         pc = 9;
         dead = false;
         savePoint = new Pair(x, y); //Initialize save point
-        dir = Direction.NORTH;
+        dir = Direction.NORTH; //Set direction on spawn
     }
 
     public void setBoard(Board board){
@@ -43,9 +40,8 @@ public class Player extends AbstractSprite {
      * Function for moving a player on the board.
      * @param x Number of units to move in x direction
      * @param y Number of units to move in y direction
-     * @return true if move is valid, false otherwise.
      */
-    public boolean move(int x, int y) {
+    public void move(int x, int y) {
         //Coordinates for current location of player
         int currentX = getCoordinates().getX();
         int currentY = getCoordinates().getY();
@@ -56,24 +52,24 @@ public class Player extends AbstractSprite {
             resetTile(currentX, currentY);
             die();
             System.out.println("HP:" + hp + " | " + "PC: " + pc);
-            return false;
+            return;
         }
         else if(updatedY > board.getSize()-1 || updatedY < 0){
             resetTile(currentX, currentY);
             die();
-            return false;
+            return;
         }
-        else if(board.info(updatedX, updatedY).getName().equals("Hole")){
+        else if(board.getPosition(updatedX, updatedY).getName().equals("Hole")){
             setCoordinates(updatedX, updatedY);
             resetTile(currentX, currentY);
             die();
-            return false;
+            return;
         }
-        else if(board.info(updatedX, updatedY).getName().equals("Wall")){
+        else if(board.getPosition(updatedX, updatedY).getName().equals("Wall")){
             System.out.println("Hit a wall.");
-            return true;
+            return;
         }
-        else if(board.info(updatedX, updatedY).getName().matches("Flag\\d+")){
+        else if(board.getPosition(updatedX, updatedY).getName().matches("Flag\\d+")){
             Flag flag = (Flag) board.getPosition(updatedX, updatedY);
             if(flag.pickUp(this)){
                 System.out.println("+1 point, " + points + " total.");
@@ -84,7 +80,7 @@ public class Player extends AbstractSprite {
         }
         setCoordinates(updatedX, updatedY);
         board.updateCoordinate(getShortName(), updatedX, updatedY);
-        return resetTile(currentX, currentY);
+        resetTile(currentX, currentY);
     }
 
     /**
@@ -94,7 +90,7 @@ public class Player extends AbstractSprite {
      * @return false (why?)
      */
     private boolean resetTile(int x, int y) {
-        AbstractSprite tile = board.getOriginalPosition(x,y);
+        AbstractGameObject tile = board.getOriginalPosition(x,y);
         if(tile.getShortName().matches("p\\d+")){
             board.updateCoordinate("g", x, y);
             return false;
