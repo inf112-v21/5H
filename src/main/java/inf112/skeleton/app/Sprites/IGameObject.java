@@ -5,7 +5,7 @@ import inf112.skeleton.app.Pair;
 /**
  * Interface for sprites
  */
-public interface ISprite {
+public interface IGameObject {
     /**
      * @param x The x coordinate you want to update
      * @param y The y coordinate you want to update

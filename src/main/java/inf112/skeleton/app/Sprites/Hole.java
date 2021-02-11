@@ -1,10 +1,8 @@
 package inf112.skeleton.app.Sprites;
 
-import com.badlogic.gdx.graphics.Texture;
-
-public class Hole extends AbstractSprite {
-    public Hole(Texture tex) {
-        super(tex);
+public class Hole extends AbstractGameObject {
+    public Hole(String texturePath) {
+        super(texturePath);
         setName("Hole");
         setShortName("h");
     }

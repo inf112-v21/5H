@@ -1,22 +1,21 @@
 package inf112.skeleton.app.Sprites;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import inf112.skeleton.app.Pair;
 
 /**
  * Class that holds all the identical functions from board Sprites.
  */
-public abstract class AbstractSprite extends Sprite implements ISprite {
+public abstract class AbstractGameObject implements IGameObject {
     private String name;
     private String shortName;
+    private final String texturePath;
     private Pair coordinates;
 
-    public AbstractSprite(Texture tex){
-        super(tex);
+    public AbstractGameObject(String texturePath){
+        this.texturePath = texturePath;
     }
 
     public void setCoordinates(int x, int y){
-        coordinates = new Pair(x, y);
+        coordinates = new Pair(x,y);
     }
 
     public Pair getCoordinates(){
@@ -25,6 +24,10 @@ public abstract class AbstractSprite extends Sprite implements ISprite {
 
     public String getName(){
         return name;
+    }
+
+    public String getTexturePath(){
+        return texturePath;
     }
 
     public String getShortName(){

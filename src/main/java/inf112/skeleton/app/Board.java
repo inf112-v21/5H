@@ -1,6 +1,5 @@
 package inf112.skeleton.app;
 
-import com.badlogic.gdx.graphics.Texture;
 import inf112.skeleton.app.Sprites.*;
 
 import java.io.File;
@@ -13,9 +12,9 @@ import java.util.Scanner;
  * Class for the Board, updates the board and provides necessary info for Game.java
  */
 public class Board {
-    private final ArrayList<ArrayList<AbstractSprite>> boardInfo;
-    private final ArrayList<ArrayList<AbstractSprite>> originalBoard;
-    private final HashMap<String, AbstractSprite> spriteMap;
+    private final ArrayList<ArrayList<AbstractGameObject>> boardInfo;
+    private final ArrayList<ArrayList<AbstractGameObject>> originalBoard;
+    private final HashMap<String, AbstractGameObject> objectMap;    //Map for getting the Game Object from a string, i.e. p1 => (Player) player1
     private int playerNum;
     private int flagNum;
     private final ArrayList<Player> playerList;
@@ -23,13 +22,20 @@ public class Board {
 
     public Board(){
         //Only need one instance of each of these classes per map, rest of items initialized in readBoard()
-        Ground ground = new Ground(new Texture("src\\main\\tex\\ground.png"));
-        Hole hole = new Hole(new Texture("src\\main\\tex\\hole.png"));
-        Wall wall = new Wall(new Texture("src\\main\\tex\\wall.png"));
+        Ground ground = new Ground("src\\main\\tex\\ground.png");
+        Hole hole = new Hole("src\\main\\tex\\hole.png");
+        Wall wall = new Wall("src\\main\\tex\\wall.png");
+        objectMap = new HashMap<>();
+        objectMap.put("g", ground);
+        objectMap.put("h", hole);
+        objectMap.put("w", wall);
+
+        /*
         spriteMap = new HashMap<>();
-        spriteMap.put("g", ground);
-        spriteMap.put("h", hole);
-        spriteMap.put("w", wall);
+        spriteMap.put("g", new Sprite(new Texture(ground.getTexturePath())));
+        spriteMap.put("h", new Sprite(new Texture(hole.getTexturePath())));
+        spriteMap.put("w", new Sprite(new Texture(wall.getTexturePath())));
+        */
 
         playerList = new ArrayList<>(); //List of players
         flagList = new ArrayList<>(); //List of flags
@@ -51,33 +57,33 @@ public class Board {
             while(scanner.hasNextLine()){
                 String line = scanner.nextLine();
                 String[] items = line.split(" ");
-                ArrayList<AbstractSprite> lineSprites = new ArrayList<>();
+                ArrayList<AbstractGameObject> lineSprites = new ArrayList<>();
                 for(int i=0; i<items.length; i++){
                     if(items[i].matches("p\\d+")) {
                         playerNum += 1;
-                        Player player = new Player(k, i, new Texture("src\\main\\tex\\player" + playerNum + ".png"), playerNum);
+                        Player player = new Player(k, i, "src\\main\\tex\\player" + playerNum + ".png", playerNum);
                         player.setBoard(this);
-                        spriteMap.put(player.getShortName(), player);
+                        objectMap.put(player.getShortName(), player);
                         playerList.add(player);
                         lineSprites.add(player);
                     }
                     else if(items[i].matches("f\\d+")) {
                         flagNum += 1;
                         int num = Integer.parseInt(items[i].substring(1));
-                        Flag flag = new Flag(k, i, new Texture("src\\main\\tex\\flag" + num +".png"), num);
-                        spriteMap.put(items[i], flag);
+                        Flag flag = new Flag(k, i, "src\\main\\tex\\flag" + num +".png", num);
+                        objectMap.put(items[i], flag);
                         flagList.add(flag);
                         lineSprites.add(flag);
                     }
                     else{
-                        lineSprites.add(spriteMap.get(items[i]));
+                        lineSprites.add(objectMap.get(items[i]));
                     }
                 }
                 k ++;
                 boardInfo.add(lineSprites);
             }
             //Make a safe clone of board
-            for( ArrayList<AbstractSprite> sublist : boardInfo) {
+            for( ArrayList<AbstractGameObject> sublist : boardInfo) {
                 originalBoard.add(new ArrayList<>(sublist));
             }
             scanner.close();
@@ -93,41 +99,59 @@ public class Board {
      * they will be used opposite due to the boardInfo[][] layout.
      * @param x x-coordinate
      * @param y y-coordinate
-     * @param sprite the short name of the sprite that should be placed in (x,y), example p1 => (AbstractSprite) Player1
+     * @param object the short name of the sprite that should be placed in (x,y), example p1 => (AbstractSprite) Player1
      */
-    public void updateCoordinate(String sprite, int x, int y){
-        if(!spriteMap.containsKey(sprite)) {
+    public void updateCoordinate(String object, int x, int y){
+        if(!objectMap.containsKey(object)) {
             System.err.println("Illegal object");
             return;
         }
-        AbstractSprite theSprite = spriteMap.get(sprite);
-        boardInfo.get(x).set(y, theSprite);
+        AbstractGameObject theObject = objectMap.get(object);
+        boardInfo.get(x).set(y, theObject);
     }
 
+    /**
+     * @return size of board as int
+     */
     public int getSize() {
         return 12;
     }
 
-    public HashMap<String, AbstractSprite> getSpriteMap() {
-        return spriteMap;
+    /**
+     * @return the objectMap, that is to say the map from shortName to Object. p1 => (Player) player1
+     */
+    public HashMap<String, AbstractGameObject> getObjectMap() {
+        return objectMap;
     }
 
-    public AbstractSprite getPosition(int x, int y) {
+    /**
+     * @param x coordinate
+     * @param y coordinate
+     * @return The object at coordinate (x,y)
+     */
+    public AbstractGameObject getPosition(int x, int y) {
         return boardInfo.get(x).get(y);
     }
 
-    public AbstractSprite getOriginalPosition(int x, int y) {
+    /**
+     * @param x coordinate
+     * @param y coordinate
+     * @return The object that initially was placed at (x,y)
+     */
+    public AbstractGameObject getOriginalPosition(int x, int y) {
         return originalBoard.get(x).get(y);
     }
 
-    public AbstractSprite info(int updatedX, int updatedY) {
-        return boardInfo.get(updatedX).get(updatedY);
-    }
-
+    /**
+     * @return list of players
+     */
     public ArrayList<Player> getPlayerList(){
         return playerList;
     }
 
+    /**
+     * @return list of flags
+     */
     public ArrayList<Flag> getFlagList(){
         return flagList;
     }
