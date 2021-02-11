@@ -99,7 +99,7 @@ public class Board {
      * they will be used opposite due to the boardInfo[][] layout.
      * @param x x-coordinate
      * @param y y-coordinate
-     * @param sprite the short name of the sprite that should be placed in (x,y), example p1 => (AbstractSprite) Player1
+     * @param object the short name of the sprite that should be placed in (x,y), example p1 => (AbstractSprite) Player1
      */
     public void updateCoordinate(String object, int x, int y){
         if(!objectMap.containsKey(object)) {

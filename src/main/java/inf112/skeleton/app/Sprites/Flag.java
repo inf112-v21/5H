@@ -8,8 +8,8 @@ public class Flag extends AbstractGameObject {
     private final LinkedList<Player> visitedBy; //Keeps track of what players have visited this flag
     private Pair coordinates;
 
-    public Flag(int x, int y, Texture tex, int number){
-        super(tex);
+    public Flag(int x, int y, String texturePath, int number){
+        super(texturePath);
         setName("Flag"+number);
         setShortName("f"+number);
         coordinates = new Pair(x, y);
