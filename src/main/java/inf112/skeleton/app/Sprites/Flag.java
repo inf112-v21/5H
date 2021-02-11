@@ -17,22 +17,6 @@ public class Flag extends AbstractGameObject {
     }
 
     /**
-     * Set the Flag coordinate to (x,y)
-     * @param x coordinate
-     * @param y coordinate
-     */
-    public void setCoordinates(int x, int y){
-        coordinates = new Pair(x, y);
-    }
-
-    /**
-     * @return coordinates as Pair
-     */
-    public Pair getCoordinates(){
-        return coordinates;
-    }
-
-    /**
      * If a player has picked up a flag once he should not be able to pick up the same flag again, therefore
      * this functions returns true if the pickup was successful.
      * @param player Player standing on same coordinates as flag, trying to pick it up
