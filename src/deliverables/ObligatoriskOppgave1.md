@@ -8,10 +8,24 @@
 * [Kodeansvarlig - Libgdx] **Håkon**: Java, Python, Haskell, SQL
 * [Teamlead] **Jonas**: Python, litt Java, datastrukturer, databaser
 * [Testansvarlig] **Emil**: Python, Java, Haskell, SQL, datastrukturer
-* [Brukerhistorier] **Hans Albert**: Python, Haskell
+* [Spesifikasjonsansvarlig] **Hans Albert**: Python, Haskell
 * [Kundeansvarlig /kontakt] **Henrik**: Python, litt Haskell, SQL, HTML
 
-
+### Oppgaver for roller:
+* Kodeansvarlig -Java:
+  *  Hovedansvar for alt med Java koden, skal ha overordnet ansvar for å hjelpe med problemer i javakoden. Ansvarlig for at java koden følger best-practices.
+* Kodeansvarlig - Libgdx:
+  * Hovedansvar for alt med libgdx. Dette innebærer å sette seg inn i hvordan å best bruke dette library til å gjennomføre prosjektet.
+* Teamlead: 
+  * Delegere oppgaver slik at det er oppgaver for alt som skal leveres. Ansvarlig for at alt som skal inn til en innlevering blir delegert og utført. Ansvarlig for at vi leverer inn alt som skal til en innlevering.
+* Testansvarlig : 
+  * Hovedansvar for testene, og å hjelpe til med å skrive testene. Ansvarlig for at java-testene følger best practises.
+* Spesifikasjonsansvarlig: 
+  * Ansvarlig for spesifikasjonene av produktet til enhver tid. Skal ha hovedansvar for at spesifikasjonen er riktig for det stadiet vi er på. Ansvarlig for at brukerhistorier og akseptansekrav er skrevet bra og håndtere problemer rundt dette.
+* Kundeansvarlig /kontakt: 
+  * Å innhente svar på spørsmål gruppemedlemmene har, fra kunde. 
+  
+Vi følte at dette var en hensiktsmessig måte å fordele de forskjellige oppgaver som trengs over i roller. Vi har nå forskjellige gruppemedlemmer som har hovedansvar over visse deler av kodebasen, spesifikasjoner og en Teamlead som har et overordnet ansvar for at alt som skal gjøres blir gjort. Vi fordelte rollene etter ønske og klarte å gjøre det på en ryddig måte hvor alle fikk en rolle de selv hadde ønsket. Vi håper denne fordelingen vil fungere bra og tillate oss å fordele ansvaret på en slik måte at vi har noen som har kunnskap til å hjelpe andre uansett område. 
 
 ## Metodikk:
 Vi vil fokusere hovedsakelig på projectboardet og har dermed en projektmetodikk som følger kanban i en stor grad. 
@@ -29,8 +43,6 @@ Teamlead og brukerhistorie-ansvarlig tar ansvar for innlevering av tekst og bruk
 Testansvarlig er hovedansvarlig for testing av koden skrevet
 Libgdx ansvarlig bistår både til kode og test etter behov.
 Kundeansvarlig fremstiller spm til gruppeleder og hjelper til med tekstinnlevering.
-
-
 
 
 ## En kort beskrivelse av det overordnede målet for applikasjonen:
@@ -92,6 +104,8 @@ perioden men med bestemmelsene som er gjort skal ette gå bedre i fremtiden.
 User stories: Vi har klart å bruke user stories på en hensiktsmessig måte og beskrive målene
 vi ønsker å oppnå under denne innleveringen.
 
+#### *Vi syns vi har god kommunikasjon og klart å diskutere oss frem til løsnigner. Alle meninger blir hørt.*
+
 ## Koding:
 Det har blitt ubalansert med commits, men det er såpass mye å sette seg inn i for å starte prosjektet, 
 slik at en person tok hovedansvaret. Dette gjorde det også enklere å lage denne grunnleggende kodebasen
@@ -100,11 +114,19 @@ og klasser og derfor ble de arbeidsoppgavene vi hadde satt veldig knytt sammen o
 Vi håper derfor at det senere vil bli mer gjevnt når det gjelder bidrag til kodebasen, når det blir mindre oppgaver som kan gjennomføres eller større oppgaver som kan stykkes opp. 
 
 
-## Fremtidige planer angående implementering av nettverk, seperasjon av grafikk og foretningslogikk etc.
-TBD
+## Fremtidige planer angående implementering av nettverk:
+Vi har ikke sett på hvordan nettverk fungere inne i libgdx men vil lage konkrete planer når vi har satt oss inn i det.
+Vi vil prioritere å få til å vise samme brett til spillere på forskjellige datamaskiner og at de skal kunne flyttes på det brettet samtidig.
+Vi tenker å gjøre dette først, og implementere simultan bevegelse, altså alle gir en bevegelsekommando og de blir gjennomført i sekvens av spillet.
+Etter at vi har fått til dette vil vi begynne å se på mer funksjonalitet til spillet som f.eks. spillekort, skade osv. 
+
 
 ## Problemer / kjente bugs / feil ved produktet vårt:
-TBD
+Spillet er turn-based istedenfor å følge reglene til spillet.
+Veggene tar opp en hel rute istedenfor å være mellom.
+Kollisjon ikke implementert og medfølgende grafiske bugs pga. dette
+Flaggene krever ikke å bli plukket opp i rekkefølge slik reglene tilsier.
+Du kan bare move en til av gangen. (dette pga. vi ikke har programkort).
 
-## *Vi syns vi har god kommunikasjon og klart å diskutere oss frem til løsnigner. Alle meninger blir hørt.*
+
 
