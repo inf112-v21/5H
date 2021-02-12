@@ -1,0 +1,26 @@
+Møte 12.02.2021
+Digitalt via Discord
+Tilstede:
+  Skjalg Eide Hodneland
+  Emil Flatøy Hodneland
+  Jonas Svåsand
+  Håkon Mathias Hvidsten Høie
+  Henrik Bie Kaarud
+  Hans Albert Biørn Terland
+
+
+Vi begynner med standup:
+Jonas: Skrevet på innleveringsmarkdown-filen og formattert den
+Skjalg: Endret slik at vi har færre textures, fikset slik at grafikk og logikk er separert 
+at vi kan skrive tester
+Hans Albert: Skrevet på innleveringsmarkdown-filen.
+Håkon: Skulle skrive tester men måtte vente på seperasjon av forretningslogikk og grafikk.
+Emil: Pairprogrammet med skjalg og skrevet litt tester.
+
+
+Vi tok så og så over endringene i innleveringsmarkdown-filen og diskuterte litt rundt det.
+Vi planla grovt, hva vi skulle gjøre for å få til å implementere nettverk, slik at flere 
+kan spille på samme brett.
+Vi la også til en liste over kjente errors/bugs i prosjektet vårt slik det er nå. Her inkluderte
+vi ikke mangler, som f.eks. at det mangler programkort o.l.
+
