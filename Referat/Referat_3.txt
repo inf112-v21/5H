@@ -5,7 +5,7 @@ Tilstede:
   Emil Flatøy Hodneland
   Jonas Svåsand
   Håkon Mathias Hvidsten Høie
-  Henrik Bie Kaarud
+  >>>>Henrik Bie Kaarud
   Hans Albert Biørn Terland
 
 
