@@ -25,15 +25,6 @@ public class GameServer extends Listener {
     public GameServer(int maxPlayers) throws IOException {
         connections = 0;
         maxConnections = maxPlayers -1;
-
-        server = new Server();
-        server.getKryo().register(requestFromClient.class);
-        server.bind(tcpPort, udpPort);
-        server.start();
-        server.addListener(new GameServer(maxPlayers));
-
-
-
     }
 
     /*

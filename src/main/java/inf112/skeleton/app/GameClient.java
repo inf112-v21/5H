@@ -15,15 +15,6 @@ public class GameClient extends Listener {
 
     private String currentRequest = "none";
 
-    public GameClient() throws IOException {
-        client = new Client();
-        client.getKryo().register(requestFromClient.class);
-
-        client.start();
-        client.connect(5000, ip, tcpPort, udpPort);
-        client.addListener(new GameClient());
-    }
-
     public void received (Connection c, Object p) {
 
         if (p instanceof requestFromClient) {

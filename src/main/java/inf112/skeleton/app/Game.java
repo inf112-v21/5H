@@ -8,12 +8,16 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Server;
 import inf112.skeleton.app.Sprites.AbstractGameObject;
 import inf112.skeleton.app.Sprites.Direction;
 import inf112.skeleton.app.Sprites.Flag;
 import inf112.skeleton.app.Sprites.Player;
 import org.lwjgl.opengl.GL20;
 
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -33,7 +37,10 @@ public class Game implements ApplicationListener {
     private int turn;                           //Counter for turn, will be obsolete once the game is no longer turn based
     private Player winner;                      //The player that won the game
     private boolean pause;                      //If the game is paused this is true
-    private boolean isServer;                     //If true runs a server, if false connects to a server as client
+    private int numPlayers;                     //Amount of players expected
+    public boolean isServer;
+    public Server server;
+    public Client client;
 
     //Map that holds Direction and the corresponding movement. I.e. north should move player x += 0, y += 1
     private final HashMap<Direction, Pair> dirMap = new HashMap<>(){{
@@ -48,6 +55,28 @@ public class Game implements ApplicationListener {
     private enum phase {
         CARD_SELECT,
         MOVE,
+    }
+    //START SERVER:
+    public void startServer() throws IOException {
+        numPlayers = 4;
+        NetworkSettings networkSettings = new NetworkSettings();
+        server = new Server();
+        server.getKryo().register(requestFromClient.class);
+        server.bind(networkSettings.tcpPort, networkSettings.udpPort);
+        server.start();
+        server.addListener(new GameServer(numPlayers));
+    }
+
+    //START CLIENT
+    public void startClient() throws IOException {
+        NetworkSettings networkSettings = new NetworkSettings();
+        client = new Client();
+        client.getKryo().register(requestFromClient.class);
+
+        client.start();
+        client.connect(5000, networkSettings.ip, networkSettings.tcpPort, networkSettings.udpPort);
+        client.addListener(new GameClient());
+
     }
 
     @Override
@@ -83,7 +112,7 @@ public class Game implements ApplicationListener {
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        checkInput();
+        doOnePlayerMove();
         batch.begin();
         if(isFinished){ //If the game is over
             Sprite winnerSprite = spriteMap.get(winner.getShortName());
@@ -134,20 +163,8 @@ public class Game implements ApplicationListener {
     /**
      * Handles input logic.
      */
-    private void checkInput() {
-        if(pause){
-            if(Gdx.input.isKeyPressed(Input.Keys.R)){ //Debug restart
-                dispose();
-                create();
-            }
-            return;
-        }
-        Player playerObject = playerList.get(turn-1);   //Get the player whose turn it is
-        Sprite playerSprite = spriteMap.get(playerObject.getShortName());   //Get the sprite for the above player
-        //If player is dead you skip to the next turn
-        if(playerObject.isDead()){
-            return;
-        }
+
+    private void serverMove(Player playerObject, Sprite playerSprite) {
         if(Gdx.input.isKeyPressed(Input.Keys.F)){ //Debug win mode
             playerObject.addScore(3);
         }
@@ -182,6 +199,85 @@ public class Game implements ApplicationListener {
             isFinished = true;
             winner = playerObject;
         }
+    }
+    private String createClientMove() {
+        String clientMoveString;
+        if(Gdx.input.isKeyPressed(Input.Keys.F)){ //Debug win mode
+            clientMoveString = "debugWin";
+        }
+        else if(Gdx.input.isKeyPressed(Input.Keys.R)){ //Debug restart
+            clientMoveString = "debugRestart";
+        }
+        else if(Gdx.input.isKeyPressed(Input.Keys.D)){ //Debug restart
+            clientMoveString = "debugD";
+        }
+        else if(Gdx.input.isKeyPressed(Input.Keys.UP)){ //Move in the direction the player is facing
+            clientMoveString = "move1";
+        }
+        else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){ //Rotate the player right
+            clientMoveString = "turnRight";
+        }
+        else if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){ //Rotate the player left
+            clientMoveString = "turnLeft";
+        } else {
+            clientMoveString = "noMove";
+        }
+        return clientMoveString;
+    }
+
+    private void doClientMove(Player playerObject, Sprite playerSprite, String move) {
+        if(move.equals("debugWin")){ //Debug win mode
+            playerObject.addScore(3);
+        }
+        else if(move.equals("debugRestart")){ //Debug restart
+            dispose();
+            create();
+        }
+        else if(move.equals("debugD")){ //Debug restart
+            playerObject.damage();
+            System.out.println("PC:" + playerObject.getPc() + "| HP: " + playerObject.getHp());
+            if(playerObject.isDead()){
+                endTurn();
+            }
+        }
+        else if(move.equals("move1")){ //Move in the direction the player is facing
+            Direction dir = playerObject.getDirection();
+            Pair pair = dirMap.get(dir);
+            playerObject.move(pair.getX(), pair.getY());
+            endTurn();
+        }
+        else if(move.equals("turnRight")){ //Rotate the player right
+            playerSprite.rotate90(true);
+            playerObject.setDirection(getNewDirection(playerObject.getDirection(), true));
+            endTurn();
+        }
+        else if(move.equals("turnLeft")){ //Rotate the player left
+            playerSprite.rotate90(false);
+            playerObject.setDirection(getNewDirection(playerObject.getDirection(), false));
+            endTurn();
+        }
+        if(playerObject.getScore() >= 3){   //If win condition
+            isFinished = true;
+            winner = playerObject;
+        }
+    }
+
+    private void doOnePlayerMove() {
+        if(pause){
+            if(Gdx.input.isKeyPressed(Input.Keys.R)){ //Debug restart
+                dispose();
+                create();
+            }
+            return;
+        }
+        Player playerObject = playerList.get(turn-1);   //Get the player whose turn it is
+        Sprite playerSprite = spriteMap.get(playerObject.getShortName());   //Get the sprite for the above player
+        //If player is dead you skip to the next turn
+        //int connectedPlayers = server.getConnectedPlayers()
+        if(playerObject.isDead()){
+            return;
+        }
+        serverMove(playerObject,playerSprite);
 
     }
 
