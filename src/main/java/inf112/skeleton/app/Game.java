@@ -61,7 +61,6 @@ public class Game implements ApplicationListener {
     }
     //START SERVER:
     public void startServer() throws IOException {
-        numPlayers = 4;
         NetworkSettings networkSettings = new NetworkSettings();
         server = new Server();
         server.getKryo().register(requestFromClient.class);
@@ -87,7 +86,7 @@ public class Game implements ApplicationListener {
 
     @Override
     public void create() {
-
+        numPlayers = 4;
         isServer = true;
 
         batch = new SpriteBatch();
@@ -143,7 +142,8 @@ public class Game implements ApplicationListener {
             }
             String move_string = createClientMove();
             System.out.println("Your move");
-            gameClient.sendMove(move_string, client);
+            MoveResponse moveToSend = new MoveResponse(move_string);
+            client.sendTCP(moveToSend);
         }
         batch.begin();
         if(isFinished){ //If the game is over

@@ -31,6 +31,7 @@ public class GameServer extends Listener {
     /*
     Method that runs when someone connects to server
      */
+    @Override
     public void connected(Connection c) {
         System.out.println("Client connected");
 
@@ -44,6 +45,7 @@ public class GameServer extends Listener {
     /*
     Method that runs when a player disconnects from the server
      */
+    @Override
     public void disconnected(Connection c) {
         connections--;
         players.remove(c);

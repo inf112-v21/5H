@@ -28,11 +28,6 @@ public class GameClient extends Listener {
 
         }
     }
-    public void sendMove(String move, Client client) {
-        MoveResponse moveToSend = new MoveResponse(move);
-        client.sendTCP(moveToSend);
-
-    }
 
     public String getCurrentRequest() {
         return currentRequest;
