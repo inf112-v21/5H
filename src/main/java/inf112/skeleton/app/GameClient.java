@@ -12,6 +12,7 @@ public class GameClient extends Listener {
     static String ip;
     static int tcpPort;
     static int udpPort;
+    private boolean needMoveInput = false;
 
     private String currentRequest = "none";
 
@@ -21,7 +22,16 @@ public class GameClient extends Listener {
             requestFromClient receivedRequest = (requestFromClient) p;
             currentRequest = receivedRequest.getRequestType();
             String message = receivedRequest.getRequestMessage();
+            if (currentRequest.equals("Move")) {
+                needMoveInput = true;
+            }
+
         }
+    }
+    public void sendMove(String move, Client client) {
+        MoveResponse moveToSend = new MoveResponse(move);
+        client.sendTCP(moveToSend);
+
     }
 
     public String getCurrentRequest() {
@@ -31,7 +41,11 @@ public class GameClient extends Listener {
         currentRequest = "none";
     }
 
-    public void sendMove(String move) {
-        //Send move
+
+    public void resetNeedMoveInput() {
+        needMoveInput = false;
+    }
+    public boolean getNeedMoveInput() {
+        return needMoveInput;
     }
 }

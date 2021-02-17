@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 import inf112.skeleton.app.Sprites.AbstractGameObject;
 import inf112.skeleton.app.Sprites.Direction;
@@ -41,6 +42,8 @@ public class Game implements ApplicationListener {
     public boolean isServer;
     public Server server;
     public Client client;
+    public GameServer gameServer;
+    public GameClient gameClient;
 
     //Map that holds Direction and the corresponding movement. I.e. north should move player x += 0, y += 1
     private final HashMap<Direction, Pair> dirMap = new HashMap<>(){{
@@ -62,9 +65,11 @@ public class Game implements ApplicationListener {
         NetworkSettings networkSettings = new NetworkSettings();
         server = new Server();
         server.getKryo().register(requestFromClient.class);
+        server.getKryo().register(MoveResponse.class);
         server.bind(networkSettings.tcpPort, networkSettings.udpPort);
         server.start();
-        server.addListener(new GameServer(numPlayers));
+        gameServer = new GameServer(numPlayers);
+        server.addListener(gameServer);
     }
 
     //START CLIENT
@@ -72,15 +77,19 @@ public class Game implements ApplicationListener {
         NetworkSettings networkSettings = new NetworkSettings();
         client = new Client();
         client.getKryo().register(requestFromClient.class);
-
+        client.getKryo().register(MoveResponse.class);
         client.start();
         client.connect(5000, networkSettings.ip, networkSettings.tcpPort, networkSettings.udpPort);
-        client.addListener(new GameClient());
+        gameClient = new GameClient();
+        client.addListener(gameClient);
 
     }
 
     @Override
     public void create() {
+
+        isServer = true;
+
         batch = new SpriteBatch();
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
@@ -100,6 +109,19 @@ public class Game implements ApplicationListener {
         isFinished = false;
         turn = 1;
         pause = false;
+        if (isServer) {
+            try {
+                startServer();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                startClient();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -111,8 +133,18 @@ public class Game implements ApplicationListener {
         camera.update();
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        doOnePlayerMove();
+        if (isServer) {
+            doOnePlayerMove();
+        } else {
+            while (true) {
+                if (gameClient.getNeedMoveInput()) {
+                    break;
+                }
+            }
+            String move_string = createClientMove();
+            System.out.println("Your move");
+            gameClient.sendMove(move_string, client);
+        }
         batch.begin();
         if(isFinished){ //If the game is over
             Sprite winnerSprite = spriteMap.get(winner.getShortName());
@@ -277,7 +309,25 @@ public class Game implements ApplicationListener {
         if(playerObject.isDead()){
             return;
         }
-        serverMove(playerObject,playerSprite);
+        if (turn == 1 || turn == 3 || turn == 4) {
+            serverMove(playerObject, playerSprite);
+        } else if (turn == 2) {
+            Connection connectedClient = gameServer.getPlayer(2);
+            if (connectedClient!= null) {
+                gameServer.request_move(connectedClient);
+                while (true) {
+                    if (!gameServer.receivedMove.equals("empty")) {
+                        break;
+                    }
+                }
+                String move = gameServer.getReceivedMove();
+                doClientMove(playerObject, playerSprite, move);
+
+            } else {
+                serverMove(playerObject,playerSprite);
+            }
+        }
+
 
     }
 

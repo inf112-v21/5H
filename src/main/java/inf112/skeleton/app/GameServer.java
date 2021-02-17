@@ -21,6 +21,7 @@ public class GameServer extends Listener {
 
     //How many connections are allowed, based on how many players game can handle
     private static int maxConnections;
+    public String receivedMove = "empty";
 
     public GameServer(int maxPlayers) throws IOException {
         connections = 0;
@@ -49,7 +50,7 @@ public class GameServer extends Listener {
     }
     // will send a request of a move from a given player
     public void request_move(Connection c) {
-
+        resetReceivedMove();
         requestFromClient moveRequest = new requestFromClient("Move");
         c.sendTCP(moveRequest);
         //c.sendUDP(moveRequest);
@@ -68,6 +69,16 @@ public class GameServer extends Listener {
 
     public int getConnectedPlayers() {
         return players.size();
+    }
+
+    public String getReceivedMove() {
+        return receivedMove;
+    }
+    public void setReceivedMove(String move) {
+        this.receivedMove = move;
+    }
+    public void resetReceivedMove() {
+        this.receivedMove = "empty";
     }
 
 }
