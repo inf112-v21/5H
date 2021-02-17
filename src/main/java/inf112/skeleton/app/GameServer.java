@@ -7,12 +7,7 @@ import com.esotericsoftware.kryonet.Server;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameServer {
-    //Server object
-
-
-
-    static Server server;
+public class GameServer extends Listener {
 
     //Ports that will be listened to
     static int udpPort;
