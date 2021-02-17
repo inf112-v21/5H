@@ -33,6 +33,7 @@ public class Game implements ApplicationListener {
     private int turn;                           //Counter for turn, will be obsolete once the game is no longer turn based
     private Player winner;                      //The player that won the game
     private boolean pause;                      //If the game is paused this is true
+    private boolean isServer;                     //If true runs a server, if false connects to a server as client
 
     //Map that holds Direction and the corresponding movement. I.e. north should move player x += 0, y += 1
     private final HashMap<Direction, Pair> dirMap = new HashMap<>(){{
