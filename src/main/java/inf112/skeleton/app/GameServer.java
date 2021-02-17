@@ -4,14 +4,16 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameServer extends Listener {
 
+    static Server server;
     //Ports that will be listened to
-    static int udpPort;
-    static int tcpPort;
+    static int udpPort = 27960;
+    static int tcpPort = 27960;
 
     //Keep tracks of how many connections we have
     private static int connections;
@@ -20,11 +22,20 @@ public class GameServer extends Listener {
     //How many connections are allowed, based on how many players game can handle
     private static int maxConnections;
 
-    public GameServer(int maxPlayers) {
+    public GameServer(int maxPlayers) throws IOException {
         connections = 0;
         maxConnections = maxPlayers -1;
 
+        server = new Server();
+        server.getKryo().register(requestFromClient.class);
+        server.bind(tcpPort, udpPort);
+        server.start();
+        server.addListener(new GameServer(maxPlayers));
+
+
+
     }
+
     /*
     Method that runs when someone connects to server
      */
@@ -62,6 +73,10 @@ public class GameServer extends Listener {
             return null;
         }
 
+    }
+
+    public int getConnectedPlayers() {
+        return players.size();
     }
 
 }
