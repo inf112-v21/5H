@@ -2,12 +2,9 @@ package inf112.skeleton.app;
 
 public class requestFromClient {
 
-    private final String requestType;
+    private String requestType;
     private String requestMessage;
 
-    public requestFromClient(String requestType) {
-        this.requestType = requestType;
-    }
 
     public void setRequestMessage(String message) {
         this.requestMessage = message;
@@ -17,5 +14,9 @@ public class requestFromClient {
     }
     public String getRequestType() {
         return this.requestType;
+    }
+
+    public void setRequestType(String request) {
+        requestType = request;
     }
 }

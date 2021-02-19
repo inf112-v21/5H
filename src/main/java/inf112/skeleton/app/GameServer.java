@@ -49,11 +49,13 @@ public class GameServer extends Listener {
     public void disconnected(Connection c) {
         connections--;
         players.remove(c);
+        System.out.println("Player disconnected");
     }
     // will send a request of a move from a given player
     public void request_move(Connection c) {
         resetReceivedMove();
-        requestFromClient moveRequest = new requestFromClient("Move");
+        requestFromClient moveRequest = new requestFromClient();
+        moveRequest.setRequestType("Move");
         c.sendTCP(moveRequest);
         //c.sendUDP(moveRequest);
 

@@ -16,7 +16,7 @@ import inf112.skeleton.app.Sprites.Direction;
 import inf112.skeleton.app.Sprites.Flag;
 import inf112.skeleton.app.Sprites.Player;
 import org.lwjgl.opengl.GL20;
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit;
 
 
 import java.io.IOException;
@@ -138,17 +138,17 @@ public class Game implements ApplicationListener {
             doOnePlayerMove();
         }
         else {
-            while (true) {
-                TimeUnit.SECONDS.sleep(1);
                 if (gameClient.getNeedMoveInput()) {
-                    break;
+                    String move_string = createClientMove();
+                    if (!move_string.equals("NoMove") ) {
+                        System.out.println("Your move");
+                        MoveResponse moveToSend = new MoveResponse(move_string);
+                        client.sendTCP(moveToSend);
+                        System.out.println("Move sent");
+                        gameClient.resetNeedMoveInput();
+                    }
                 }
             }
-            String move_string = createClientMove();
-            System.out.println("Your move");
-            MoveResponse moveToSend = new MoveResponse(move_string);
-            client.sendTCP(moveToSend);
-        }
         batch.begin();
         if(isFinished){ //If the game is over
             Sprite winnerSprite = spriteMap.get(winner.getShortName());
@@ -318,22 +318,22 @@ public class Game implements ApplicationListener {
         } else if (turn == 2) {
             Connection connectedClient = gameServer.getPlayer(0);
             if (connectedClient!= null) {
-                gameServer.request_move(connectedClient);
-                while (true) {
-                    if (!gameServer.receivedMove.equals("empty")) {
-                        break;
-                    }
+                //gameServer.request_move(connectedClient);
+                gameServer.resetReceivedMove();
+                requestFromClient moveRequest = new requestFromClient();
+                moveRequest.setRequestType("Move");
+                connectedClient.sendTCP(moveRequest);
+                if (gameServer.receivedMove.equals("empty")) {
+                    String move = gameServer.getReceivedMove();
+                    doClientMove(playerObject, playerSprite, move);
+                    System.out.println("Connected client moved!");
                 }
-                String move = gameServer.getReceivedMove();
-                doClientMove(playerObject, playerSprite, move);
-
-            } else {
-                serverMove(playerObject,playerSprite);
+                }
             }
+        /*else {
+                serverMove(playerObject,playerSprite);
+            }*/
         }
-
-
-    }
 
     /**
      * Function for rotating a player from one direction to another.
