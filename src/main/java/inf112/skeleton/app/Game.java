@@ -16,7 +16,6 @@ import inf112.skeleton.app.Sprites.Direction;
 import inf112.skeleton.app.Sprites.Flag;
 import inf112.skeleton.app.Sprites.Player;
 import org.lwjgl.opengl.GL20;
-import java.util.concurrent.TimeUnit;
 
 
 import java.io.IOException;
@@ -45,7 +44,10 @@ public class Game implements ApplicationListener {
     public Client client;
     public GameServer gameServer;
     public GameClient gameClient;
+
     private final NetworkSettings networkSettings = new NetworkSettings();
+    private String moveString = "noMove";
+    private boolean sentMoveRequest = false;
 
     //Map that holds Direction and the corresponding movement. I.e. north should move player x += 0, y += 1
     private final HashMap<Direction, Pair> dirMap = new HashMap<>(){{
@@ -137,22 +139,24 @@ public class Game implements ApplicationListener {
             doOnePlayerMove();
         }
         else {
-
-                if (!client.isConnected()) {
-                    try {
-                    client.connect(5000, networkSettings.ip, networkSettings.tcpPort, networkSettings.udpPort); } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+            if (!client.isConnected()) {
+                try {
+                client.connect(5000, networkSettings.ip, networkSettings.tcpPort, networkSettings.udpPort); } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                if (gameClient.getNeedMoveInput()) {
+            }
+            if (gameClient.getNeedMoveInput()) {
+                System.out.println("Your move");
+                if (moveString.equals("NoMove") ) {
                     String move_string = createClientMove();
-                    if (!move_string.equals("NoMove") ) {
-                        System.out.println("Your move");
-                        MoveResponse moveToSend = new MoveResponse(move_string);
-                        client.sendTCP(moveToSend);
-                        System.out.println("Move sent");
-                        gameClient.resetNeedMoveInput();
-                    }
+                } else {
+
+                    MoveResponse moveToSend = new MoveResponse(moveString);
+                    client.sendTCP(moveToSend);
+                    System.out.println("Move sent");
+                    gameClient.resetNeedMoveInput();
+                    moveString = "NoMove";
+                }
                 }
             }
         batch.begin();
@@ -323,17 +327,19 @@ public class Game implements ApplicationListener {
             serverMove(playerObject, playerSprite);
         } else if (turn == 2) {
             Connection connectedClient = gameServer.getPlayer(0);
-            if (connectedClient!= null) {
+            if (connectedClient!= null && !sentMoveRequest) {
                 //gameServer.request_move(connectedClient);
                 gameServer.resetReceivedMove();
                 requestFromClient moveRequest = new requestFromClient();
                 moveRequest.setRequestType("Move");
                 connectedClient.sendTCP(moveRequest);
-                if (gameServer.receivedMove.equals("empty")) {
-                    String move = gameServer.getReceivedMove();
-                    doClientMove(playerObject, playerSprite, move);
-                    System.out.println("Connected client moved!");
+                sentMoveRequest = true;
                 }
+            if (!gameServer.receivedMove.equals("empty")) {
+                String move = gameServer.getReceivedMove();
+                doClientMove(playerObject, playerSprite, move);
+                System.out.println("Connected client moved!");
+                sentMoveRequest = false;
                 }
             }
         /*else {
