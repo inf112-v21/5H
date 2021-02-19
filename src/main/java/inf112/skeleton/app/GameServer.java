@@ -2,7 +2,6 @@ package inf112.skeleton.app;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import com.esotericsoftware.kryonet.Server;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,14 +9,9 @@ import java.util.List;
 
 public class GameServer extends Listener {
 
-    static Server server;
-    //Ports that will be listened to
-    static int udpPort = 27960;
-    static int tcpPort = 27960;
-
     //Keep tracks of how many connections we have
     private static int connections;
-    private final List<Connection> players = new ArrayList<Connection>();
+    private final List<Connection> players = new ArrayList<Connection>(); // Holds all the connection objects of the players
 
     //How many connections are allowed, based on how many players game can handle
     private static int maxConnections;
@@ -28,22 +22,23 @@ public class GameServer extends Listener {
         maxConnections = maxPlayers -1;
     }
 
-    /*
-    Method that runs when someone connects to server
+    /**
+    * Method that runs when someone connects to server
      */
     @Override
     public void connected(Connection c) {
         System.out.println("Client connected");
 
-        if (connections < maxConnections) {
-            connections++;
-            players.add(c);
+        if (connections < maxConnections) { // Checks if more connections are allowed
+            connections++; // If they are we add to the connections counter
+            players.add(c); // Adds the connection object to players arraylist
         } else {
-            System.out.println("Too many players already");
+            System.out.println("Too many players already"); // Prints error message if too many connected.
         }
     }
     /*
     Method that runs when a player disconnects from the server
+    Removes them from the players list and registers that connections is one less
      */
     @Override
     public void disconnected(Connection c) {
@@ -53,26 +48,39 @@ public class GameServer extends Listener {
     }
 
 
+    /**
+     * @param c
+     * @param p
+     * Method that is run when a tcp/udp message is received
+     */
     public void received (Connection c, Object p){
-        if (p instanceof  MoveResponse) {
-            MoveResponse moveResponse = (MoveResponse) p;
-            System.out.println(moveResponse.move);
-            this.receivedMove = moveResponse.move;
+        if (p instanceof  MoveResponse) { // checks if the message contains a move if it does:
+            MoveResponse moveResponse = (MoveResponse) p; // Typecasts the moveResponse for some reason
+            System.out.println(moveResponse.move); // prints the received move
+            this.receivedMove = moveResponse.move; // registers the move from received object to local variable
         }
 
     }
 
 
     // will send a request of a move from a given player
+    // Currently not used
     public void request_move(Connection c) {
         resetReceivedMove();
-        requestFromClient moveRequest = new requestFromClient();
+        requestToClient moveRequest = new requestToClient();
         moveRequest.setRequestType("Move");
         c.sendTCP(moveRequest);
         //c.sendUDP(moveRequest);
 
     }
 
+    /**
+     * @param index
+     * @return player
+     * Method that retrieves a player object from players arraylist
+     * So that their connection object can be used to send TCP/UDP messages
+     * returns null if index is out of bounds
+     */
     public Connection getPlayer(int index) {
         if (index < players.size()) {
             return players.get(index);
@@ -83,6 +91,10 @@ public class GameServer extends Listener {
 
     }
 
+    /**
+     * @return Amount of players
+     * Method that tells you how many player-clients are connected to server
+     */
     public int getConnectedPlayers() {
         return players.size();
     }
