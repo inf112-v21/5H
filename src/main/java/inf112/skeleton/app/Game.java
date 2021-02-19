@@ -45,6 +45,7 @@ public class Game implements ApplicationListener {
     public Client client;
     public GameServer gameServer;
     public GameClient gameClient;
+    private final NetworkSettings networkSettings = new NetworkSettings();
 
     //Map that holds Direction and the corresponding movement. I.e. north should move player x += 0, y += 1
     private final HashMap<Direction, Pair> dirMap = new HashMap<>(){{
@@ -62,7 +63,6 @@ public class Game implements ApplicationListener {
     }
     //START SERVER:
     public void startServer() throws IOException {
-        NetworkSettings networkSettings = new NetworkSettings();
         server = new Server();
         server.getKryo().register(requestFromClient.class);
         server.getKryo().register(MoveResponse.class);
@@ -74,7 +74,6 @@ public class Game implements ApplicationListener {
 
     //START CLIENT
     public void startClient() throws IOException {
-        NetworkSettings networkSettings = new NetworkSettings();
         client = new Client();
         client.getKryo().register(requestFromClient.class);
         client.getKryo().register(MoveResponse.class);
@@ -138,6 +137,13 @@ public class Game implements ApplicationListener {
             doOnePlayerMove();
         }
         else {
+
+                if (!client.isConnected()) {
+                    try {
+                    client.connect(5000, networkSettings.ip, networkSettings.tcpPort, networkSettings.udpPort); } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
                 if (gameClient.getNeedMoveInput()) {
                     String move_string = createClientMove();
                     if (!move_string.equals("NoMove") ) {

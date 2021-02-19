@@ -13,6 +13,7 @@ public class GameClient extends Listener {
     static int tcpPort;
     static int udpPort;
     private boolean needMoveInput = false;
+    public boolean isConnected = false;
 
     private String currentRequest = "none";
 
