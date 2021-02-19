@@ -17,7 +17,12 @@
     <maven.compiler.release>9</maven.compiler.release>
   </properties>
 
-
+  <repositories>
+    <repository>
+      <id>clojars</id>
+      <url>http://clojars.org/repo/</url>
+    </repository>
+  </repositories>
 
   <dependencies>
     <!-- https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx -->
@@ -53,6 +58,19 @@
       <version>RELEASE</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>kryonet</groupId>
+      <artifactId>kryonet</artifactId>
+      <version>2.21</version>
+    </dependency>
+    <dependency>
+      <groupId>com.esotericsoftware</groupId>
+      <artifactId>kryo</artifactId>
+      <version>5.0.3</version>
+    </dependency>
+
+
   </dependencies>
 
   <build>

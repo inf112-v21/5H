@@ -3,7 +3,7 @@ package inf112.skeleton.app;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
-public class Main {
+public class main2 {
     public static void main(String[] args) {
         Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
         cfg.setTitle("TestGrid");
@@ -12,6 +12,6 @@ public class Main {
         cfg.useVsync(true);
         cfg.setIdleFPS(60);
 
-        new Lwjgl3Application(new Game(true), cfg);
+        new Lwjgl3Application(new Game(false), cfg);
     }
 }
