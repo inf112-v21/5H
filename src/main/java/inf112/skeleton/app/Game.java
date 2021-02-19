@@ -46,8 +46,9 @@ public class Game implements ApplicationListener {
     public GameClient gameClient;
 
     private final NetworkSettings networkSettings = new NetworkSettings();
-    private String moveString = "noMove";
+    private String moveString = "NoMove";
     private boolean sentMoveRequest = false;
+    private boolean moveMessagePrinted = false;
 
     //Map that holds Direction and the corresponding movement. I.e. north should move player x += 0, y += 1
     private final HashMap<Direction, Pair> dirMap = new HashMap<>(){{
@@ -151,7 +152,10 @@ public class Game implements ApplicationListener {
                 }
             }
             if (gameClient.getNeedMoveInput()) {
-                System.out.println("Your move");
+                if (!moveMessagePrinted) {
+                    System.out.println("Your move");
+                    moveMessagePrinted = true;
+                }
                 if (moveString.equals("NoMove") ) {
                     moveString = createClientMove();
                 } else {
@@ -170,6 +174,7 @@ public class Game implements ApplicationListener {
                     System.out.println("Move sent");
                     gameClient.resetNeedMoveInput();
                     moveString = "NoMove";
+                    moveMessagePrinted = false;
                 }
                 }
             }
@@ -280,7 +285,7 @@ public class Game implements ApplicationListener {
         else if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){ //Rotate the player left
             clientMoveString = "turnLeft";
         } else {
-            clientMoveString = "noMove";
+            clientMoveString = "NoMove";
         }
         return clientMoveString;
     }
