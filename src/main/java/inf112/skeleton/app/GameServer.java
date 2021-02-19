@@ -51,6 +51,18 @@ public class GameServer extends Listener {
         players.remove(c);
         System.out.println("Player disconnected");
     }
+
+
+    public void received (Connection c, Object p){
+        if (p instanceof  MoveResponse) {
+            MoveResponse moveResponse = (MoveResponse) p;
+            System.out.println(moveResponse.move);
+            this.receivedMove = moveResponse.move;
+        }
+
+    }
+
+
     // will send a request of a move from a given player
     public void request_move(Connection c) {
         resetReceivedMove();

@@ -153,10 +153,10 @@ public class Game implements ApplicationListener {
             if (gameClient.getNeedMoveInput()) {
                 System.out.println("Your move");
                 if (moveString.equals("NoMove") ) {
-                    String move_string = createClientMove();
+                    moveString = createClientMove();
                 } else {
-
-                    MoveResponse moveToSend = new MoveResponse(moveString);
+                    MoveResponse moveToSend = new MoveResponse();
+                    moveToSend.setMove(moveString);
                     if (client.isConnected()) {
                         client.sendTCP(moveToSend);
                     } else {
