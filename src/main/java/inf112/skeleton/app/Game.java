@@ -83,11 +83,12 @@ public class Game implements ApplicationListener {
         client.addListener(gameClient);
 
     }
-
+    public Game(boolean k) {
+        isServer = k;
+    }
     @Override
     public void create() {
         numPlayers = 4;
-        isServer = true;
 
         batch = new SpriteBatch();
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());

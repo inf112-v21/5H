@@ -1,0 +1,16 @@
+Møte 19.02.2021
+Digitalt via Discord
+Tilstede:
+  Skjalg Eide Hodneland
+  Emil Flatøy Hodneland
+  Jonas Svåsand
+  Håkon Mathias Hvidsten Høie
+  >>>>Henrik Bie Kaarud
+  Hans Albert Biørn Terland
+
+
+ Standup: Alle tilstede har sett litt på forskjellige nettverksimplementasjoner. Jonas har prøvd å implementere KryoNet.
+ men har feilet.
+
+ Vi fortsetter med å se på kryonet, sammen har vi fått koden til å kjøre men klarer enda ikke å connecte hverken locally
+ eller externally
