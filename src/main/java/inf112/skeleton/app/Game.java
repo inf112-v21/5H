@@ -83,7 +83,11 @@ public class Game implements ApplicationListener {
         client.connect(5000, networkSettings.ip, networkSettings.tcpPort, networkSettings.udpPort);
         gameClient = new GameClient();
         client.addListener(gameClient);
+    }
 
+    public void reconnectClient() throws IOException {
+        client.connect(5000, networkSettings.ip, networkSettings.tcpPort, networkSettings.udpPort);
+        client.addListener(gameClient);
     }
     public Game(boolean k) {
         isServer = k;
@@ -141,7 +145,8 @@ public class Game implements ApplicationListener {
         else {
             if (!client.isConnected()) {
                 try {
-                client.connect(5000, networkSettings.ip, networkSettings.tcpPort, networkSettings.udpPort); } catch (IOException e) {
+                    reconnectClient();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -152,7 +157,16 @@ public class Game implements ApplicationListener {
                 } else {
 
                     MoveResponse moveToSend = new MoveResponse(moveString);
-                    client.sendTCP(moveToSend);
+                    if (client.isConnected()) {
+                        client.sendTCP(moveToSend);
+                    } else {
+                        try {
+                            reconnectClient();
+                            client.sendTCP(moveToSend);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     System.out.println("Move sent");
                     gameClient.resetNeedMoveInput();
                     moveString = "NoMove";
