@@ -13,4 +13,4 @@ Tilstede:
  men har feilet.
 
  Vi fortsetter med å se på kryonet, sammen har vi fått koden til å kjøre men klarer enda ikke å connecte hverken locally
- eller externally
+ eller externally.

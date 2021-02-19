@@ -16,6 +16,7 @@ import inf112.skeleton.app.Sprites.Direction;
 import inf112.skeleton.app.Sprites.Flag;
 import inf112.skeleton.app.Sprites.Player;
 import org.lwjgl.opengl.GL20;
+import java.util.concurrent.TimeUnit
 
 
 import java.io.IOException;
@@ -135,8 +136,10 @@ public class Game implements ApplicationListener {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         if (isServer) {
             doOnePlayerMove();
-        } else {
+        }
+        else {
             while (true) {
+                TimeUnit.SECONDS.sleep(1);
                 if (gameClient.getNeedMoveInput()) {
                     break;
                 }
@@ -313,7 +316,7 @@ public class Game implements ApplicationListener {
         if (turn == 1 || turn == 3 || turn == 4) {
             serverMove(playerObject, playerSprite);
         } else if (turn == 2) {
-            Connection connectedClient = gameServer.getPlayer(2);
+            Connection connectedClient = gameServer.getPlayer(0);
             if (connectedClient!= null) {
                 gameServer.request_move(connectedClient);
                 while (true) {

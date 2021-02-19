@@ -24,6 +24,7 @@ public class GameClient extends Listener {
             String message = receivedRequest.getRequestMessage();
             if (currentRequest.equals("Move")) {
                 needMoveInput = true;
+                System.out.println("I should move");
             }
 
         }
