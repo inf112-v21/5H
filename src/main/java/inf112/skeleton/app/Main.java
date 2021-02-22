@@ -87,7 +87,7 @@ public class Main {
      * @return Connection state, either "Server" or "Client"
      */
     public static String serverClientSelection() {
-        Object[] possibilities = {"Server", "Client"};
+        Object[] possibilities = {"server", "client"};
         String prompt = "Please select if you want to Host Server or join as a Client";
 
         Object result = JOptionPane.showInputDialog(

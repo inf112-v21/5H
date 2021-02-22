@@ -77,6 +77,7 @@ public class Game implements ApplicationListener {
     @Override
     public void create() {
         numPlayers = 4;
+        network = new Network(networkSettings, numPlayers);
 
         batch = new SpriteBatch();
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -99,65 +100,19 @@ public class Game implements ApplicationListener {
         pause = false;
         if (isServer) { // If this instance of game is supposed to be a server it starts one
             try {
-                startServer();
+                network.startServer();
+                gameServerListener = network.getGameServerListener();
             } catch (IOException e) { // Exception thrown if it cannot bind ports
                 e.printStackTrace();
             }
         } else { // If this instance of game is not supposed to be a server it starts a client and (tries to) connect to a server
             try {
-                startClient();
+                network.startClient();
             } catch (IOException e) { //Exception thrown if it cannot connect to given server in 5 seconds
                 e.printStackTrace();
             }
         }
     }
-
-
-    /**
-     * @throws IOException
-     * Starts a server and binds ports for it
-     * ports to bind is retrieved from the NetworkSettings.java class
-     * Also adds a listener to the server of type GameServer.java
-     * Listener handles connections and keep track of them as well as handling incoming messages
-     */
-    public void startServer() throws IOException {
-        server = new Server();
-        server.getKryo().register(requestToClient.class);
-        server.getKryo().register(MoveResponse.class);
-        server.bind(networkSettings.getTcpPort(), networkSettings.getUdpPort());
-        server.start();
-        gameServerListener = new GameServerListener(numPlayers);
-        server.addListener(gameServerListener);
-    }
-
-    /**
-     * @throws IOException
-     * Starts a client and connects it to server
-     * Uses the NetworkSettings.java file to figure out which ip the server has and ports it uses
-     * adds a listener of type GameClient.java to client
-     * the listeners handles all incoming traffic
-     */
-    //START CLIENT
-    public void startClient() throws IOException {
-        client = new Client();
-        client.getKryo().register(requestToClient.class);
-        client.getKryo().register(MoveResponse.class);
-        client.start();
-        client.connect(5000, networkSettings.getIp(), networkSettings.getTcpPort(), networkSettings.getUdpPort());
-        gameClientListener = new GameClientListener();
-        client.addListener(gameClientListener);
-    }
-
-    /**
-     * @throws IOException
-     * Reconnects client to server if it is no longer connected
-     * Also re-adds the listener that was initially added to it.
-     */
-    public void reconnectClient() throws IOException {
-        client.connect(5000, networkSettings.getIp(), networkSettings.getTcpPort(), networkSettings.getUdpPort());
-        client.addListener(gameClientListener);
-    }
-
 
     @Override
     public void resize(int i, int i1) {
@@ -185,7 +140,7 @@ public class Game implements ApplicationListener {
                     moveMessagePrinted = true;
                 }
                 if (moveString.equals("NoMove") ) { // If no move has been registered, it will try to register  a move from the keyboard
-                    moveString = createClientMove();
+                    moveString = moveToString();
                 } else { // If a move is registered it will start the sending process
                     MoveResponse moveToSend = new MoveResponse();  //Creates an object that can be sent to server with the intended move
                     moveToSend.setMove(moveString); // registers the move on the object
@@ -300,29 +255,29 @@ public class Game implements ApplicationListener {
      * @return moveString
      * Register keyboard input from the client and returns a string representing said (valid) input
      */
-    private String createClientMove() {
-        String clientMoveString;
+    private String moveToString() {
+        String moveString;
         if(Gdx.input.isKeyPressed(Input.Keys.F)){ //Debug win mode
-            clientMoveString = "debugWin";
+            moveString = "debugWin";
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.R)){ //Debug restart
-            clientMoveString = "debugRestart";
+            moveString = "debugRestart";
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.D)){ //Debug restart
-            clientMoveString = "debugD";
+            moveString = "debugD";
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.UP)){ //Move in the direction the player is facing
-            clientMoveString = "move1";
+            moveString = "move1";
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){ //Rotate the player right
-            clientMoveString = "turnRight";
+            moveString = "turnRight";
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){ //Rotate the player left
-            clientMoveString = "turnLeft";
+            moveString = "turnLeft";
         } else {
-            clientMoveString = "NoMove";
+            moveString = "NoMove";
         }
-        return clientMoveString;
+        return moveString;
     }
 
     /**
@@ -332,7 +287,7 @@ public class Game implements ApplicationListener {
      * Takes a moveString received from a client and registers it on the Server
      * Will change the needed objects to change the representation on the board
      */
-    private void doClientMove(Player playerObject, Sprite playerSprite, String move) {
+    private void move(Player playerObject, Sprite playerSprite, String move) {
         switch (move) {
             case "debugWin":  //Debug win mode
                 playerObject.addScore(3);
@@ -408,8 +363,7 @@ public class Game implements ApplicationListener {
                 }
             if (!gameServerListener.receivedMove.equals("empty")) { // checks if received move has been changed from "empty"
                 String move = gameServerListener.getReceivedMove(); // retrieves move from the gameServer listener
-                doClientMove(playerObject, playerSprite, move); // Does the retrieved move on the given playerobject with doClientMove method
-                System.out.println("Connected client moved!"); //Logs to console that a move has been done
+                move(playerObject, playerSprite, move); // Does the retrieved move on the given playerobject with doClientMove method
                 sentMoveRequest = false; // Resets the sentMoveRequest as this turn is now over
                 }
             }
