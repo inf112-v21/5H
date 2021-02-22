@@ -29,7 +29,7 @@ public class Main {
         HashMap<String, String> selection = new HashMap<>();
         String result = serverClientSelection();
         selection.put("state", result);
-        if(result.equals("Client")){
+        if(result.equals("client")){
             String ip = ipConfig();
             selection.put("ip", ip);
         }

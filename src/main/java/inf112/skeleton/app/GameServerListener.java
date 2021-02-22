@@ -83,7 +83,8 @@ public class GameServerListener extends Listener {
     public Connection getPlayer(int index) {
         if (index < players.size()) {
             return players.get(index);
-        } else {
+        }
+        else {
             System.out.println("Player doesn't exist");
             return null;
         }

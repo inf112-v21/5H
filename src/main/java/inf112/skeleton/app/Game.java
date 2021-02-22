@@ -40,9 +40,8 @@ public class Game implements ApplicationListener {
     private int numPlayers;                     //Amount of players expected
     public boolean isServer;                    // If true you start a server, if false you start a client and try to connect to server
     public Server server;
-    public Client client;
-    public GameServerListener gameServerListener;
-    public GameClientListener gameClientListener;
+    private Network network;
+    private GameServerListener gameServerListener;
 
     private final NetworkSettings networkSettings;
     private String moveString = "NoMove";        // Variables that hold move string for client, NoMove means no move have been done yet
@@ -64,14 +63,13 @@ public class Game implements ApplicationListener {
         MOVE,
     }
 
-
     /**
      * Constructor for the game class.
      * @param settings The server connection settings object
      */
     public Game(NetworkSettings settings) {
         networkSettings = settings;
-        isServer = networkSettings.getState().equals("Server");
+        isServer = networkSettings.getState().equals("server");
     }
 
     @Override
@@ -127,14 +125,14 @@ public class Game implements ApplicationListener {
             doOnePlayerMove();
         }
         else {
-            if (!client.isConnected()) { // Checks if a disconnection has happened, and reconnect if it's the case.
+            if (!network.getClient().isConnected()) { // Checks if a disconnection has happened, and reconnect if it's the case.
                 try {
-                    reconnectClient();
+                    network.reconnectClient();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            if (gameClientListener.getNeedMoveInput()) { // Checks if it is this client's turn to move
+            if (network.getGameClientListener().getNeedMoveInput()) { // Checks if it is this client's turn to move
                 if (!moveMessagePrinted) { // If it has not printed that it's your move yet, it will
                     System.out.println("Your move");
                     moveMessagePrinted = true;
@@ -144,18 +142,18 @@ public class Game implements ApplicationListener {
                 } else { // If a move is registered it will start the sending process
                     MoveResponse moveToSend = new MoveResponse();  //Creates an object that can be sent to server with the intended move
                     moveToSend.setMove(moveString); // registers the move on the object
-                    if (client.isConnected()) { // Checks once more if a disconnect has happened
-                        client.sendTCP(moveToSend); // Sends the move object to the server
+                    if (network.getClient().isConnected()) { // Checks once more if a disconnect has happened
+                        network.getClient().sendTCP(moveToSend); // Sends the move object to the server
                     } else { // reconnects if necessary
                         try {
-                            reconnectClient();
-                            client.sendTCP(moveToSend); // Sends the move object to the server
+                            network.reconnectClient();
+                            network.getClient().sendTCP(moveToSend); // Sends the move object to the server
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                     System.out.println("Move sent"); // Tells player of client that their move has been registered.
-                    gameClientListener.resetNeedMoveInput(); // Set the needMoveInput to false as no input is longer needed until it receives request to move again
+                    network.getGameClientListener().resetNeedMoveInput(); // Set the needMoveInput to false as no input is longer needed until it receives request to move again
                     moveString = "NoMove"; // Resets move string
                     moveMessagePrinted = false; // Reset moveMessagePrinted
                 }
@@ -206,49 +204,6 @@ public class Game implements ApplicationListener {
         sprite.setSize(camera.viewportWidth/boardSize, camera.viewportWidth/boardSize);
         sprite.setX(x*(camera.viewportWidth/boardSize));
         sprite.setY(y*(camera.viewportHeight/boardSize));
-    }
-
-
-    /**
-     * @param playerObject the player object
-     * @param playerSprite the player object as sprite
-     * Method for the server player to  select move, and change the necessary objects to register the moves
-     */
-    private void serverMove(Player playerObject, Sprite playerSprite) {
-        if(Gdx.input.isKeyPressed(Input.Keys.F)){ //Debug win mode
-            playerObject.addScore(3);
-        }
-        else if(Gdx.input.isKeyPressed(Input.Keys.R)){ //Debug restart
-            dispose();
-            create();
-        }
-        else if(Gdx.input.isKeyPressed(Input.Keys.D)){ //Debug restart
-            playerObject.damage();
-            System.out.println("PC:" + playerObject.getPc() + "| HP: " + playerObject.getHp());
-            if(playerObject.isDead()){
-                endTurn();
-            }
-        }
-        else if(Gdx.input.isKeyPressed(Input.Keys.UP)){ //Move in the direction the player is facing
-            Direction dir = playerObject.getDirection();
-            Pair pair = dirMap.get(dir);
-            playerObject.move(pair.getX(), pair.getY());
-            endTurn();
-        }
-        else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){ //Rotate the player right
-            playerSprite.rotate90(true);
-            playerObject.setDirection(getNewDirection(playerObject.getDirection(), true));
-            endTurn();
-        }
-        else if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){ //Rotate the player left
-            playerSprite.rotate90(false);
-            playerObject.setDirection(getNewDirection(playerObject.getDirection(), false));
-            endTurn();
-        }
-        if(playerObject.getScore() >= 3){   //If win condition
-            isFinished = true;
-            winner = playerObject;
-        }
     }
 
     /**
@@ -329,7 +284,7 @@ public class Game implements ApplicationListener {
     /**
      * Does one player move
      * Will determine if the server host should move a piece or it should request a move from a connected client
-     * Currently Server host will take controls of players 1, 3 and 4 and client will get player 2 if connected.
+     * Currently Server host will take controls of player 1 and the clients will control their own players :).
      * This method will be run many times and a move might not be registered on the first run through of the method
      * Therefore there is support for sending requests only once but being able to receive them untill a valid move is made
      * TODO: Add support for more than one connected client.
@@ -349,12 +304,12 @@ public class Game implements ApplicationListener {
         if(playerObject.isDead()){
             return;
         }
-        if (turn == 1 || turn == 3 || turn == 4) { // If the turn belongs to player 1, 3 or 4 let server player make move
-            serverMove(playerObject, playerSprite);
-        } else if (turn == 2) { // if player 2s turn
-            Connection connectedClient = gameServerListener.getPlayer(0); // Get connected player at index 0 (first connected players)
-            if (connectedClient!= null && !sentMoveRequest) { // Checks that there is a player connected from index 0 and that a move request has not already been sent this turn
-                //gameServer.request_move(connectedClient);
+        if (turn == 1) { // If the turn belongs to player 1 let server player make move
+            move(playerObject, playerSprite, moveToString());
+        }
+        else {
+            Connection connectedClient = gameServerListener.getPlayer(turn-2); // Get connected player at the correct index (first connected players first)
+            if (connectedClient != null && !sentMoveRequest) { // Checks that there is a player connected from index 0 and that a move request has not already been sent this turn
                 gameServerListener.resetReceivedMove(); // Resets received move so that we can make sure when we get one from client
                 requestToClient moveRequest = new requestToClient(); // Makes a new request object that can be sent to client
                 moveRequest.setRequestType("Move"); // Registers "Move" as the request in the request object
@@ -365,11 +320,9 @@ public class Game implements ApplicationListener {
                 String move = gameServerListener.getReceivedMove(); // retrieves move from the gameServer listener
                 move(playerObject, playerSprite, move); // Does the retrieved move on the given playerobject with doClientMove method
                 sentMoveRequest = false; // Resets the sentMoveRequest as this turn is now over
+                gameServerListener.resetReceivedMove(); // Resets received move so that we can make sure when we get one from client
                 }
             }
-        /*else {
-                serverMove(playerObject,playerSprite);
-            }*/
         }
 
     /**
@@ -433,12 +386,17 @@ public class Game implements ApplicationListener {
         boolean foundNext = false;
         while(!foundNext){
             turn++;
-            if(turn > board.getPlayerList().size()){
+            if(turn > playerList.size()){
                 turn = 1;
             }
             Player playerToMove = playerList.get(turn-1);
             if(playerToMove.isDead()){
                 continue;
+            }
+            if(turn >= 2){
+                if(gameServerListener.getPlayer(turn-2) == null){
+                    continue;
+                }
             }
             foundNext = true;
         }
