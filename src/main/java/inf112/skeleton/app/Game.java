@@ -17,7 +17,6 @@ import inf112.skeleton.app.Sprites.Flag;
 import inf112.skeleton.app.Sprites.Player;
 import org.lwjgl.opengl.GL20;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,15 +39,15 @@ public class Game implements ApplicationListener {
     private boolean pause;                      //If the game is paused this is true
     private int numPlayers;                     //Amount of players expected
     public boolean isServer;                    // If true you start a server, if false you start a client and try to connect to server
-    public Server server;                       // Variable that holds the server object
-    public Client client;                       // Variable that holds client object
-    public GameServer gameServer;               // Variable that holds servers listener type GameServer.java
-    public GameClient gameClient;               // Variable that holds clients listener type GameClient.java
+    public Server server;
+    public Client client;
+    public GameServerListener gameServerListener;
+    public GameClientListener gameClientListener;
 
-    private final NetworkSettings networkSettings = new NetworkSettings(); // An external class that holds the networksettings. Ports and IP adresses.
+    private final NetworkSettings networkSettings;
     private String moveString = "NoMove";        // Variables that hold move string for client, NoMove means no move have been done yet
-    private boolean sentMoveRequest = false;     // Holds whether Server has sent a moverequest to client or not
-    private boolean moveMessagePrinted = false; // Holds whether a moveMessae has been printed to console or not
+    private boolean sentMoveRequest = false;     // Holds whether Server has sent a MoveRequest to client or not
+    private boolean moveMessagePrinted = false; // Holds whether a moveMessage has been printed to console or not
 
     //Map that holds Direction and the corresponding movement. I.e. north should move player x += 0, y += 1
     private final HashMap<Direction, Pair> dirMap = new HashMap<>(){{
@@ -67,58 +66,13 @@ public class Game implements ApplicationListener {
 
 
     /**
-     * @throws IOException
-     * Starts a server and binds ports for it
-     * ports to bind is retrieved from the NetworkSettings.java class
-     * Also adds a listener to the server of type GameServer.java
-     * Listener handles connections and keep track of them as well as handling incoming messages
+     * Constructor for the game class.
+     * @param settings The server connection settings object
      */
-    public void startServer() throws IOException {
-        server = new Server();
-        server.getKryo().register(requestToClient.class);
-        server.getKryo().register(MoveResponse.class);
-        server.bind(networkSettings.tcpPort, networkSettings.udpPort);
-        server.start();
-        gameServer = new GameServer(numPlayers);
-        server.addListener(gameServer);
+    public Game(NetworkSettings settings) {
+        networkSettings = settings;
+        isServer = networkSettings.getState().equals("Server");
     }
-
-    /**
-     * @throws IOException
-     * Starts a client and connects it to server
-     * Uses the NetworkSettings.java file to figure out which ip the server has and ports it uses
-     * adds a listener of type GameClient.java to client
-     * the listeners handles all incoming traffic
-     */
-    //START CLIENT
-    public void startClient() throws IOException {
-        client = new Client();
-        client.getKryo().register(requestToClient.class);
-        client.getKryo().register(MoveResponse.class);
-        client.start();
-        client.connect(5000, networkSettings.ip, networkSettings.tcpPort, networkSettings.udpPort);
-        gameClient = new GameClient();
-        client.addListener(gameClient);
-    }
-
-    /**
-     * @throws IOException
-     * Reconnects client to server if it is no longer connected
-     * Also re-adds the listener that was initially added to it.
-     */
-    public void reconnectClient() throws IOException {
-        client.connect(5000, networkSettings.ip, networkSettings.tcpPort, networkSettings.udpPort);
-        client.addListener(gameClient);
-    }
-
-    /**
-     * Constructor for Game class
-     * @param k True if you want to start game as a server(host) false if you want to connect to a server
-     */
-    public Game(boolean k) {
-        isServer = k;
-    }
-
 
     @Override
     public void create() {
@@ -158,6 +112,53 @@ public class Game implements ApplicationListener {
         }
     }
 
+
+    /**
+     * @throws IOException
+     * Starts a server and binds ports for it
+     * ports to bind is retrieved from the NetworkSettings.java class
+     * Also adds a listener to the server of type GameServer.java
+     * Listener handles connections and keep track of them as well as handling incoming messages
+     */
+    public void startServer() throws IOException {
+        server = new Server();
+        server.getKryo().register(requestToClient.class);
+        server.getKryo().register(MoveResponse.class);
+        server.bind(networkSettings.getTcpPort(), networkSettings.getUdpPort());
+        server.start();
+        gameServerListener = new GameServerListener(numPlayers);
+        server.addListener(gameServerListener);
+    }
+
+    /**
+     * @throws IOException
+     * Starts a client and connects it to server
+     * Uses the NetworkSettings.java file to figure out which ip the server has and ports it uses
+     * adds a listener of type GameClient.java to client
+     * the listeners handles all incoming traffic
+     */
+    //START CLIENT
+    public void startClient() throws IOException {
+        client = new Client();
+        client.getKryo().register(requestToClient.class);
+        client.getKryo().register(MoveResponse.class);
+        client.start();
+        client.connect(5000, networkSettings.getIp(), networkSettings.getTcpPort(), networkSettings.getUdpPort());
+        gameClientListener = new GameClientListener();
+        client.addListener(gameClientListener);
+    }
+
+    /**
+     * @throws IOException
+     * Reconnects client to server if it is no longer connected
+     * Also re-adds the listener that was initially added to it.
+     */
+    public void reconnectClient() throws IOException {
+        client.connect(5000, networkSettings.getIp(), networkSettings.getTcpPort(), networkSettings.getUdpPort());
+        client.addListener(gameClientListener);
+    }
+
+
     @Override
     public void resize(int i, int i1) {
     }
@@ -170,7 +171,7 @@ public class Game implements ApplicationListener {
         if (isServer) { // If this is a server it runs the move logic.
             doOnePlayerMove();
         }
-        else { // If it is not a server it runs this else clause
+        else {
             if (!client.isConnected()) { // Checks if a disconnection has happened, and reconnect if it's the case.
                 try {
                     reconnectClient();
@@ -178,7 +179,7 @@ public class Game implements ApplicationListener {
                     e.printStackTrace();
                 }
             }
-            if (gameClient.getNeedMoveInput()) { // Checks if it is this clients turn to move if it is it will run this:
+            if (gameClientListener.getNeedMoveInput()) { // Checks if it is this client's turn to move
                 if (!moveMessagePrinted) { // If it has not printed that it's your move yet, it will
                     System.out.println("Your move");
                     moveMessagePrinted = true;
@@ -199,7 +200,7 @@ public class Game implements ApplicationListener {
                         }
                     }
                     System.out.println("Move sent"); // Tells player of client that their move has been registered.
-                    gameClient.resetNeedMoveInput(); // Set the needMoveInput to false as no input is longer needed until it receives request to move again
+                    gameClientListener.resetNeedMoveInput(); // Set the needMoveInput to false as no input is longer needed until it receives request to move again
                     moveString = "NoMove"; // Resets move string
                     moveMessagePrinted = false; // Reset moveMessagePrinted
                 }
@@ -254,8 +255,8 @@ public class Game implements ApplicationListener {
 
 
     /**
-     * @param playerObject
-     * @param playerSprite
+     * @param playerObject the player object
+     * @param playerSprite the player object as sprite
      * Method for the server player to  select move, and change the necessary objects to register the moves
      */
     private void serverMove(Player playerObject, Sprite playerSprite) {
@@ -325,42 +326,44 @@ public class Game implements ApplicationListener {
     }
 
     /**
-     * @param playerObject
-     * @param playerSprite
+     * @param playerObject the player object
+     * @param playerSprite the player object as sprite
      * @param move
      * Takes a moveString received from a client and registers it on the Server
      * Will change the needed objects to change the representation on the board
      */
     private void doClientMove(Player playerObject, Sprite playerSprite, String move) {
-        if(move.equals("debugWin")){ //Debug win mode
-            playerObject.addScore(3);
-        }
-        else if(move.equals("debugRestart")){ //Debug restart
-            dispose();
-            create();
-        }
-        else if(move.equals("debugD")){ //Debug restart
-            playerObject.damage();
-            System.out.println("PC:" + playerObject.getPc() + "| HP: " + playerObject.getHp());
-            if(playerObject.isDead()){
+        switch (move) {
+            case "debugWin":  //Debug win mode
+                playerObject.addScore(3);
+                break;
+            case "debugRestart":  //Debug restart
+                dispose();
+                create();
+                break;
+            case "debugD":  //Debug restart
+                playerObject.damage();
+                System.out.println("PC:" + playerObject.getPc() + "| HP: " + playerObject.getHp());
+                if (playerObject.isDead()) {
+                    endTurn();
+                }
+                break;
+            case "move1":  //Move in the direction the player is facing
+                Direction dir = playerObject.getDirection();
+                Pair pair = dirMap.get(dir);
+                playerObject.move(pair.getX(), pair.getY());
                 endTurn();
-            }
-        }
-        else if(move.equals("move1")){ //Move in the direction the player is facing
-            Direction dir = playerObject.getDirection();
-            Pair pair = dirMap.get(dir);
-            playerObject.move(pair.getX(), pair.getY());
-            endTurn();
-        }
-        else if(move.equals("turnRight")){ //Rotate the player right
-            playerSprite.rotate90(true);
-            playerObject.setDirection(getNewDirection(playerObject.getDirection(), true));
-            endTurn();
-        }
-        else if(move.equals("turnLeft")){ //Rotate the player left
-            playerSprite.rotate90(false);
-            playerObject.setDirection(getNewDirection(playerObject.getDirection(), false));
-            endTurn();
+                break;
+            case "turnRight":  //Rotate the player right
+                playerSprite.rotate90(true);
+                playerObject.setDirection(getNewDirection(playerObject.getDirection(), true));
+                endTurn();
+                break;
+            case "turnLeft":  //Rotate the player left
+                playerSprite.rotate90(false);
+                playerObject.setDirection(getNewDirection(playerObject.getDirection(), false));
+                endTurn();
+                break;
         }
         if(playerObject.getScore() >= 3){   //If win condition
             isFinished = true;
@@ -394,17 +397,17 @@ public class Game implements ApplicationListener {
         if (turn == 1 || turn == 3 || turn == 4) { // If the turn belongs to player 1, 3 or 4 let server player make move
             serverMove(playerObject, playerSprite);
         } else if (turn == 2) { // if player 2s turn
-            Connection connectedClient = gameServer.getPlayer(0); // Get connected player at index 0 (first connected players)
+            Connection connectedClient = gameServerListener.getPlayer(0); // Get connected player at index 0 (first connected players)
             if (connectedClient!= null && !sentMoveRequest) { // Checks that there is a player connected from index 0 and that a move request has not already been sent this turn
                 //gameServer.request_move(connectedClient);
-                gameServer.resetReceivedMove(); // Resets received move so that we can make sure when we get one from client
+                gameServerListener.resetReceivedMove(); // Resets received move so that we can make sure when we get one from client
                 requestToClient moveRequest = new requestToClient(); // Makes a new request object that can be sent to client
                 moveRequest.setRequestType("Move"); // Registers "Move" as the request in the request object
                 connectedClient.sendTCP(moveRequest); // Sends the requestObject to the retrieved client
                 sentMoveRequest = true; // Changes sentMoveRequest so that no more moverequests will be sent this turn
                 }
-            if (!gameServer.receivedMove.equals("empty")) { // checks if received move has been changed from "empty"
-                String move = gameServer.getReceivedMove(); // retrieves move from the gameServer listener
+            if (!gameServerListener.receivedMove.equals("empty")) { // checks if received move has been changed from "empty"
+                String move = gameServerListener.getReceivedMove(); // retrieves move from the gameServer listener
                 doClientMove(playerObject, playerSprite, move); // Does the retrieved move on the given playerobject with doClientMove method
                 System.out.println("Connected client moved!"); //Logs to console that a move has been done
                 sentMoveRequest = false; // Resets the sentMoveRequest as this turn is now over

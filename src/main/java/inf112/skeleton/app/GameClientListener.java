@@ -2,21 +2,21 @@ package inf112.skeleton.app;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
-public class GameClient extends Listener {
+public class GameClientListener extends Listener {
 
     private boolean needMoveInput = false; // Keeps track of it a moverequest has been received and no move sent for said request
 
     private String currentRequest = "none"; // Holds the type of request the client currently has
 
     /**
-     * @param c
-     * @param p
+     * @param connection the connection to Server
+     * @param receivedObject
      * Handles incoming messages from server
      */
-    public void received (Connection c, Object p) {
+    public void received (Connection connection, Object receivedObject) {
 
-        if (p instanceof requestToClient) { //Checks if request is a request to the client
-            requestToClient receivedRequest = (requestToClient) p; //Typecasts it if it is
+        if (receivedObject instanceof requestToClient) { //Checks if request is a request to the client
+            requestToClient receivedRequest = (requestToClient) receivedObject; //Typecasts it if it is
             currentRequest = receivedRequest.getRequestType(); // Retrieves the type of request (a string)
             //String message = receivedRequest.getRequestMessage();
             if (currentRequest.equals("Move")) { //If it is a moveRequest:
