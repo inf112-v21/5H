@@ -7,6 +7,9 @@ import inf112.skeleton.app.MoveResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class for Server to listen to clients
+ */
 public class GameServerListener extends Listener {
 
     //Keep tracks of how many connections we have
@@ -15,7 +18,7 @@ public class GameServerListener extends Listener {
 
     //How many connections are allowed, based on how many players game can handle
     private static int maxConnections;
-    public String receivedMove = "empty";
+    public String receivedMove = "NoMove";
 
     public GameServerListener(int maxPlayers) {
         connections = 0;
@@ -49,9 +52,10 @@ public class GameServerListener extends Listener {
 
 
     /**
+     * Method that is run when a tcp/udp message is received
      * @param connection the connection object
      * @param receivedObject The received object
-     * Method that is run when a tcp/udp message is received
+     *
      */
     public void received (Connection connection, Object receivedObject){
         if (receivedObject instanceof MoveResponse) { // checks if the message contains a move if it does:
@@ -66,7 +70,7 @@ public class GameServerListener extends Listener {
     // Currently not used
     public void request_move(Connection connection) {
         resetReceivedMove();
-        requestToClient moveRequest = new requestToClient();
+        RequestToClient moveRequest = new RequestToClient();
         moveRequest.setRequestType("Move");
         connection.sendTCP(moveRequest);
         //c.sendUDP(moveRequest);
@@ -88,7 +92,13 @@ public class GameServerListener extends Listener {
             System.out.println("Player doesn't exist");
             return null;
         }
+    }
 
+    /**
+     * @return the list of connections
+     */
+    public List<Connection> getPlayers() {
+        return players;
     }
 
     /**
@@ -106,7 +116,7 @@ public class GameServerListener extends Listener {
         this.receivedMove = move;
     }
     public void resetReceivedMove() {
-        this.receivedMove = "empty";
+        this.receivedMove = "NoMove";
     }
 
 }

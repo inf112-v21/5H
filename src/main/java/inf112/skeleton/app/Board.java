@@ -30,13 +30,6 @@ public class Board {
         objectMap.put("h", hole);
         objectMap.put("w", wall);
 
-        /*
-        spriteMap = new HashMap<>();
-        spriteMap.put("g", new Sprite(new Texture(ground.getTexturePath())));
-        spriteMap.put("h", new Sprite(new Texture(hole.getTexturePath())));
-        spriteMap.put("w", new Sprite(new Texture(wall.getTexturePath())));
-        */
-
         playerList = new ArrayList<>(); //List of players
         flagList = new ArrayList<>(); //List of flags
         boardInfo = new ArrayList<>(); //List of list of objects on board

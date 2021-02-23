@@ -9,10 +9,10 @@ import java.io.IOException;
 public class Network {
     private Server server;
     private Client client;
-    private NetworkSettings networkSettings;
+    private final NetworkSettings networkSettings;
     private GameServerListener gameServerListener;
     private GameClientListener gameClientListener;
-    private int numPlayers;
+    private final int numPlayers;
 
     public Network(NetworkSettings networkSettings, int numPlayers){
         this.numPlayers = numPlayers;
@@ -29,8 +29,9 @@ public class Network {
      */
     public void startServer() throws IOException {
         server = new Server();
-        server.getKryo().register(requestToClient.class);
+        server.getKryo().register(RequestToClient.class);
         server.getKryo().register(MoveResponse.class);
+        server.getKryo().register(PlayerMoved.class);
         server.bind(networkSettings.getTcpPort(), networkSettings.getUdpPort());
         server.start();
         gameServerListener = new GameServerListener(numPlayers);
@@ -44,11 +45,11 @@ public class Network {
      * adds a listener of type GameClient.java to client
      * the listeners handles all incoming traffic
      */
-    //START CLIENT
     public void startClient() throws IOException {
         client = new Client();
-        client.getKryo().register(requestToClient.class);
+        client.getKryo().register(RequestToClient.class);
         client.getKryo().register(MoveResponse.class);
+        client.getKryo().register(PlayerMoved.class);
         client.start();
         client.connect(5000, networkSettings.getIp(), networkSettings.getTcpPort(), networkSettings.getUdpPort());
         gameClientListener = new GameClientListener();
