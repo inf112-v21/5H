@@ -7,6 +7,7 @@ import inf112.skeleton.app.net.NetworkSettings;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class Main {
     private static final String IPV4_PATTERN = "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\\.(?!$)|$)){4}$";
@@ -19,7 +20,7 @@ public class Main {
 
         //Application setup
         Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
-        cfg.setTitle(settings.getState());
+        cfg.setTitle("RoboRally - " + settings.getState().toUpperCase());
         cfg.setWindowedMode(900, 900);
         cfg.setResizable(true);
         cfg.useVsync(true);
@@ -121,7 +122,7 @@ public class Main {
      */
     public static String serverClientSelection() {
         Object[] possibilities = {"server", "client"};
-        String prompt = "Please select if you want to Host Server or join as a Client";
+        String prompt = "Please select if you want to be the server or join as a client";
 
         Object result = JOptionPane.showInputDialog(
                 null,

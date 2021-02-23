@@ -72,17 +72,22 @@ public class Game implements ApplicationListener {
      */
     public Game(NetworkSettings settings, int numPlayers) {
         this.numPlayers = numPlayers;
+
+        //Set network variables
         networkSettings = settings;
         isServer = networkSettings.getState().equals("server"); //True if instance is server
         network = new Network(networkSettings, numPlayers);
-        if (isServer) { // If this instance of game is supposed to be a server it starts one
+
+        if (isServer) { //If this instance of game is supposed to be a server it starts one
             try {
                 network.startServer();
                 gameServerListener = network.getGameServerListener();
             } catch (IOException e) { // Exception thrown if it cannot bind ports
                 e.printStackTrace();
             }
-        } else { // If this instance of game is not supposed to be a server it starts a client and (tries to) connect to a server
+        }
+
+        else {  //If this instance of game is not supposed to be a server it starts a client and (tries to) connect to a server
             try {
                 network.startClient();
             } catch (IOException e) { //Exception thrown if it cannot connect to given server in 5 seconds
@@ -127,7 +132,7 @@ public class Game implements ApplicationListener {
             doOnePlayerMove();
         }
         else {
-            if (!network.getClient().isConnected()) { // Checks if a disconnection has happened, and reconnect if it's the case.
+            if (!network.getClient().isConnected()) { // Checks if a disconnection has happened, and reconnects if it's the case.
                 try {
                     network.reconnectClient();
                 } catch (IOException e) {
@@ -212,8 +217,8 @@ public class Game implements ApplicationListener {
     }
 
     /**
-     * @return moveString
-     * Register keyboard input from the client and returns a string representing said (valid) input
+     * Converts an input to a String that can be sent between host and clients, used in move to move the player.
+     * @return string with the move to do.
      */
     private String moveToString() {
         String moveString;
@@ -234,7 +239,8 @@ public class Game implements ApplicationListener {
         }
         else if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){ //Rotate the player left
             moveString = "turnLeft";
-        } else {
+        }
+        else {
             moveString = "NoMove";
         }
         return moveString;
@@ -403,6 +409,8 @@ public class Game implements ApplicationListener {
             }
             foundNext = true;
         }
+
+        //todo make the clients request/get sent the updated board here.
 
         System.out.println("---------------------------");
         System.out.println("Player " + turn + " to move");
