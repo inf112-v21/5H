@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 public class Main {
     private static final String IPV4_PATTERN = "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\\.(?!$)|$)){4}$";
+    private static int playerCount;
 
     public static void main(String[] args) {
         NetworkSettings settings = setup();
@@ -23,7 +24,7 @@ public class Main {
         cfg.setResizable(true);
         cfg.useVsync(true);
         cfg.setIdleFPS(60);
-        new Lwjgl3Application(new Game(settings), cfg);
+        new Lwjgl3Application(new Game(settings, playerCount), cfg);
         System.exit(42069);
     }
 
@@ -41,6 +42,8 @@ public class Main {
         }
         else{
             selection.put("ip", "localhost");
+            playerCount = selectPlayerCount();
+
         }
         ArrayList<String> ports = portConfig();
         selection.put("tcp", ports.get(0));
@@ -48,6 +51,29 @@ public class Main {
 
         //Create networkSettings
         return new NetworkSettings(selection.get("state"), selection.get("ip"), Integer.parseInt(selection.get("tcp")), Integer.parseInt(selection.get("udp")));
+    }
+
+    /**
+     * Query the Server user for player count.
+     * @return the amount of players in the game
+     */
+    private static int selectPlayerCount() {
+        Object[] possibilities = {"2", "3", "4"};
+        String prompt = "Please select the amount of players for this game";
+
+        Object result = JOptionPane.showInputDialog(
+                null,
+                prompt,
+                "",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                possibilities,
+                possibilities[0]);
+        if(result == null){
+            System.err.println("Program ended by user.");
+            System.exit(-1);
+        }
+        return Integer.parseInt(result.toString());
     }
 
     /**
@@ -104,7 +130,7 @@ public class Main {
                 JOptionPane.PLAIN_MESSAGE,
                 null,
                 possibilities,
-                possibilities[1]);
+                possibilities[0]);
         if(result == null){
             System.err.println("Program ended by user.");
             System.exit(-1);

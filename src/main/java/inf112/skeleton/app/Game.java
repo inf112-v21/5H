@@ -70,16 +70,29 @@ public class Game implements ApplicationListener {
      * Constructor for the game class.
      * @param settings The server connection settings object
      */
-    public Game(NetworkSettings settings) {
+    public Game(NetworkSettings settings, int numPlayers) {
+        this.numPlayers = numPlayers;
         networkSettings = settings;
         isServer = networkSettings.getState().equals("server"); //True if instance is server
+        network = new Network(networkSettings, numPlayers);
+        if (isServer) { // If this instance of game is supposed to be a server it starts one
+            try {
+                network.startServer();
+                gameServerListener = network.getGameServerListener();
+            } catch (IOException e) { // Exception thrown if it cannot bind ports
+                e.printStackTrace();
+            }
+        } else { // If this instance of game is not supposed to be a server it starts a client and (tries to) connect to a server
+            try {
+                network.startClient();
+            } catch (IOException e) { //Exception thrown if it cannot connect to given server in 5 seconds
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
     public void create() {
-        numPlayers = 4;
-        network = new Network(networkSettings, numPlayers);
-
         batch = new SpriteBatch();
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
@@ -99,20 +112,6 @@ public class Game implements ApplicationListener {
         isFinished = false;
         turn = 1;
         pause = false;
-        if (isServer) { // If this instance of game is supposed to be a server it starts one
-            try {
-                network.startServer();
-                gameServerListener = network.getGameServerListener();
-            } catch (IOException e) { // Exception thrown if it cannot bind ports
-                e.printStackTrace();
-            }
-        } else { // If this instance of game is not supposed to be a server it starts a client and (tries to) connect to a server
-            try {
-                network.startClient();
-            } catch (IOException e) { //Exception thrown if it cannot connect to given server in 5 seconds
-                e.printStackTrace();
-            }
-        }
     }
 
     @Override
@@ -172,7 +171,7 @@ public class Game implements ApplicationListener {
             winnerSprite.setX(1);
             winnerSprite.setY(1);
             winnerSprite.draw(batch);
-            Sprite text = new Sprite(new Texture("src\\main\\tex\\win.png"));
+            Sprite text = new Sprite(new Texture("src\\main\\resources\\tex\\win.png"));
             text.setX(camera.viewportWidth/5);
             text.setY(camera.viewportHeight/5);
             text.draw(batch);
