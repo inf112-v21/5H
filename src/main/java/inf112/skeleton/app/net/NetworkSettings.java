@@ -1,4 +1,4 @@
-package inf112.skeleton.app;
+package inf112.skeleton.app.net;
 
 /**
  * Class that holds all the settings for network:

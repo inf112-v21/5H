@@ -1,4 +1,4 @@
-package inf112.skeleton.app.Sprites;
+package inf112.skeleton.app.sprites;
 
 import inf112.skeleton.app.Pair;
 

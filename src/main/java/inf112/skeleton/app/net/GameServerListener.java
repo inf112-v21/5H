@@ -1,9 +1,9 @@
-package inf112.skeleton.app;
+package inf112.skeleton.app.net;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import inf112.skeleton.app.MoveResponse;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +54,7 @@ public class GameServerListener extends Listener {
      * Method that is run when a tcp/udp message is received
      */
     public void received (Connection connection, Object receivedObject){
-        if (receivedObject instanceof  MoveResponse) { // checks if the message contains a move if it does:
+        if (receivedObject instanceof MoveResponse) { // checks if the message contains a move if it does:
             MoveResponse moveResponse = (MoveResponse) receivedObject; // Typecasts the moveResponse for some reason
             System.out.println(moveResponse.move); // prints the received move
             this.receivedMove = moveResponse.move; // registers the move from received object to local variable

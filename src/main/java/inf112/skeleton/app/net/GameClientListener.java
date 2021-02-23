@@ -1,4 +1,4 @@
-package inf112.skeleton.app;
+package inf112.skeleton.app.net;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 

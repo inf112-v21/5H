@@ -1,4 +1,4 @@
-package inf112.skeleton.app;
+package inf112.skeleton.app.net;
 
 /**
  * A class that is used to send a request from server to client

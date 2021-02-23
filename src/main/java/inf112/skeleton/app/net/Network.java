@@ -1,7 +1,8 @@
-package inf112.skeleton.app;
+package inf112.skeleton.app.net;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Server;
+import inf112.skeleton.app.MoveResponse;
 
 import java.io.IOException;
 
@@ -75,5 +76,6 @@ public class Network {
     public Client getClient(){
         return client;
     }
+    public Server getServer() { return server;}
 
 }

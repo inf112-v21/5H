@@ -2,6 +2,7 @@ package inf112.skeleton.app;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import inf112.skeleton.app.net.NetworkSettings;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class Main {
         NetworkSettings settings = setup();
         //check connection
         System.out.println(settings.getState());
+
         //Application setup
         Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
         cfg.setTitle(settings.getState());
@@ -25,6 +27,10 @@ public class Main {
         System.exit(42069);
     }
 
+    /**
+     * Function for querying the user for connection settings.
+     * @return NetworkSettings object containing connection information
+     */
     public static NetworkSettings setup(){
         HashMap<String, String> selection = new HashMap<>();
         String result = serverClientSelection();
@@ -45,6 +51,7 @@ public class Main {
     }
 
     /**
+     * Query user for tcp and udp ports.
      * @return List of ports as String, List.get(0) is the tcp port and list.get(1) is the udp port.
      */
     private static ArrayList<String> portConfig() {
@@ -83,8 +90,8 @@ public class Main {
     }
 
     /**
-     * Function for asking user to select either server or client
-     * @return Connection state, either "Server" or "Client"
+     * Query user to select either server or client
+     * @return Connection state, either "server" or "client"
      */
     public static String serverClientSelection() {
         Object[] possibilities = {"server", "client"};

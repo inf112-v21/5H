@@ -1,6 +1,6 @@
 package inf112.skeleton.app;
 
-import inf112.skeleton.app.Sprites.*;
+import inf112.skeleton.app.sprites.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,9 +22,9 @@ public class Board {
 
     public Board(){
         //Only need one instance of each of these classes per map, rest of items initialized in readBoard()
-        Ground ground = new Ground("src\\main\\tex\\ground.png");
-        Hole hole = new Hole("src\\main\\tex\\hole.png");
-        Wall wall = new Wall("src\\main\\tex\\wall.png");
+        Ground ground = new Ground("src\\main\\resources\\tex\\ground.png");
+        Hole hole = new Hole("src\\main\\resources\\tex\\hole.png");
+        Wall wall = new Wall("src\\main\\resources\\tex\\wall.png");
         objectMap = new HashMap<>();
         objectMap.put("g", ground);
         objectMap.put("h", hole);
@@ -51,7 +51,7 @@ public class Board {
      */
     public void readBoard(int boardNum) {
         try{
-            File file = new File("src\\main\\boards\\Board"+boardNum+".txt");
+            File file = new File("src\\main\\resources\\boards\\Board"+boardNum+".txt");
             Scanner scanner = new Scanner(file);
             int k = 0;
             while(scanner.hasNextLine()){
@@ -61,7 +61,7 @@ public class Board {
                 for(int i=0; i<items.length; i++){
                     if(items[i].matches("p\\d+")) {
                         playerNum += 1;
-                        Player player = new Player(k, i, "src\\main\\tex\\player" + playerNum + ".png", playerNum);
+                        Player player = new Player(k, i, "src\\main\\resources\\tex\\player" + playerNum + ".png", playerNum);
                         player.setBoard(this);
                         objectMap.put(player.getShortName(), player);
                         playerList.add(player);
@@ -70,7 +70,7 @@ public class Board {
                     else if(items[i].matches("f\\d+")) {
                         flagNum += 1;
                         int num = Integer.parseInt(items[i].substring(1));
-                        Flag flag = new Flag(k, i, "src\\main\\tex\\flag" + num +".png", num);
+                        Flag flag = new Flag(k, i, "src\\main\\resources\\tex\\flag" + num +".png", num);
                         objectMap.put(items[i], flag);
                         flagList.add(flag);
                         lineSprites.add(flag);
