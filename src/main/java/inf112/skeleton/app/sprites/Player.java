@@ -51,7 +51,6 @@ public class Player extends AbstractGameObject {
         if(updatedX > board.getSize()-1 || updatedX < 0){
             resetTile(currentX, currentY);
             die();
-            System.out.println("HP:" + hp + " | " + "PC: " + pc);
             return;
         }
         else if(updatedY > board.getSize()-1 || updatedY < 0){
@@ -125,6 +124,7 @@ public class Player extends AbstractGameObject {
         }
         resetPosition();
         pc = 9;
+        System.out.println(getName() + " died and now has: " + hp + " HP");
     }
 
     /**
