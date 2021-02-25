@@ -5,6 +5,7 @@ import com.esotericsoftware.kryonet.Listener;
 import inf112.skeleton.app.MoveResponse;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -13,16 +14,18 @@ import java.util.List;
 public class GameServerListener extends Listener {
 
     //Keep tracks of how many connections we have
-    private static int connections;
-    private final List<Connection> players = new ArrayList<>(); // Holds all the connection objects of the players
+    private static int numConnections;
+    private final HashMap<Integer, Connection> players = new HashMap<>(); // A map from playerNumber to connection.
+    private final HashMap<Connection, Integer> reversePlayers = new HashMap<>(); // A map from connection to playerNumber.
+    private final ArrayList<Connection> isConnected = new ArrayList<>(); // A list of all currently connected clients.
 
     //How many connections are allowed, based on how many players game can handle
     private static int maxConnections;
     public String receivedMove = "NoMove";
 
     public GameServerListener(int maxPlayers) {
-        connections = 0;
-        maxConnections = maxPlayers -1;
+        numConnections = 0;
+        maxConnections = maxPlayers - 1;
     }
 
     /**
@@ -32,10 +35,19 @@ public class GameServerListener extends Listener {
     public void connected(Connection c) {
         System.out.println("Client connected");
 
-        if (connections < maxConnections) { // Checks if more connections are allowed
-            connections++; // If they are we add to the connections counter
-            players.add(c); // Adds the connection object to players arraylist
-        } else {
+        if (numConnections < maxConnections) { // Checks if more connections are allowed
+            if(players.containsValue(c)){
+                isConnected.add(c);
+                System.out.println("Player " + (reversePlayers.get(c)+2) + " reconnected!");
+            }
+            else{
+                players.put(numConnections, c); // Adds the connection object to players map, player -> conn
+                reversePlayers.put(c, numConnections); //Adds the connection to player map, conn -> player
+                isConnected.add(c); //Adds client to list over currently connected clients
+                numConnections++; // Increment connections counter
+            }
+        }
+        else {
             System.out.println("Too many players already"); // Prints error message if too many connected.
         }
     }
@@ -45,9 +57,8 @@ public class GameServerListener extends Listener {
      */
     @Override
     public void disconnected(Connection c) {
-        connections--;
-        players.remove(c);
-        System.out.println("Player disconnected");
+        isConnected.remove(c);
+        System.out.println("Player " + (reversePlayers.get(c)+2) + " disconnected");
     }
 
 
@@ -85,8 +96,14 @@ public class GameServerListener extends Listener {
      * returns null if index is out of bounds
      */
     public Connection getPlayer(int index) {
-        if (index < players.size()) {
-            return players.get(index);
+        if (index < numConnections) {
+            if(isConnected.contains(players.get(index))){
+                return players.get(index);
+            }
+            else{
+                System.out.println("Player is currently disconnected");
+                return null;
+            }
         }
         else {
             System.out.println("Player doesn't exist");
@@ -98,7 +115,7 @@ public class GameServerListener extends Listener {
      * @return the list of connections
      */
     public List<Connection> getPlayers() {
-        return players;
+        return isConnected;
     }
 
     /**

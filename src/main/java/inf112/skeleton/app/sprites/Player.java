@@ -23,7 +23,7 @@ public class Player extends AbstractGameObject {
         super(texturePath);
         setShortName("p"+number);
         setCoordinates(x,y);
-        setName("Player"+number);
+        setName("Player "+number);
         points = 0;
         hp = 3;
         pc = 9;
