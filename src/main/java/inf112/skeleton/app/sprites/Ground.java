@@ -1,4 +1,4 @@
-package inf112.skeleton.app.Sprites;
+package inf112.skeleton.app.sprites;
 
 public class Ground extends AbstractGameObject {
     public Ground(String texturePath) {

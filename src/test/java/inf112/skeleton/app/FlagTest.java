@@ -1,8 +1,7 @@
 package inf112.skeleton.app;
 
-import inf112.skeleton.app.Sprites.Direction;
-import inf112.skeleton.app.Sprites.Flag;
-import inf112.skeleton.app.Sprites.Player;
+import inf112.skeleton.app.sprites.Flag;
+import inf112.skeleton.app.sprites.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

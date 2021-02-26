@@ -1,4 +1,4 @@
-package inf112.skeleton.app.Sprites;
+package inf112.skeleton.app.sprites;
 
 import inf112.skeleton.app.Board;
 import inf112.skeleton.app.Pair;
@@ -23,7 +23,7 @@ public class Player extends AbstractGameObject {
         super(texturePath);
         setShortName("p"+number);
         setCoordinates(x,y);
-        setName("Player"+number);
+        setName("Player "+number);
         points = 0;
         hp = 3;
         pc = 9;
@@ -51,7 +51,6 @@ public class Player extends AbstractGameObject {
         if(updatedX > board.getSize()-1 || updatedX < 0){
             resetTile(currentX, currentY);
             die();
-            System.out.println("HP:" + hp + " | " + "PC: " + pc);
             return;
         }
         else if(updatedY > board.getSize()-1 || updatedY < 0){
@@ -125,6 +124,7 @@ public class Player extends AbstractGameObject {
         }
         resetPosition();
         pc = 9;
+        System.out.println(getName() + " died and now has: " + hp + " HP");
     }
 
     /**
