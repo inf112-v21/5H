@@ -1,4 +1,4 @@
-package inf112.skeleton.app.Cards;
+package inf112.skeleton.app.cards;
 
 import java.util.*;
 import com.esotericsoftware.kryonet.Connection;
@@ -6,30 +6,24 @@ import inf112.skeleton.app.GameServer;
 
 
 public class Deck {
-	private ArrayList<String> currentDeck = new ArrayList<String>();
-	private ArrayList<String> player1 = new ArrayList<String>();
-	private ArrayList<String> player2 = new ArrayList<String>();
-	private ArrayList<String> player3 = new ArrayList<String>();
-	private ArrayList<String> player4 = new ArrayList<String>();
+	private List<Card> currentDeck = new ArrayList();
+	private CardCollection player1 = new CardCollection();
+	private CardCollection player2 = new CardCollection();
+	private CardCollection player3 = new CardCollection();
+	private CardCollection player4 = new CardCollection();
+	
+	public Deck() {
+		createDeck();
+	}
 	
 	
 	
-	public ArrayList<String> createDeck () {
+	public void createDeck () {
 		//ArrayList<String> currentDeck = new ArrayList<String>();
-		int i = 0;
-		while (i<5) {
-			currentDeck.add(MoveCard.createMoveCard1());
-			currentDeck.add(MoveCard.createMoveCard2());
-			currentDeck.add(MoveCard.createMoveCard3());
-			currentDeck.add(RotateRCard.createRotateRCard());
-			currentDeck.add(RotateLCard.createRotateLCard());
-			currentDeck.add(BackupCard.createBackupCard());
-			currentDeck.add(TurnCard.createTurnCard());
-			i++;
+		for (int i = 0; i<18; i++) {
+			currentDeck.add(new Card("move1",490+i*10));
 		}
-		currentDeck.add(MoveCard.createMoveCard1());
 		Collections.shuffle(currentDeck);
-		return currentDeck;
 	}
 	
 	public void deal() {
@@ -51,19 +45,6 @@ public class Deck {
 		
 	}
 	
-	public ArrayList<String> smallDeck(int i1,int i2,int i3,int i4,int i5) {
-		player1.addAll(i1, currentDeck);
-		player1.addAll(i2, currentDeck);
-		player1.addAll(i3, currentDeck);
-		player1.addAll(i4, currentDeck);
-		player1.addAll(i5, currentDeck);
-		return player1;
-		
-		
-	}
 
-	public void shuffle() {
-		//Collections.shuffle(createDeck());
-	
-	}
+
 }
