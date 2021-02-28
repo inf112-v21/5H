@@ -1,4 +1,4 @@
-package inf112.skeleton.app.NetworkTests;
+package inf112.skeleton.app.networkTests;
 
 import com.esotericsoftware.kryonet.Connection;
 import inf112.skeleton.app.net.GameClientListener;

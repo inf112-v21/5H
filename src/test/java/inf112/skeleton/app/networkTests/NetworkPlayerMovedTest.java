@@ -1,4 +1,4 @@
-package inf112.skeleton.app.NetworkTests;
+package inf112.skeleton.app.networkTests;
 
 import inf112.skeleton.app.net.PlayerMoved;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class NetworkPlayerMovedTest {
 
-    PlayerMoved playerMoved;
+    private PlayerMoved playerMoved;
     private String shortName;
     private String move;
 
