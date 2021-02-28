@@ -18,7 +18,4 @@ public class Card {
 	public int getPriority() {
 		return priority;
 	}
-	
-	
-
 }

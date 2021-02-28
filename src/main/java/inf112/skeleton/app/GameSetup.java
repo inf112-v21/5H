@@ -1,7 +1,4 @@
 package inf112.skeleton.app;
-
-import inf112.skeleton.app.net.NetworkSettings;
-
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
