@@ -1,0 +1,22 @@
+Møte 01.03.2021
+Digitalt via Discord
+Tilstede:
+  Skjalg Eide Hodneland
+  Emil Flatøy Hodneland
+  Jonas Svåsand
+  Håkon Mathias Hvidsten Høie
+  Henrik Bie Kaarud
+  Hans Albert Biørn Terland
+
+
+
+Standup:
+Hans Albert jobbet med klassediagram og automatisering
+Emil skrevet tester til network spesielt listener
+Skjalg fixet compilation error for Card klassen , og fortsatte å jobbe med main klasse og logikk-
+Fikset det slik at det kjører på linux (og mac?), men bygger fortsatt ikke.
+
+Håkon + Jonas omgjorde Card klassen , fikset på deck klassen og implementerte Card Collection.
+
+Vi diskuterte hva som må gjøres frem til fredag, for innleveringen og delte på arbeidsoppgavene.
+
