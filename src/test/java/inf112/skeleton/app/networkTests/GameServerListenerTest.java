@@ -41,8 +41,9 @@ public class GameServerListenerTest {
 
     @AfterEach
     private void closeAllConnections() { //Closes all connections
-        serverNetwork.getServer().close();
         clientNetwork.getClient().close();
+        serverNetwork.getServer().close();
+
     }
 
 
