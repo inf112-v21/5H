@@ -172,9 +172,7 @@ public class Game implements ApplicationListener {
                     Player playerThatHasMoved = (Player) abstractGameObject; //Cast to player
                     move(playerThatHasMoved, spriteMap.get(playerMoved.getShortName()), playerMoved.getMove()); //Move player locally.
                 }
-
                 network.getGameClientListener().resetPlayerHasMoved();
-
             }
         }
         batch.begin();
