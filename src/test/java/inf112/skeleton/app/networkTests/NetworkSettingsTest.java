@@ -1,20 +1,19 @@
-package inf112.skeleton.app.NetworkTests;
+package inf112.skeleton.app.networkTests;
 
 import inf112.skeleton.app.net.NetworkSettings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 
 public class NetworkSettingsTest {
 
     private NetworkSettings settings;
     private String state;
-    String ip;
-    int tcpPort;
-    int udpPort;
+    private String ip;
+    private int tcpPort;
+    private int udpPort;
 
 
     @BeforeEach

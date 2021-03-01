@@ -125,6 +125,9 @@ public class GameServerListener extends Listener {
     public int getConnectedPlayers() {
         return players.size();
     }
+    public HashMap<Integer, Connection> getPlayerHashmap(){
+        return players;
+    }
 
     public String getReceivedMove() {
         return receivedMove;

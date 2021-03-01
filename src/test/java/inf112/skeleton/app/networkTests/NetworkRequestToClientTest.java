@@ -1,4 +1,4 @@
-package inf112.skeleton.app.NetworkTests;
+package inf112.skeleton.app.networkTests;
 
 import inf112.skeleton.app.net.RequestToClient;
 import org.junit.jupiter.api.BeforeEach;
