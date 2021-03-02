@@ -11,6 +11,7 @@ public class Player extends AbstractGameObject {
     private Board board;
     private boolean dead;
     private Direction dir;  //Facing direction
+    private int playerNum; //The number for this player (1 for player1, 2 for player2...)
 
 
 
@@ -24,12 +25,14 @@ public class Player extends AbstractGameObject {
         setShortName("p"+number);
         setCoordinates(x,y);
         setName("Player "+number);
+        setPlayerNum(number);
         points = 0;
         hp = 3;
         pc = 9;
         dead = false;
         savePoint = new Pair(x, y); //Initialize save point
         dir = Direction.NORTH; //Set direction on spawn
+        setPlayerNum(number);
     }
 
     public void setBoard(Board board){
@@ -197,5 +200,12 @@ public class Player extends AbstractGameObject {
 
     public boolean isDead(){
         return dead;
+    }
+
+    public void setPlayerNum(int num){
+        playerNum = num;
+    }
+    public int getPlayerNum(){
+        return playerNum;
     }
 }

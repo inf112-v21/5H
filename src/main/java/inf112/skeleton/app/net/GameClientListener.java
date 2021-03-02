@@ -1,6 +1,7 @@
 package inf112.skeleton.app.net;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import inf112.skeleton.app.cards.Hand;
 
 /**
  * Class for Client to listen to server
@@ -11,6 +12,9 @@ public class GameClientListener extends Listener {
 
     private PlayerMoved playerMoved;
     private boolean playerHasMoved;
+
+    private Hand hand;
+    private boolean handReceived;
 
     /**
      * @param connection the connection to Server
@@ -30,6 +34,10 @@ public class GameClientListener extends Listener {
         if(receivedObject instanceof PlayerMoved){
             playerMoved = (PlayerMoved) receivedObject;
             playerHasMoved = true;
+        }
+        if(receivedObject instanceof Hand){
+            hand = (Hand) receivedObject;
+            handReceived = true;
         }
     }
 
@@ -53,6 +61,16 @@ public class GameClientListener extends Listener {
 
     public void resetPlayerHasMoved() {
         playerHasMoved = false;
+    }
+
+    public Hand getHand(){
+        return hand;
+    }
+    public void resetHandReceived(){
+        handReceived = false;
+    }
+    public boolean hasReceivedHand(){
+        return handReceived;
     }
 
 }

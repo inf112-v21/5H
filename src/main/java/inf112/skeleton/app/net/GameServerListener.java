@@ -3,6 +3,7 @@ package inf112.skeleton.app.net;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import inf112.skeleton.app.MoveResponse;
+import inf112.skeleton.app.cards.Hand;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,11 +22,17 @@ public class GameServerListener extends Listener {
 
     //How many connections are allowed, based on how many players game can handle
     private static int maxConnections;
+
+    //Received moves, mapped from Player.getShortName() to Hand
+    public ArrayList<Hand> receivedMoves;
+    public int numReceivedMoves;
+
     public String receivedMove = "NoMove";
 
     public GameServerListener(int maxPlayers) {
         numConnections = 0;
         maxConnections = maxPlayers - 1;
+        receivedMoves = new ArrayList<>();
     }
 
     /**
@@ -73,6 +80,11 @@ public class GameServerListener extends Listener {
             MoveResponse moveResponse = (MoveResponse) receivedObject; // Typecasts the moveResponse for some reason
             System.out.println(moveResponse.move); // prints the received move
             this.receivedMove = moveResponse.move; // registers the move from received object to local variable
+        }
+        if(receivedObject instanceof Hand){
+            Hand hand = (Hand) receivedObject;
+            receivedMoves.add(hand);
+            numReceivedMoves++;
         }
     }
 
@@ -137,6 +149,10 @@ public class GameServerListener extends Listener {
     }
     public void resetReceivedMove() {
         this.receivedMove = "NoMove";
+    }
+    public void resetReceivedMoves(){
+        receivedMoves = new ArrayList<>();
+        numReceivedMoves = 0;
     }
 
 }
