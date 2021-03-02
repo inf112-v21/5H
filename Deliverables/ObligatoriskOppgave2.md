@@ -1,7 +1,7 @@
 # Oblig 2 
 ## 5H
 
-### Deloppgave 1
+##Deloppgave 1
 
 #### Roller i teamet:
 Vi har alle utført rollene vi har i Teamet, så langt har det gått bra og vi planlegger ikke noen bytter.
@@ -35,6 +35,7 @@ og dermed arbeidsfordeling.
 
 
 ---
+## Deloppgave 2
 ### Krav
 
 #### Brukerhistorier
@@ -44,6 +45,7 @@ og dermed arbeidsfordeling.
 #### Arbeidsoppgaver
 
 ---
+## Deloppgave 3
 ### Kode:
 
 #### Bygging: 
