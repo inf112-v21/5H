@@ -40,7 +40,7 @@ public class GameServerListenerTest {
     }
 
     @AfterEach
-    private void closeAllConnections() { //Closes all connections
+    public void closeAllConnections() { //Closes all connections
         clientNetwork.getClient().close();
 
         serverNetwork.getServer().close();
