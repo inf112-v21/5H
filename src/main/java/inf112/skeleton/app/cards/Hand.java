@@ -3,15 +3,15 @@ package inf112.skeleton.app.cards;
 import java.util.ArrayList;
 
 public class Hand {
-    private final ArrayList<Card> fullHand;
-    private final ArrayList<Card> selectedCards;
-    private final String playerShortName;
+    private ArrayList<Card> fullHand;
+    private ArrayList<Card> selectedCards;
+    private String playerShortName;
 
     /**
      * Initializes the player hand.
      * @param cards An ArrayList of Cards to choose from
      */
-    public Hand(ArrayList<Card> cards, String playerShortName){
+    public void create(ArrayList<Card> cards, String playerShortName){
         fullHand = cards;
         selectedCards = new ArrayList<>();
         this.playerShortName = playerShortName;
@@ -20,17 +20,21 @@ public class Hand {
     /**
      * Selects a card at index cardNum from the Hand.
      * @param cardNum The integer index of card in hand.
+     * @return true if the move was registered, false otherwise.
      */
-    public void selectCard(int cardNum){
+    public boolean selectCard(int cardNum){
         if(selectedCards.size() > 5){
-            System.err.println("Max amount selected!");
+            System.out.println("Max amount selected!");
+            return false;
         }
         else if(selectedCards.contains(fullHand.get(cardNum))){
-            System.err.println("Card already selected");
+            unSelect(cardNum);
+            return true;
         }
         else{
             selectedCards.add(fullHand.get(cardNum));
-            System.out.println("Card: "+fullHand.get(cardNum).getType()+ " selected.");
+            System.out.println("Card: "+ fullHand.get(cardNum).getType() + " selected.");
+            return true;
         }
     }
 
@@ -39,12 +43,7 @@ public class Hand {
      * @param cardNum The integer index of card in hand.
      */
     public void unSelect(int cardNum){
-        if(selectedCards.contains(fullHand.get(cardNum))){
-            selectedCards.remove(fullHand.get(cardNum));
-        }
-        else{
-            System.err.println("Card not selected, cannot be unselected");
-        }
+        selectedCards.remove(fullHand.get(cardNum));
     }
 
     /**
@@ -52,5 +51,24 @@ public class Hand {
      */
     public String getPlayerShortName() {
         return playerShortName;
+    }
+
+    /**
+     * @return number of cards selected by player.
+     */
+    public int getNumberOfCardsSelected(){
+        return selectedCards.size();
+    }
+
+    public ArrayList<Card> getAllCards() {
+        return fullHand;
+    }
+
+    public ArrayList<Card> getSelectedCards(){
+        return selectedCards;
+    }
+
+    public Card getFirstCard() {
+        return selectedCards.get(0);
     }
 }

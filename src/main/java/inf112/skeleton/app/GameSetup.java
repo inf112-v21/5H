@@ -37,7 +37,7 @@ public class GameSetup {
      * @return the amount of players in the game
      */
     private static String selectPlayerCount() {
-        Object[] possibilities = {"2", "3", "4"};
+        Object[] possibilities = {"1","2", "3", "4"};
         String prompt = "Please select the amount of players for this game";
 
         Object result = JOptionPane.showInputDialog(

@@ -29,7 +29,7 @@ public class NetworkRequestToClientTest {
     @Test
     public void requestDataSetGetTest(){
         assertNotEquals(requestData,requestToClient.getRequestData());
-        requestToClient.setRequestMessage(requestData);
+        requestToClient.setRequestData(requestData);
         assertEquals(requestData, requestToClient.getRequestData());
     }
 }

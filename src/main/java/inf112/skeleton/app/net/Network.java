@@ -3,8 +3,11 @@ package inf112.skeleton.app.net;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Server;
 import inf112.skeleton.app.MoveResponse;
+import inf112.skeleton.app.cards.Card;
+import inf112.skeleton.app.cards.Hand;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Network {
     private Server server;
@@ -32,6 +35,9 @@ public class Network {
         server.getKryo().register(RequestToClient.class);
         server.getKryo().register(MoveResponse.class);
         server.getKryo().register(PlayerMoved.class);
+        server.getKryo().register(Hand.class);
+        server.getKryo().register(Card.class);
+        server.getKryo().register(ArrayList.class);
         server.bind(networkSettings.getTcpPort(), networkSettings.getUdpPort());
         server.start();
         gameServerListener = new GameServerListener(numPlayers);
@@ -50,6 +56,9 @@ public class Network {
         client.getKryo().register(RequestToClient.class);
         client.getKryo().register(MoveResponse.class);
         client.getKryo().register(PlayerMoved.class);
+        client.getKryo().register(Hand.class);
+        client.getKryo().register(Card.class);
+        client.getKryo().register(ArrayList.class);
         client.start();
         client.connect(5000, networkSettings.getIp(), networkSettings.getTcpPort(), networkSettings.getUdpPort());
         gameClientListener = new GameClientListener();
