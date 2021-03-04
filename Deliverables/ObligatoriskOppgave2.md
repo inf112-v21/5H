@@ -11,14 +11,14 @@ slik at han kan sende spørsmålene videre til de relevante personer på forhån
 kan vi få gode og forberedte/ svar fra lab-leder/foreleser.
 
 #### Kommunikasjon:
-Noen snakker mye. Vi må ta ansvar for å la alle komme til ordet, og at de som ikke bidrar
+Noen snakker mye, andre lite. Vi må ta ansvar for å la alle komme til ordet, og at de som ikke bidrar
 mye muntlig må prøve å bidra mer. Dette må begge "sider" prøve å forbedre oss på.
 
 #### Standup: 
 Det har fungert bra og vi vil fortsette med dette.
 
 #### Kanban: 
-Vi har kanskje ikke brukt projectboardet til det fulle potensial. Vi har f.eks.
+Vi har kanskje ikke brukt projectboardet til sitt fulle potensial. Vi har f.eks.
 ikke brukt det noe særlig til å fordele oppgaver. Dette må vi forbedre og legge inn oppgaver før de fordeles, ettersom akkurat nå
 legger vi de til basert på hvilke oppgaver vi har begynt på. Ved å endre bruken vår av projectboardet vil vi kunne få bedre oversikt over fremdiften og planen for prosjektarbeidet.
 
@@ -63,6 +63,21 @@ Manuelle tester:
 
 #### MVP:
 Vårt produkt oppfyller MVP.
+
+1. Vi kan vise et spillebrett
+2. Vi kan vise spillebrikker på brettet
+3. Vi kunne flytte brikker via piltaster men nå bruker vi kort
+4. Robot kan besøke flagg
+5. Robot vinner hvis den besøker flagg (foreløpig bryr ikke spillet seg om rekkefølgen på flaggbesøk)
+6. Vi kan spille fra flere maskiner, både på lokalt nettverk men også via Internett
+   - En spiller må opptre som Server 
+   - De andre spillerne kobler seg til som klienter (maks 3 per nå)
+7. Vi kan dele ut kort (fra et fullstendig dekk som er likt det fra det fysiske spillet)
+8. En spiller får tildelt 9 kort og kan velge ut 5 av disse 
+9. Disse valgte kortene programmerer spillerens robot og dens bevegelser
+
+
+
 
 #### Kommentarer til kode og utførelse
 Vi har fortsatt ujevne commits. Dette er til dels pga. parprogrammering hvor en person commiter arbeidet, og i githubs oversikt er det da den personen som får credit.
