@@ -47,7 +47,7 @@ Teknisk produktoppsett:
 4. Nå starter spillet og kjører av seg selv!
 
 *Klient:*
-1. Skriv inn IP-adressen til Hosten
+1. Skriv inn IP-adressen til Hosten (dersom du kjører to instanser lokalt velger du "localhost" som ip)
 2. Skriv inn portene hosten valgte
 3. Sjekk at du konnekter og vent på de andre spillerne
 4. Når alle er tilkoblet starter spillet og du kan begynne å spille
