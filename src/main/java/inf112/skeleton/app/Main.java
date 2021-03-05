@@ -28,6 +28,6 @@ public class Main {
         cfg.useVsync(true);
         cfg.setIdleFPS(60);
         new Lwjgl3Application(new Game(settings, playerCount), cfg);
-        System.exit(42069);
+        System.exit(0);
     }
 }
