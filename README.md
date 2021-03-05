@@ -64,9 +64,12 @@ Vinn ved å være den første til å ha roboten sin innom alle tre flaggene vinn
 ### Kjente Feil og mangler
 
 - Foreløpig eksisterer ikke skade i spillet og man kan ikke power down.
+  - Derav er det heller ingen begrensing på kort man får tildelt eller kan velge.
 - Roboter skyter ikke laser
 - Brettet består bare av simple felt, ingen rullebånd, skiftenøkler osv.
 - Vegger tar opp en hel brikke på brettet
 - Flaggene kan besøkes i hvilken som helst rekkefølge
 - Roboter kan gå igjennom hverandre
 - Travis CI build, en gang bygget ikke prosjektet grunnet at porter ikke closet skikkelig i gameServerListenerTest.java, har ikke klart å reprodusere denne feilen siden så vanskelig å teste om den virker skikkelig nå. Problemet virker som det lå i at @AfterEach ikke closet portene skikkelig.
+- Det dukker fortsatt opp 4 briller selvom man er færre som spiller.
+- Det skjer av og til litt desynkornisering av spillebrettet. At noen spillere ser brikker på andre steder enn de egentlig er og i forhold til hva som vises hos andre spillere.
