@@ -2,7 +2,8 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/59c74c9604594cb0a07585f2dd1d4f45)](https://www.codacy.com/gh/inf112-v21/5H/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=inf112-v21/5H&amp;utm_campaign=Badge_Grade)
 
 # Robo Rally
-###INF112 5H
+
+### INF112 5H
 
 ---
 
@@ -19,13 +20,13 @@ TBD
 1. Kjør spillet
 2. Velg om du skal være server eller klient
 
-Server:
+*Server:*
 1. Velg hvor mange spillere dere er (max 4)
 2. Velg porter for å la de andre spillerne koble seg igjennom
 3. Vent på at alle andre kobler seg til
 4. Nå starter spillet og kjører av seg selv!
 
-Klient:
+*Klient:*
 1. Skriv inn IP-adressen til Hosten
 2. Skriv inn portene hosten valgte
 3. Sjekk at du konnekter og vent på de andre spillerne
