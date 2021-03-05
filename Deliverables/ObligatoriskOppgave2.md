@@ -66,10 +66,10 @@ og dermed arbeidsfordeling.
 **Akseptansekrav:** Tildelte kort vises frem for spilleren og spilleren står fritt til å velge fem kort blant de tildelte.
 
 **Arbeidsoppgaver** 
-- La klienten motta kort fra Server ved å legge til i ClientListener
+- La klienten motta kort fra Server ved å legge til i GameClientListener
 - Metode for å registrere 5 kort fra tastaturet
 - Velge ut kortene til en ny hånd og sende dem tilbake
-- Legge til I ServerListener slik at den kan motta hånden og bruke den.
+- Legge til I GameServerListener slik at den kan motta hånden og bruke den.
 
 #### [9] Bevege robot ut fra valgte kort: 
 **Brukerhistorie:** Som [spiller] ønsker jeg at min robot etterligninger bevegelsene anvist av mine valgte kort denne runden.
@@ -80,6 +80,7 @@ og dermed arbeidsfordeling.
 - Metode for å ta et kort og gjøre en bevegelse ut i fra kortet
 - Sørge for at prioriteten til kortene blir tatt med i vurdering av hvem som skal flytte først
 - Sørge for at bevegelser blir sendt mellom spillere slik at det oppdateres for alle brukere
+- Alt dette er i Game.java
 
 
 
@@ -87,10 +88,10 @@ og dermed arbeidsfordeling.
 Vår første prioritering denne innleveringen var å sette opp nettverksfunksjonen, til dette har vi brukt KryoNet. Vi gjorde dette først med å klare å sende klasser frem og tilbake mellom server og klient. Først brukte vi bare dette til å se om brikkene klarte å bevege seg med kommandoer fra klient, senere introduserte vi også at brettet blir oppdatert hos klienten etter flytt. Etter dette begynte vi på kort klassene og holder av kort (hånd og dekk), og passet på at disse ble skrevet på en måte som var kompatibelt med KryoNet. Imens kortene ble skrevet tok vi også og refaktorerte nettverksklassen slik at den var separat fra game. Etter at kort og nettverksrefaktorering var ferdig kunne vi begynne på å bevege seg basert på kort, og funksjoner for å velge kort. Dette ble gjort sist da det var avhengig av de forrige stegene.
 
 #### Bugs 
+- Største bugs:
 - Issue #40
 - Issue #43 
-
-
+- Referer til readme.md for full liste
 
 ---
 ## Deloppgave 3
@@ -126,13 +127,24 @@ ObjectAid generer ønsket klassediagram for valgte klasser, viser frem innhavend
 
 De generert diagrammene benytter seg av samme symbolikk som UML digram gjør.
 - Grønne sirkler står for public
-- Rødefirkanter er private
+- Røde firkanter er private
 Selve boksene benytter seg også av vanlig UML syntax. 3 ledd. Navnet på klassen, et felt for variabler, tilsutt et felt for metodene. 
-
+  
+Klassediagramene er laget for de ulike pakkene: skeleton.app, skeleton.app.cards, skeleton.app.net, skeleton.app.sprites
 
 #### Tester
 **Automatiske tester:**
-- g
+
+De automatiske testene våre dekker store deler av kodebasen. Vi tester at Player fungerer korrekt og andre objekter knyttet til den.
+Vi tester også nettverksdelen, hvor vi tester at vi kan connecte klient til server, og sende klasser frem og tilbake mellom dem, og at dette
+  blir korrekt registrert av Listeners. Det har vært noen problemer av og til når Travis kjører automatiske tester på nettverket,
+  at connections ikke har blitt closed til tross for at vi closer connections i en @AfterEach metode i testene. Vi prøver å finne ut hvorfor dette skjer,
+  men feilen har dukket opp rett før innlevering, og skjer bare av og til og ikke i IntelliJ så vi har problemer med å løse de. Hvis tester feiler, kan det være at de vil passere etter å bha blitt kjørt om igjen.
+  
+
+  Vi har også tester på kort, i at de blir lagd korrekt og kan leses. Vi tester også at dekket består av alle de kortene det skal
+  ifølge reglene, og at prioritetene til de forskjellige kortene er unike. Vi har ikke lagd automatiske tester til noen deler
+  som krever grafisk interaksjon og har dermed Manuelle tester på denne delen av kodebasen.
 
 **Manuelle tester:**
 
