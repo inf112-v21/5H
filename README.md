@@ -69,3 +69,4 @@ Vinn ved å være den første til å ha roboten sin innom alle tre flaggene vinn
 - Vegger tar opp en hel brikke på brettet
 - Flaggene kan besøkes i hvilken som helst rekkefølge
 - Roboter kan gå igjennom hverandre
+- Travis CI build, en gang bygget ikke prosjektet grunnet at porter ikke closet skikkelig i gameServerListenerTest.java, har ikke klart å reprodusere denne feilen siden så vanskelig å teste om den virker skikkelig nå. Problemet virker som det lå i at @AfterEach ikke closet portene skikkelig.
