@@ -23,12 +23,13 @@ public class Hand {
      * @return true if the move was registered, false otherwise.
      */
     public boolean selectCard(int cardNum){
-        if(selectedCards.size() > 5){
+        if(selectedCards.size() >= 5){
             System.out.println("Max amount selected!");
             return false;
         }
         else if(selectedCards.contains(fullHand.get(cardNum))){
             unSelect(cardNum);
+            System.out.println("Unselected");
             return true;
         }
         else{

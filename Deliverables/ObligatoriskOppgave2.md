@@ -121,7 +121,14 @@ For å bygge koden:
 - Vi har alle windows som OS og bruker Travis for å sjekke om det bygger på Linux/Mac.
 
 #### Klassediagram:
-- se egen mappe 
+Vi har generert klassedigram med Object Aid Explorer. Dette er en Eclipse Plugin som finnes her: https://marketplace.eclipse.org/content/objectaid-uml-explorer. 
+ObjectAid generer ønsket klassediagram for valgte klasser, viser frem innhavende metodene og feltvariabler. Det kan også vise fram dependencies som vi også har gjort, dette vises frem med piler. 
+
+De generert diagrammene benytter seg av samme symbolikk som UML digram gjør.
+- Grønne sirkler står for public
+- Rødefirkanter er private
+Selve boksene benytter seg også av vanlig UML syntax. 3 ledd. Navnet på klassen, et felt for variabler, tilsutt et felt for metodene. 
+
 
 #### Tester
 **Automatiske tester:**
@@ -167,7 +174,7 @@ Vårt produkt oppfyller MVP.
 9. Disse valgte kortene programmerer spillerens robot og dens bevegelser
 
 #### Kommentarer til kode og utførelse
-Vi har fortsatt ujevne commits. Dette er til dels pga. parprogrammering hvor en person commiter arbeidet, og i githubs oversikt er det da den personen som får credit.
+Vi har fortsatt ujevne commits. Dette er til dels pga. parprogrammering hvor en person commiter arbeidet, og i githubs oversikt er det da den personen som får credit. (Noen har også commitet fra flere accounts, feks Emil har committet fra sep012 og emilhod og Jonas Fra jsva og Jonas Svåsand)
 Det er også litt forskjell i størrelse på commit til de forskjellige gruppemedlemmene noe som også påvirker antall commits.
 Det er fortsatt sånn at vi føler at main/game er ganske innfløkt og at derfor bare noen par har rørt filen. Vi prøver derfor å fordele andre oppgaver som omhandler
 klasser utenom game.java for at alle skal få kodet, men det har sålangt har behovet for dette bare vært cards packagen. Vi fant network packagen like vanskelig

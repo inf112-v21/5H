@@ -23,39 +23,42 @@ public class Deck {
 	 * necessary data in regards to priority for this.
 	 */
 	public void createDeck () {
-		for (int i = 0; i<=340; i=i+10) {
-			if(i<=170) {
+		for (int i = 0; i<=34; i++) {
+			if(i<=17) {
 				Card card = new Card();
-				card.create("move1", 490 + (i));
+				card.create("move1", 490 + (i*10));
 				currentDeck.add(card);
 			}
-			if(i<=110){
+			if(i<=11){
 				Card card = new Card();
-				card.create("move2",670+(i));
+				card.create("move2",670+(i*10));
 				currentDeck.add(card);
 			}
-			if(i<=40){
+			if(i<=5){
 				Card card = new Card();
-				card.create("move3",790+(i));
+				card.create("move3",790+(i*10));
 				currentDeck.add(card);
 			}
-			if(i<=40){
+			if(i<=5){
 				Card card = new Card();
-				card.create("backUp",430+(i));
+				card.create("backUp",430+(i*10));
 				currentDeck.add(card);
 			}
-			if(i<=50){
+			if(i<=5){
 				Card card = new Card();
-				card.create("uTurn",10+(i));
+				card.create("uTurn",10+(i*10));
 				currentDeck.add(card);
 			}
-			Card card = new Card();
-			card.create("turnRight",80+(i));
-			currentDeck.add(card);
+			if(i%2==0){
+				Card card = new Card();
+				card.create("turnRight",80+(i*10));
+				currentDeck.add(card);
 
-			Card card2 = new Card();
-			card2.create("turnLeft",70+(i));
-			currentDeck.add(card2);
+				Card card2 = new Card();
+				card2.create("turnLeft",70+(i*10));
+				currentDeck.add(card2);
+			}
+
 		}
 		Collections.shuffle(currentDeck);
 	}
@@ -75,5 +78,8 @@ public class Deck {
 	public void resetDeck(){
 		currentDeck = new ArrayList<>();
 		createDeck();
+	}
+	public ArrayList<Card> getCurrentDeck() {
+		return currentDeck;
 	}
 }
