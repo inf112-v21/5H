@@ -44,6 +44,8 @@ og dermed arbeidsfordeling.
 
 #### Arbeidsoppgaver
 
+#### Forklar kort hvordan dere har prioritert oppgavene fremover - dvs, hvorfan har vi prioritert oppgavene denne uka. 
+
 ---
 ## Deloppgave 3
 ### Kode:
