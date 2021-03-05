@@ -1,0 +1,23 @@
+Møte 05.03.2021
+Digitalt via Discord
+Tilstede:
+  Skjalg Eide Hodneland
+  Emil Flatøy Hodneland
+  Jonas Svåsand
+  Håkon Mathias Hvidsten Høie
+  Henrik Bie Kaarud
+  Hans Albert Biørn Terland
+
+
+Standup: 
+Emil begynt på manuelle tester for libGDX
+Hans Albert: laget klassediagram
+Henrik: Vært i kontakt med lableder for å stille spm.
+Håkon: Jobbet med tester til kard
+Jonas: Skrevet på innlevering på readme.md , edit pom.xml 
+Skjalg: Fikset compilation på linux, la inn move fra kort og tur.
+
+Emil og Håkon fullfører kort tester.
+Vi andre går over teksten til innleveringen og andre ting.
+
+

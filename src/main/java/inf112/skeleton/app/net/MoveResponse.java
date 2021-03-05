@@ -1,4 +1,4 @@
-package inf112.skeleton.app;
+package inf112.skeleton.app.net;
 
 /**
  * A class that holds a move for a given player

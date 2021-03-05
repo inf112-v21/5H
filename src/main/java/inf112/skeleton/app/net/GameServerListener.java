@@ -2,7 +2,6 @@ package inf112.skeleton.app.net;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import inf112.skeleton.app.MoveResponse;
 import inf112.skeleton.app.cards.Hand;
 
 import java.util.ArrayList;

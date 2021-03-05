@@ -1,8 +1,8 @@
 package inf112.skeleton.app.net;
 
+import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Server;
-import inf112.skeleton.app.MoveResponse;
 import inf112.skeleton.app.cards.Card;
 import inf112.skeleton.app.cards.Hand;
 
@@ -32,16 +32,20 @@ public class Network {
      */
     public void startServer() throws IOException {
         server = new Server();
-        server.getKryo().register(RequestToClient.class);
-        server.getKryo().register(MoveResponse.class);
-        server.getKryo().register(PlayerMoved.class);
-        server.getKryo().register(Hand.class);
-        server.getKryo().register(Card.class);
-        server.getKryo().register(ArrayList.class);
+        registerClasses(server.getKryo());
         server.bind(networkSettings.getTcpPort(), networkSettings.getUdpPort());
         server.start();
         gameServerListener = new GameServerListener(numPlayers);
         server.addListener(gameServerListener);
+    }
+
+    private void registerClasses(Kryo kryo) {
+        kryo.register(RequestToClient.class);
+        kryo.register(MoveResponse.class);
+        kryo.register(PlayerMoved.class);
+        kryo.register(Hand.class);
+        kryo.register(Card.class);
+        kryo.register(ArrayList.class);
     }
 
     /**
@@ -53,12 +57,7 @@ public class Network {
      */
     public void startClient() throws IOException {
         client = new Client();
-        client.getKryo().register(RequestToClient.class);
-        client.getKryo().register(MoveResponse.class);
-        client.getKryo().register(PlayerMoved.class);
-        client.getKryo().register(Hand.class);
-        client.getKryo().register(Card.class);
-        client.getKryo().register(ArrayList.class);
+        registerClasses(client.getKryo());
         client.start();
         client.connect(5000, networkSettings.getIp(), networkSettings.getTcpPort(), networkSettings.getUdpPort());
         gameClientListener = new GameClientListener();

@@ -6,7 +6,7 @@ import inf112.skeleton.app.net.NetworkSettings;
 
 import java.util.HashMap;
 
-public class Main {
+public class Main2 {
     public static void main(String[] args) {
         HashMap<String, String> setupData = GameSetup.setup(); //Set up all game settings
         NetworkSettings settings = new NetworkSettings(setupData.get("state"), setupData.get("ip"), Integer.parseInt(setupData.get("tcp")), Integer.parseInt(setupData.get("udp")));
