@@ -1,5 +1,4 @@
-# Oblig 2 
-## 5H
+# Oblig 2 Gruppe 5H
 
 ## Deloppgave 1
 
@@ -36,24 +35,23 @@ og dermed arbeidsfordeling.
 
 ---
 ## Deloppgave 2
+### Brukerhistorier
 
-#### Brukerhistorier
+#### [6] Spille fra flere maskiner (vise brikker for alle spillere, flytte brikker for alle spillere): 
+**Brukerhistorie:** Som [spiller] har jeg lyst å spille online med mine venner.
 
-#### [6] Implement online play: 
-**Brukerhistorie** 
-Som [spiller] har jeg lyst å spille online med mine venner.
-**Akseptansekrav:** 
-Jeg kan se og interagere med samme brett som en annen via internett.
-**Arbeidsoppgaver** 
+**Akseptansekrav:** Jeg kan se og interagere med samme brett som en annen via internett.
+
+**Arbeidsoppgaver:** 
 - Sette opp Gdx.net
 - Kunne sende og motta HTTP requests
 - Bruke Gdx.net til å spille sammen to eller flere spillere på samme brett
 
 #### [7] Dele ut kort: 
-**Brukerhistorie** 
-Som [spiller] ønsker jeg å mota tilstrekkelig med kort, mens jeg fortsatt er i livet.
-**Akseptansekrav:** 
-Deltagende spillere mottar 9 kort (Implementasjon der dette avtar ettersom man mister liv er ikke med i MVP)
+**Brukerhistorie:** Som [spiller] ønsker jeg å mota tilstrekkelig med kort, mens jeg fortsatt er i livet.
+
+**Akseptansekrav:** Deltagende spillere mottar 9 kort (Implementasjon der dette avtar ettersom man mister liv er ikke med i MVP)
+
 **Arbeidsoppgaver** 
  - Card klasse som representerer ett kort
  - Deck klasse som inneholder alle kortene som trengs for RoboRally
@@ -63,10 +61,10 @@ Deltagende spillere mottar 9 kort (Implementasjon der dette avtar ettersom man m
     - Metode for å sende hånden fra serveren til klienten
 
 #### [8] Velge 5 kort: 
-**Brukerhistorie** 
-Som [spiller] ønsker jeg å kunne huke av fem kort blant de tildelte kortene mine.
-**Akseptansekrav:** 
-Tildelte kort vises frem for spilleren og spilleren står fritt til å velge fem kort blant de tildelte.
+**Brukerhistorie:** Som [spiller] ønsker jeg å kunne huke av fem kort blant de tildelte kortene mine.
+
+**Akseptansekrav:** Tildelte kort vises frem for spilleren og spilleren står fritt til å velge fem kort blant de tildelte.
+
 **Arbeidsoppgaver** 
 - La klienten motta kort fra Server ved å legge til i ClientListener
 - Metode for å registrere 5 kort fra tastaturet
@@ -74,18 +72,18 @@ Tildelte kort vises frem for spilleren og spilleren står fritt til å velge fem
 - Legge til I ServerListener slik at den kan motta hånden og bruke den.
 
 #### [9] Bevege robot ut fra valgte kort: 
-**Brukerhistorie** 
-Som [spiller] ønsker jeg at min robot etterligninger bevegelsene anvist av mine valgte kort denne runden.
-**Akseptansekrav:** 
-Roboten er i stand til å bevege seg etter angitte instrukser.
-**Arbeidsoppgaver** 
+**Brukerhistorie:** Som [spiller] ønsker jeg at min robot etterligninger bevegelsene anvist av mine valgte kort denne runden.
+
+**Akseptansekrav:** Roboten er i stand til å bevege seg etter angitte instrukser.
+
+**Arbeidsoppgaver:** 
 - Metode for å ta et kort og gjøre en bevegelse ut i fra kortet
 - Sørge for at prioriteten til kortene blir tatt med i vurdering av hvem som skal flytte først
 - Sørge for at bevegelser blir sendt mellom spillere slik at det oppdateres for alle brukere
 
 
 
-#### Forklar kort hvordan dere har prioritert oppgavene fremover - dvs, hvorfan har vi prioritert oppgavene denne uka. 
+#### Forklar kort hvordan dere har prioritert oppgavene fremover:
 Vår første prioritering denne innleveringen var å sette opp nettverksfunksjonen, til dette har vi brukt KryoNet. Vi gjorde dette først med å klare å sende klasser frem og tilbake mellom server og klient. Først brukte vi bare dette til å se om brikkene klarte å bevege seg med kommandoer fra klient, senere introduserte vi også at brettet blir oppdatert hos klienten etter flytt. Etter dette begynte vi på kort klassene og holder av kort (hånd og dekk), og passet på at disse ble skrevet på en måte som var kompatibelt med KryoNet. Imens kortene ble skrevet tok vi også og refaktorerte nettverksklassen slik at den var separat fra game. Etter at kort og nettverksrefaktorering var ferdig kunne vi begynne på å bevege seg basert på kort, og funksjoner for å velge kort. Dette ble gjort sist da det var avhengig av de forrige stegene.
 
 #### Bugs 
@@ -96,7 +94,28 @@ Vår første prioritering denne innleveringen var å sette opp nettverksfunksjon
 
 ---
 ## Deloppgave 3
-### Kode:
+
+#### Teknisk produktoppsett 
+Software som trengs:
+- Last ned java versjon 13 eller nyere (https://www.oracle.com/java/technologies/javasedownloads.html)
+- En IDE, eksempelvis IntelliJ (https://www.jetbrains.com/idea/download/#section=windows)
+Setup:
+- Klon prosjektet fra github / last ned .zip med nyeste tagged commit
+	
+For å kjøre koden:
+    1. Åpne prosjektet i IntelliJ (eller annen IDE), kjør Main.java.
+    2. Velg "server", antall spillere du ønsker i spillet, og porter. (hvis du velger 1 spiller så      avslutter spillet etter en runde, da du vinner)
+    3.1 Dersom du ønsker å spille med andre må porten du velger være port-forwardet i ruter instillingene dine,
+        da følger de andre samme steg som deg, men velger "client" i punkt 2. Du som server må finne ip-adressen din, eksempelvis på 
+        https://whatismyipaddress.com/. Client må skrive inn denne ip adressen (IPv4), så portene du valgte i steg 2.
+    3.2 Dersom du ønsker å spille aleine (for testing), kjør Main2, velg "client", velg "localhost" som ip, og samme porter du valgte i steg 2. 
+    4. Når antall spillere som er med i spillet er lik antall spillere du valgte når du satt opp "server" starter spillet,
+            og alle får tildelt en hånd. Denne blir for nå printet i konsollen. Du har bevegelse [prioritet]. Du velger disse ved å bruke 
+            tastene 1-9. Når 5 kort er valgt blir disse sendt til serveren, og du avventer resten av spillerene. Når alle har sendt bevegelser
+            skjer bevegelsene steg for steg for alle spillere. (KNOWN BUG: Desync, noen ganger skjer feile ting for Client, jobber med å fikse dette)
+ 
+For å bygge koden:
+- Kjør `mvn clean install`. (Testet til å funke på alle platformer, skal få build success)
 
 #### Bygging: 
 - Vi har alle windows som OS og bruker Travis for å sjekke om det bygger på Linux/Mac.
@@ -146,9 +165,6 @@ Vårt produkt oppfyller MVP.
 7. Vi kan dele ut kort (fra et fullstendig dekk som er likt det fra det fysiske spillet)
 8. En spiller får tildelt 9 kort og kan velge ut 5 av disse 
 9. Disse valgte kortene programmerer spillerens robot og dens bevegelser
-
-
-
 
 #### Kommentarer til kode og utførelse
 Vi har fortsatt ujevne commits. Dette er til dels pga. parprogrammering hvor en person commiter arbeidet, og i githubs oversikt er det da den personen som får credit.
