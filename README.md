@@ -14,7 +14,27 @@ Roboten kontrolleres via programkort som hver spiller velger ut for sin robot, o
 Man vinner ved å være den første til å besøke alle flaggene på brettet!
 
 ### Hvordan installere
-TBD
+Teknisk produktoppsett: 
+- Software som trengs:
+  - Last ned java versjon 13 eller nyere (https://www.oracle.com/java/technologies/javase-downloads.html)
+  - En IDE, eksempelvis IntelliJ (https://www.jetbrains.com/idea/download/#section=windows)
+- Setup:
+    - Klon prosjektet fra github / last ned .zip med nyeste tagged commit
+    - For å kjøre koden:
+        1. Åpne prosjektet i IntelliJ (eller annen IDE), kjør Main.java.
+        2. Velg "server", antall spillere du ønsker i spillet, og porter. (hvis du velger 1 spiller så avslutter spillet etter en runde, da du vinner)
+        3. Du kan enten spille alene eller med andre via nettverk.
+           - Dersom du ønsker å spille med andre må porten du velger være port-forwardet i ruter instillingene dine,
+             da følger de andre samme steg som deg, men velger "client" i punkt 2. Du som server må finne ip-adressen din, eksempelvis på 
+             https://whatismyipaddress.com/. Client må skrive inn denne ip adressen (IPv4), så portene du valgte i steg 2.
+           - Dersom du ønsker å spille aleine (for testing), kjør Main2, velg "client", velg "localhost" som ip, og samme porter du valgte i steg 2. 
+        4.  Når antall spillere som er med i spillet er lik antall spillere du valgte når du satt opp "server" starter spillet,
+            og alle får tildelt en hånd. Denne blir for nå printet i konsollen. Du har bevegelse [prioritet]. Du velger disse ved å bruke 
+            tastene 1-9. Når 5 kort er valgt blir disse sendt til serveren, og du avventer resten av spillerene. Når alle har sendt bevegelser
+            skjer bevegelsene steg for steg for alle spillere. (KNOWN BUG: Desync, noen ganger skjer feile ting for Client, jobber med å fikse dette)
+
+    - For å bygge koden:
+      - Kjør mvn clean install. (Testet til å funke på alle platformer, skal få build success)
 
 ### Starte ett spill
 1. Kjør spillet
