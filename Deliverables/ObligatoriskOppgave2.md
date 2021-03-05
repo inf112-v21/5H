@@ -1,7 +1,7 @@
 # Oblig 2 
 ## 5H
 
-##Deloppgave 1
+## Deloppgave 1
 
 #### Roller i teamet:
 Vi har alle utført rollene vi har i Teamet, så langt har det gått bra og vi planlegger ikke noen bytter.
@@ -36,15 +36,63 @@ og dermed arbeidsfordeling.
 
 ---
 ## Deloppgave 2
-### Krav
 
 #### Brukerhistorier
 
-#### Akseptansekrav
+#### [6] Implement online play: 
+**Brukerhistorie** 
+Som [spiller] har jeg lyst å spille online med mine venner.
+**Akseptansekrav:** 
+Jeg kan se og interagere med samme brett som en annen via internett.
+**Arbeidsoppgaver** 
+- Sette opp Gdx.net
+- Kunne sende og motta HTTP requests
+- Bruke Gdx.net til å spille sammen to eller flere spillere på samme brett
 
-#### Arbeidsoppgaver
+#### [7] Dele ut kort: 
+**Brukerhistorie** 
+Som [spiller] ønsker jeg å mota tilstrekkelig med kort, mens jeg fortsatt er i livet.
+**Akseptansekrav:** 
+Deltagende spillere mottar 9 kort (Implementasjon der dette avtar ettersom man mister liv er ikke med i MVP)
+**Arbeidsoppgaver** 
+ - Card klasse som representerer ett kort
+ - Deck klasse som inneholder alle kortene som trengs for RoboRally
+ - Deale en hånd til spiller
+    - Lage en Hand klasse som holder kortene
+    - Legge til tilfeldige kort fra Deck til Hand
+    - Metode for å sende hånden fra serveren til klienten
+
+#### [8] Velge 5 kort: 
+**Brukerhistorie** 
+Som [spiller] ønsker jeg å kunne huke av fem kort blant de tildelte kortene mine.
+**Akseptansekrav:** 
+Tildelte kort vises frem for spilleren og spilleren står fritt til å velge fem kort blant de tildelte.
+**Arbeidsoppgaver** 
+- La klienten motta kort fra Server ved å legge til i ClientListener
+- Metode for å registrere 5 kort fra tastaturet
+- Velge ut kortene til en ny hånd og sende dem tilbake
+- Legge til I ServerListener slik at den kan motta hånden og bruke den.
+
+#### [9] Bevege robot ut fra valgte kort: 
+**Brukerhistorie** 
+Som [spiller] ønsker jeg at min robot etterligninger bevegelsene anvist av mine valgte kort denne runden.
+**Akseptansekrav:** 
+Roboten er i stand til å bevege seg etter angitte instrukser.
+**Arbeidsoppgaver** 
+- Metode for å ta et kort og gjøre en bevegelse ut i fra kortet
+- Sørge for at prioriteten til kortene blir tatt med i vurdering av hvem som skal flytte først
+- Sørge for at bevegelser blir sendt mellom spillere slik at det oppdateres for alle brukere
+
+
 
 #### Forklar kort hvordan dere har prioritert oppgavene fremover - dvs, hvorfan har vi prioritert oppgavene denne uka. 
+Vår første prioritering denne innleveringen var å sette opp nettverksfunksjonen, til dette har vi brukt KryoNet. Vi gjorde dette først med å klare å sende klasser frem og tilbake mellom server og klient. Først brukte vi bare dette til å se om brikkene klarte å bevege seg med kommandoer fra klient, senere introduserte vi også at brettet blir oppdatert hos klienten etter flytt. Etter dette begynte vi på kort klassene og holder av kort (hånd og dekk), og passet på at disse ble skrevet på en måte som var kompatibelt med KryoNet. Imens kortene ble skrevet tok vi også og refaktorerte nettverksklassen slik at den var separat fra game. Etter at kort og nettverksrefaktorering var ferdig kunne vi begynne på å bevege seg basert på kort, og funksjoner for å velge kort. Dette ble gjort sist da det var avhengig av de forrige stegene.
+
+#### Bugs 
+- Issue #40
+- Issue #43 
+
+
 
 ---
 ## Deloppgave 3
@@ -54,7 +102,7 @@ og dermed arbeidsfordeling.
 - Vi har alle windows som OS og bruker Travis for å sjekke om det bygger på Linux/Mac.
 
 #### Klassediagram:
-
+- se egen mappe 
 
 #### Tester
 **Automatiske tester:**
@@ -64,7 +112,7 @@ og dermed arbeidsfordeling.
 
 *@BeforeEach*
 - Setup:
-    - Start the game (check the how-to-play guide)
+    - Start the game (se teknisk produkt oppsett for instrukser)  
 
 *MoveForwardTest:*
 - Select the move card. The player Sprite should then move forward.
