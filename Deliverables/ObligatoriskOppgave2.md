@@ -10,7 +10,7 @@ Likevel vi bør prøve å ha viktige spørsmål klar på forhånd og fremstille 
 slik at han kan sende spørsmålene videre til de relevante personer på forhånd. På denne måten
 kan vi få gode og forberedte/ svar fra lab-leder/foreleser.
 
-#### Kommunikasjon:
+#### Kommunikasjon og gruppedynamikk:
 Noen snakker mye, andre lite. Vi må ta ansvar for å la alle komme til ordet, og at de som ikke bidrar
 mye muntlig må prøve å bidra mer. Dette må begge "sider" prøve å forbedre oss på.
 
@@ -55,11 +55,32 @@ og dermed arbeidsfordeling.
 
 
 #### Tester
-Automatiske tester:
+**Automatiske tester:**
 - g
 
-Manuelle tester:
-- g
+**Manuelle tester:**
+
+*@BeforeEach*
+- Setup:
+    - Start the game (check the how-to-play guide)
+
+*MoveForwardTest:*
+- Select the move card. The player Sprite should then move forward.
+
+*RotateClockwiseTest*:
+- Select a clockwise rotation card. The player Sprite should then rotate 90 degrees clockwise.
+
+*RotateCounterClockwiseTest*:
+- Select a clockwise rotation card. The player Sprite should then rotate 90 degrees counterclockwise.
+
+*OutOfBoundsTest*
+- Select cards so that the player goes out of bounds. The HP should then go down 1. (Check output in console)
+
+*HoleTest*
+- Select cards so that the player goes in a hole. The HP should then go down 1. (Check output in console)
+
+*FlagTest*
+- Select cards so that the player goes on all the 3 flags. The player should then win (Order does not matter yet)
 
 #### MVP:
 Vårt produkt oppfyller MVP.
