@@ -121,7 +121,14 @@ For å bygge koden:
 - Vi har alle windows som OS og bruker Travis for å sjekke om det bygger på Linux/Mac.
 
 #### Klassediagram:
-- se egen mappe 
+Vi har generert klassedigram med Object Aid Explorer. Dette er en Eclipse Plugin som finnes her: https://marketplace.eclipse.org/content/objectaid-uml-explorer. 
+ObjectAid generer ønsket klassediagram for valgte klasser, viser frem innhavende metodene og feltvariabler. Det kan også vise fram dependencies som vi også har gjort, dette vises frem med piler. 
+
+De generert diagrammene benytter seg av samme symbolikk som UML digram gjør.
+- Grønne sirkler står for public
+- Rødefirkanter er private
+Selve boksene benytter seg også av vanlig UML syntax. 3 ledd. Navnet på klassen, et felt for variabler, tilsutt et felt for metodene. 
+
 
 #### Tester
 **Automatiske tester:**
