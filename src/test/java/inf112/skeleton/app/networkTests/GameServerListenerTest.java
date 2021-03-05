@@ -96,8 +96,10 @@ public class GameServerListenerTest {
     }
 
     @Test
-    public void getConnectedPlayersTest(){
+    public void getConnectedPlayersTest() throws IOException{
         int size = gameServerListener.getConnectedPlayers();
+        if(size == 0)
+            clientNetwork.reconnectClient();
         assertEquals(1, size);
     }
 
