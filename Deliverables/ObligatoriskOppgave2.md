@@ -186,7 +186,7 @@ Vårt produkt oppfyller MVP.
 9. Disse valgte kortene programmerer spillerens robot og dens bevegelser
 
 #### Kommentarer til kode og utførelse
-Vi har fortsatt ujevne commits. Dette er til dels pga. parprogrammering hvor en person commiter arbeidet, og i githubs oversikt er det da den personen som får credit.
+Vi har fortsatt ujevne commits. Dette er til dels pga. parprogrammering hvor en person commiter arbeidet, og i githubs oversikt er det da den personen som får credit. (Noen har også commitet fra flere accounts, feks Emil har committet fra sep012 og emilhod og Jonas Fra jsva og Jonas Svåsand)
 Det er også litt forskjell i størrelse på commit til de forskjellige gruppemedlemmene noe som også påvirker antall commits.
 Det er fortsatt sånn at vi føler at main/game er ganske innfløkt og at derfor bare noen par har rørt filen. Vi prøver derfor å fordele andre oppgaver som omhandler
 klasser utenom game.java for at alle skal få kodet, men det har sålangt har behovet for dette bare vært cards packagen. Vi fant network packagen like vanskelig
