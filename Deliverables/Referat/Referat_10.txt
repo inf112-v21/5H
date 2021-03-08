@@ -1,0 +1,29 @@
+Møte 08.03.2021
+Digitalt via Discord
+Tilstede:
+  Skjalg Eide Hodneland
+  Emil Flatøy Hodneland
+  Jonas Svåsand
+  Håkon Mathias Hvidsten Høie
+  >>>Henrik Bie Kaarud
+  Hans Albert Biørn Terland
+
+Standup: ingen ting gjort siden forrige gang.
+
+Vi planlegger hva vi vil ha med i neste innlevering. Foreløpig liste:
+- Meny hvor man kan se kort og har en powerdown knapp., se skade
+	- For å få dette til må man endre hvordan sprites rendres mm.
+- Laser og skade.
+- Kollisjon mellom spillere
+Andre ting vi håper å få tid til:
+- Fikse brettet, vegger skal ikke ta opp plass, legge til litt flere typer med brett-felt (men ikke funksjonalitet for dem)
+- Kort utdeling og valg av kort tar hensyn til skade.
+- Fikse flagg
+- Power down knapp funksjonalitet
+
+
+Frem til fredag:
+
+Vi ønsker å bytte om på arbeidsfordelingen fra tidligere. Jonas, Skjalg og Emil har bidratt mest til kodebasen, 
+og skal nå fokusere mer på brukerhistorier/fremføring frem til fredag. De andre forbereder seg med å
+undersøke hvordan vi må gå frem med å forandringer for å kunne legge til en meny.
