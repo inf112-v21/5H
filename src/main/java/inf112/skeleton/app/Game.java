@@ -226,9 +226,7 @@ public class Game implements ApplicationListener {
             phase = Phase.MOVE;
         }
         else if(phase == Phase.MOVE){
-            if(playerMoves.getMoves().size() > 0){
-                doOnePlayerMove(); //Advances moves by one
-            }
+            doOnePlayerMove(); //Advances moves by one
         }
     }
 
@@ -568,6 +566,11 @@ public class Game implements ApplicationListener {
         if(alivePlayerList.size() == 1){ //If there is only one player left, the player wins.
             winner = alivePlayerList.get(0);
             phase = Phase.FINISHED;
+        }
+        else if(isServer){
+            if(playerMoves.getMoves().size() == 0){
+                phase = Phase.DEAL_CARDS;
+            }
         }
 
         //Pause between moves so the user can see whats happening.
