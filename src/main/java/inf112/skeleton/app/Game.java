@@ -22,7 +22,6 @@ import org.lwjgl.opengl.GL20;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 /**
  * Class for handling GUI and game setup/logic
  */
@@ -36,7 +35,7 @@ public class Game implements ApplicationListener {
     private ArrayList<Player> alivePlayerList;  //List of all players that are alive in the game
     private ArrayList<Flag> flagList;           //List of all flags on map (This will be used in the future to fix order for flag pickup)
     private Player winner;                      //The player that won the game
-    private final int numPlayers;                     //Amount of players expected
+    private int numPlayers;                     //Amount of players expected
     private final boolean isServer;             // If true you start a server, if false you start a client and try to connect to server
     private Phase phase;                        //Phase the game is in.
     private Hand hand;                          //The hand of this player
@@ -47,7 +46,7 @@ public class Game implements ApplicationListener {
     private final Network network;
     private GameServerListener gameServerListener;
     private boolean moveMessagePrinted = false; // Holds whether a moveMessage has been printed to console or not
-    private PlayerMoved playerMoved;
+    private PlayerMoves playerMoves;
     private ArrayList<Hand> allMoves; //All moves received by server from Client(s)
 
     //Map that holds Direction and the corresponding movement. I.e. north should move player x += 0, y += 1
@@ -178,6 +177,11 @@ public class Game implements ApplicationListener {
             }
             hasPrintedState = true;
             if(gameServerListener.getConnectedPlayers()+1 == numPlayers){
+                GameInfoTCP gi = new GameInfoTCP();
+                gi.setNumPlayers(numPlayers);
+                for(Connection connection : gameServerListener.getPlayers()){
+                    connection.sendTCP(gi);
+                }
                 phase = Phase.DEAL_CARDS;
                 System.out.println("Changed phase to Deal Cards");
             }
@@ -206,7 +210,7 @@ public class Game implements ApplicationListener {
         }
         else if(phase == Phase.WAIT_FOR_CLIENT_MOVE){
             if(gameServerListener.numReceivedMoves == gameServerListener.getConnectedPlayers()){
-                phase = Phase.MOVE;
+                phase = Phase.SEND_CARDS;
                 allMoves = gameServerListener.receivedMoves;
                 hasPrintedState = false;
             }
@@ -217,8 +221,14 @@ public class Game implements ApplicationListener {
                 }
             }
         }
+        else if (phase == Phase.SEND_CARDS){
+            sendListOfAllMoves();
+            phase = Phase.MOVE;
+        }
         else if(phase == Phase.MOVE){
-            doOnePlayerMove(); //Advances moves by one
+            if(playerMoves.getMoves().size() > 0){
+                doOnePlayerMove(); //Advances moves by one
+            }
         }
     }
 
@@ -233,6 +243,9 @@ public class Game implements ApplicationListener {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+        if(network.getGameClientListener().hasReceivedGameInfo()){
+            numPlayers = network.getGameClientListener().getGameInfo().getNumPlayers();
         }
         // Checks if this client has yet to submit moves
         if (network.getGameClientListener().hasReceivedHand()) {
@@ -272,14 +285,17 @@ public class Game implements ApplicationListener {
             }
         }
         if(phase == Phase.MOVE){
-            if(network.getGameClientListener().playerHasMoved()){ //If the client has been notified of another player's move
-                playerMoved = network.getGameClientListener().getPlayerMoved(); //Get the notification object
-                AbstractGameObject abstractGameObject = board.getObjectMap().get(playerMoved.getShortName()); //Get the object from notification string
-                if(abstractGameObject instanceof Player){ //If the object is a player
-                    Player playerThatHasMoved = (Player) abstractGameObject; //Cast to player
-                    move(playerThatHasMoved, spriteMap.get(playerMoved.getShortName()), playerMoved.getMove()); //Move player locally.
+            if(network.getGameClientListener().hasReceivedAllMoves()){ //If the client has been notified of another player's move
+                playerMoves = network.getGameClientListener().getAllPlayerMoves(); //Get the notification object
+                network.getGameClientListener().resetHasReceivedAllMoves(); //Reset the bool that says if you have received new moves.
+            }
+            else{
+                if(playerMoves == null){
+                    return;
                 }
-                network.getGameClientListener().resetPlayerHasMoved();
+                if(playerMoves.getMoves().size() > 0){ //If there are moves to do
+                    doOnePlayerMove(); //Do a move
+                }
             }
         }
     }
@@ -421,39 +437,55 @@ public class Game implements ApplicationListener {
     }
 
     /**
-     * Progresses the game 1 single move at a time, handles logic for selecting which player should move,
-     * and fetches the necessary information for the move() function to use.
+     * Progresses the game 1 single move at a time, and fetches the necessary information for the move() function to use.
      */
     private void doOnePlayerMove() {
-        //Loop through all the moves in this turn, and select the one with highest priority in position 0 to be the move to be executed.
-        Hand handToMove = allMoves.get(0);
-        for(Hand hand : allMoves){ //Loop through all moves
-            if(hand.getNumberOfCardsSelected() > handToMove.getNumberOfCardsSelected()){ //If the current hand has more cards than selected hand (so it is one move behind)
-                handToMove = hand; //Select the new hand.
-                continue;
-            }
-            if(hand.getNumberOfCardsSelected() == handToMove.getNumberOfCardsSelected()){ //If they are on equal amounts of cards
-                if(hand.getSelectedCards().size() > 0){
-                    if(hand.getFirstCard().getPriority() > handToMove.getFirstCard().getPriority()){ //If the new hand has higher priority on first card
-                        handToMove = hand; //Select the new hand.
+        Card card = playerMoves.getMoves().remove(0);    //Get the move Card
+        String move = card.getType();   //Get the move
+        String shortName = card.getShortName(); //Get name of player to move
+        Player player = (Player) board.getObjectMap().get(shortName); //Get Player
+        Sprite playerSprite = spriteMap.get(shortName); //Get player as Sprite
+        move(player, playerSprite, move);   //Move player
+    }
+
+    /**
+     * Sends a list of all moves ordered by when the move should be performed to clients so that
+     * they can update the board correctly.
+     * This change from sending each move to list of moves was made to prevent de-synchronization between moves.
+     */
+    private void sendListOfAllMoves(){
+        ArrayList<Card> listMoves = new ArrayList<>(); //A list to hold all moves.
+        while(allMoves.size() > 0){
+            //Loop through all the moves in this turn, and select the one with highest priority in position 0 to be the move to be executed.
+            Hand handToMove = allMoves.get(0); //Get an initial hand
+            for(Hand hand : allMoves){ //Loop through all moves
+                if(hand.getNumberOfCardsSelected() > handToMove.getNumberOfCardsSelected()){ //If the current hand has more cards than selected hand (so it is one move behind)
+                    handToMove = hand; //Select the new hand.
+                    continue;
+                }
+                if(hand.getNumberOfCardsSelected() == handToMove.getNumberOfCardsSelected()){ //If they are on equal amounts of cards
+                    if(hand.getSelectedCards().size() > 0){
+                        if(hand.getFirstCard().getPriority() > handToMove.getFirstCard().getPriority()){ //If the new hand has higher priority on first card
+                            handToMove = hand; //Select the new hand.
+                        }
                     }
                 }
             }
-        }
-        Card card = handToMove.getSelectedCards().remove(0);    //Get the move Card
-        String move = card.getType();   //Get the move
-        String shortName = handToMove.getPlayerShortName(); //Get name of player to move
-        //Create object to inform client(s) of moves.
-        playerMoved = new PlayerMoved();
-        playerMoved.setShortName(shortName);
-        playerMoved.setMove(move);
-        Player player = (Player) board.getObjectMap().get(shortName); //Get Player
-        Sprite playerSprite = spriteMap.get(shortName); //Get player as Sprite
-        move(player, playerSprite, move);   //Move player on server
+            Card card = handToMove.getSelectedCards().remove(0);    //Get the move Card
+            String shortName = handToMove.getPlayerShortName(); //Get name of player to move
+            card.setShortName(shortName);
+            listMoves.add(card);
 
-        //Move player on clients:
+            if(handToMove.getSelectedCards().size() == 0){
+                allMoves.remove(handToMove);
+            }
+        }
+        playerMoves = new PlayerMoves();
+        playerMoves.setMoves(listMoves);
+
+        //Send moves to all clients:
         for(Connection connection : gameServerListener.getPlayers()){
-            connection.sendTCP(playerMoved);
+            connection.sendTCP(playerMoves);
         }
     }
 
@@ -525,38 +557,17 @@ public class Game implements ApplicationListener {
      * able to see the final position of the player. (There is probably a cleaner way to do this than sleep the thread.)
      */
     private void endTurn(){
-        if(isServer){ //Server related code:
-            boolean turnOver = true; //Signals that all queued moves are done
-            for(Hand hand : allMoves){
-                if(hand.getNumberOfCardsSelected() != 0){ //If there exists a move that is waiting, turn is not over.
-                    turnOver = false;
-                    break;
-                }
+        ArrayList<Player> toBeRemoved = new ArrayList<>(); //List of players that died this round
+        for(Player player : alivePlayerList){
+            if(player.isDead() || player.getPlayerNum() > numPlayers){    //If player died
+                toBeRemoved.add(player); //Add to list over dead players
+                System.out.println(player.getName() + " died!");
             }
-            if(turnOver){ //If turn is done, set phase to next phase.
-                phase = Phase.DEAL_CARDS;
-                gameServerListener.receivedMoves = new ArrayList<>();
-            }
-            ArrayList<Player> toBeRemoved = new ArrayList<>(); //List of players that died this round
-            for(Player player : alivePlayerList){
-                if(player.isDead() || player.getPlayerNum() > numPlayers){    //If player died
-                    toBeRemoved.add(player); //Add to list over dead players
-                    System.out.println(player.getName() + " died!");
-                }
-            }
-            alivePlayerList.removeAll(toBeRemoved); //Remove dead players from list of alive players
-            if(alivePlayerList.size() == 1){ //If there is only one player left, the player wins.
-                winner = alivePlayerList.get(0);
-                phase = Phase.FINISHED;
-            }
-
-
         }
-        else { //Client related code:
-            if(network.getGameClientListener().playerHasMoved()){ //Make sure you don't infinitely iterate over a single move
-                network.getGameClientListener().resetPlayerHasMoved();
-                return;
-            }
+        alivePlayerList.removeAll(toBeRemoved); //Remove dead players from list of alive players
+        if(alivePlayerList.size() == 1){ //If there is only one player left, the player wins.
+            winner = alivePlayerList.get(0);
+            phase = Phase.FINISHED;
         }
 
         //Pause between moves so the user can see whats happening.

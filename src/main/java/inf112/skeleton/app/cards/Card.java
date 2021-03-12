@@ -3,6 +3,7 @@ package inf112.skeleton.app.cards;
 public class Card {
 	private String type;
 	private int priority;
+	private String shortName;
 
 	public void create(String type, int priority){
 		this.type = type;
@@ -15,6 +16,13 @@ public class Card {
 
 	public int getPriority() {
 		return priority;
+	}
+
+	public void setShortName(String shortName) {
+		this.shortName = shortName;
+	}
+	public String getShortName() {
+		return shortName;
 	}
 
 	@Override

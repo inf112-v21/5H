@@ -28,7 +28,6 @@ public class GameServerListenerTest {
 
     @BeforeEach
     public void setUp() throws IOException {
-
         serverNetworkSettings = new NetworkSettings("server", "localhost", 3074, 3074);
         clientNetworkSettings = new NetworkSettings("client", "localhost", 3074, 3074);
         serverNetwork = new Network(serverNetworkSettings, numPlayers);
@@ -42,9 +41,7 @@ public class GameServerListenerTest {
     @AfterEach
     public void closeAllConnections() { //Closes all connections
         clientNetwork.getClient().close();
-
         serverNetwork.getServer().close();
-
     }
 
 

@@ -10,11 +10,14 @@ public class GameClientListener extends Listener {
 
     private boolean needMoveInput = false; // Keeps track of it a moveRequest has been received and no move sent for said request
 
-    private PlayerMoved playerMoved;
-    private boolean playerHasMoved;
+    private PlayerMoves playerMoves;
+    private boolean hasReceivedMoves;
 
     private Hand hand;
     private boolean handReceived;
+
+    private GameInfoTCP gameInfo;
+    private boolean hasReceivedGameInfo;
 
     /**
      * @param connection the connection to Server
@@ -31,13 +34,17 @@ public class GameClientListener extends Listener {
                 System.out.println("I should move");
             }
         }
-        if(receivedObject instanceof PlayerMoved){
-            playerMoved = (PlayerMoved) receivedObject;
-            playerHasMoved = true;
+        if(receivedObject instanceof PlayerMoves){
+            playerMoves = (PlayerMoves) receivedObject;
+            hasReceivedMoves = true;
         }
         if(receivedObject instanceof Hand){
             hand = (Hand) receivedObject;
             handReceived = true;
+        }
+        if(receivedObject instanceof GameInfoTCP){
+            gameInfo = (GameInfoTCP) receivedObject;
+            hasReceivedGameInfo = true;
         }
     }
 
@@ -51,26 +58,59 @@ public class GameClientListener extends Listener {
         return needMoveInput;
     }
 
-    public PlayerMoved getPlayerMoved() {
-        return playerMoved;
+    /**
+     * @return All the moves for a turn, in the form of a PlayerMoved object.
+     */
+    public PlayerMoves getAllPlayerMoves() {
+        return playerMoves;
     }
 
-    public boolean playerHasMoved() {
-        return playerHasMoved;
+    /**
+     * @return True if client has received all the moves for one turn, false otherwise
+     */
+    public boolean hasReceivedAllMoves() {
+        return hasReceivedMoves;
     }
 
-    public void resetPlayerHasMoved() {
-        playerHasMoved = false;
+    /**
+     * Set hasReceivedMoves to false
+     */
+    public void resetHasReceivedAllMoves() {
+        hasReceivedMoves = false;
     }
 
+    /**
+     * @return The hand the player has been dealt
+     */
     public Hand getHand(){
         return hand;
     }
-    public void resetHandReceived(){
-        handReceived = false;
-    }
+
+    /**
+     * @return True if player has received a new hand, false otherwise
+     */
     public boolean hasReceivedHand(){
         return handReceived;
     }
 
+    /**
+     * Resets handReceived to false
+     */
+    public void resetHandReceived(){
+        handReceived = false;
+    }
+
+    /**
+     * @return True if client has received game info.
+     */
+    public boolean hasReceivedGameInfo() {
+        return hasReceivedGameInfo;
+    }
+
+    /**
+     * @return the gameInfo object
+     */
+    public GameInfoTCP getGameInfo() {
+        return gameInfo;
+    }
 }

@@ -42,10 +42,11 @@ public class Network {
     private void registerClasses(Kryo kryo) {
         kryo.register(RequestToClient.class);
         kryo.register(MoveResponse.class);
-        kryo.register(PlayerMoved.class);
+        kryo.register(PlayerMoves.class);
         kryo.register(Hand.class);
         kryo.register(Card.class);
         kryo.register(ArrayList.class);
+        kryo.register(GameInfoTCP.class);
     }
 
     /**
