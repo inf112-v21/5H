@@ -1,0 +1,27 @@
+Møte 12.03.2021
+Digitalt via Discord
+Tilstede:
+  Skjalg Eide Hodneland
+  Emil Flatøy Hodneland
+  Jonas Svåsand
+  Håkon Mathias Hvidsten Høie
+  >>>Henrik Bie Kaarud
+  Hans Albert Biørn Terland
+
+
+
+Standup:
+
+Emil skrevet brukeristorie
+Jonas Laget og holdt presentasjon
+Hans sett på game klassen for forståelse.
+
+
+Vi bestemmer oss for at Håkon og Hans skal begynne å se på game klassen nå, og finne mer ut om hvordan
+vi kan legge til GUI elementer (f.eks. knapper eller kort vises på skjermen) til spillebrettet slik at dette kan vises
+sammen. Vi anntar løsningen ligger i viewports fra libgdx men er ikke helt sikker på dette.
+
+Jonas, Skjalg og Emil blir ansvarlig for å løse bugs som henger igjen fra før, f.eks. desync bug.
+Senere skal de lage hjelpemetoder for f.eks. spiller kollisjon og laser men vi avventer med å implementere dette.
+
+Henrik har ikke møtt opp, vi sender ham arbeidsoppgaver, det er meningen han skal jobbe med Håkon og Hans på GUI.
