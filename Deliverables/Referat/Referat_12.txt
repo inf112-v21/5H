@@ -1,0 +1,37 @@
+Møte 15.03.2021
+Digitalt via Discord
+Tilstede:
+  Skjalg Eide Hodneland
+  Emil Flatøy Hodneland
+  Jonas Svåsand
+  Håkon Mathias Hvidsten Høie
+  >>>Henrik Bie Kaarud
+  Hans Albert Biørn Terland
+
+
+
+Standup:
+
+Hadse og Håkon satte seg inn i game/libgdx
+
+Skjalg fikset desync problemet
+
+
+
+Todo:
+
+en metode for å sjekke om det står en spiller i et gitt felt - Skjalg
+
+en lager laser metode som looper over alle spillere og skyter lasere. - Emil
+
+Disse to skal bare lages foreløpig, plugges inn i logikken senere.
+
+Jonas lager tester for dette når det kan gjøres, lager userstories + legger til på project board.
+
+Jonas lager skisse for GUI.
+
+Håkon og Hans lager ett GUI til neste gang, trenger ikke være funksjonellt men bør være grafiske.
+
+
+
+
