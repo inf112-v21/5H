@@ -6,12 +6,15 @@ public class Laser extends AbstractGameObject{
     
     private Direction direction;
     private Pair coordinates;
+    private int number;
     
-    public Laser (String texturePath){
+    public Laser (int x, int y, String texturePath, int number){
         super(texturePath);
-        setName("Laser");
-        setShortName("l");
-
+        setName("Laser"+number);
+        setShortName("l"+number);
+        this.direction = Direction.WEST; //Testvvalue
+        this.number = number;
+        coordinates = new Pair(x,y);
     }
 
 
@@ -21,5 +24,14 @@ public class Laser extends AbstractGameObject{
 
     public void setDirection(Direction direction) {
         this.direction = direction;
+    }
+
+    @Override
+    public Pair getCoordinates() {
+        return coordinates;
+    }
+
+    public int getNumber() {
+        return number;
     }
 }
