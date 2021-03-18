@@ -575,7 +575,7 @@ public class Game implements ApplicationListener {
 
         //Pause between moves so the user can see whats happening.
         try {
-            Thread.sleep(500);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

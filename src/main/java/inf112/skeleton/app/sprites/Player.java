@@ -67,6 +67,12 @@ public class Player extends AbstractGameObject {
             die();
             return;
         }
+        else if(board.getPosition(updatedX, updatedY).getName().equals("Laser")){
+            setCoordinates(updatedX, updatedY);
+            resetTile(currentX, currentY);
+            die();
+            return;
+        }
         else if(board.getPosition(updatedX, updatedY).getName().equals("Wall")){
             System.out.println("Hit a wall.");
             return;
