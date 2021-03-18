@@ -182,6 +182,7 @@ public class Game implements ApplicationListener {
                 else if(object.getShortName().matches("p\\d+")){
                     Player player = (Player) object;
                     player.damage();
+                    System.out.println(player.getPc());
                     return;
                 }
                 currentPos = new Pair(currentPos.getX()+dir.getX(), currentPos.getY()+dir.getY());
@@ -449,8 +450,8 @@ public class Game implements ApplicationListener {
                 for(int i=0; i<2; i++){
                     playerSprite.rotate90(false);
                     playerObject.setDirection(getNewDirection(playerObject.getDirection(), false));
-                    endTurn();
                 }
+                endTurn();
                 break;
         }
         if(playerObject.getScore() >= 3){   //If win condition
