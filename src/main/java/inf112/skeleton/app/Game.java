@@ -580,6 +580,7 @@ public class Game implements ApplicationListener {
      * able to see the final position of the player. (There is probably a cleaner way to do this than sleep the thread.)
      */
     private void endTurn(){
+        fireLasers();
         ArrayList<Player> toBeRemoved = new ArrayList<>(); //List of players that died this round
         for(Player player : alivePlayerList){
             if(player.isDead() || player.getPlayerNum() > numPlayers){    //If player died
