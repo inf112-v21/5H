@@ -1,0 +1,24 @@
+Møte 19.03.2021
+Digitalt via Discord
+Tilstede
+  Skjalg Eide Hodneland
+  Emil Flatøy Hodneland
+  Jonas Svåsand
+  Håkon Mathias Hvidsten Høie
+  >>>>Henrik Bie Kaarud
+  Hans Albert Biørn Terland
+
+Standup:
+Hans+ Håkon - Sett mer på game klassen og forståelse av game. Begynt å se på hvordan man kan legge
+til skjermer / views i game slik at vi kan legge til meny etc.
+Emil - Lagt til litt på laser
+Skjalg - Skrevet collsion
+Jonas - Skrevet UserStories til laser/collision
+
+Arbeidsoppgaver: 
+Hans og Håkon fortsetter på meny/ GUI
+Emil fortsetter på Laser / ser på flagg.
+Skjalg ser på flagg.
+
+Jonas skriver testene for laser/kollisjon. Begynner å skrive innleveringen.
+
