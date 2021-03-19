@@ -30,7 +30,6 @@ public class Game implements ApplicationListener {
     public Board board;                         //The board being played
     private int boardSize;                      //The number of tiles on board, as of now the board is always 1:1, if we allow for other board this needs to be separated into two values
     private ArrayList<Player> alivePlayerList;  //List of all players that are alive in the game
-    private ArrayList<Flag> flagList;           //List of all flags on map (This will be used in the future to fix order for flag pickup)
     private ArrayList<Laser> laserList;         //List of all the laser roots on the map
     private Player winner;                      //The player that won the game
     private int numPlayers;                     //Amount of players expected
@@ -104,7 +103,6 @@ public class Game implements ApplicationListener {
         }
         alivePlayerList = new ArrayList<>();
         alivePlayerList.addAll(board.getPlayerList());
-        flagList = board.getFlagList();
         laserList = board.getLaserList();
         boardSize = board.getSize();
         hasPrintedHandInfo = false;
@@ -473,6 +471,29 @@ public class Game implements ApplicationListener {
     }
 
     /**
+     * Function for checking if a player collides with another player, moves the second
+     * @param player that is moving
+     * @return true if player should move/collide with something
+     */
+    private boolean collision(Player player){
+        Pair dir = dirMap.get(player.getDirection());
+        Pair playerPos = player.getCoordinates();
+        int newX = playerPos.getX()+dir.getX();
+        int newY = playerPos.getY()+dir.getY();
+        if(board.getPosition(newX, newY).getShortName().matches("p\\d+")){ //If there is a player where we are moving
+            Player playerToMove = (Player) board.getPosition(newX, newY); //Get the player
+            if(collision(playerToMove)){ //If the player also collides, handle that collision.
+                playerToMove.move(newX, newY);
+            }
+            else{
+                return false;
+            }
+        }
+        else return !board.getPosition(newX, newY).getShortName().matches("w"); //If player hits wall return false
+        return true;
+    }
+
+    /**
      * Sends a list of all moves ordered by when the move should be performed to clients so that
      * they can update the board correctly.
      * This change from sending each move to list of moves was made to prevent de-synchronization between moves.
@@ -536,8 +557,6 @@ public class Game implements ApplicationListener {
         }
     }
 
-
-
     /**
      * Function for rotating a player from one direction to another.
      * @param dir initial direction
@@ -586,6 +605,14 @@ public class Game implements ApplicationListener {
         for(Player player : alivePlayerList){
             if(player.isDead() || player.getPlayerNum() > numPlayers){    //If player died
                 toBeRemoved.add(player); //Add to list over dead players
+                int playerX = player.getCoordinates().getX();
+                int playerY = player.getCoordinates().getY();
+                if(board.getOriginalPosition(playerX, playerY).getShortName().equals(player.getShortName())){
+                    board.updateCoordinate("g", playerX, playerY);
+                }
+                else{
+                    board.updateCoordinate(board.getOriginalPosition(playerX, playerY).getShortName(), playerX, playerY);
+                }
                 System.out.println(player.getName() + " died!");
             }
         }

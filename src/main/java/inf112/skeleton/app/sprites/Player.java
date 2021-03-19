@@ -3,6 +3,8 @@ package inf112.skeleton.app.sprites;
 import inf112.skeleton.app.Board;
 import inf112.skeleton.app.Pair;
 
+import java.util.ArrayList;
+
 public class Player extends AbstractGameObject {
     private int points;
     private int hp;
@@ -12,6 +14,7 @@ public class Player extends AbstractGameObject {
     private boolean dead;
     private Direction dir;  //Facing direction
     private int playerNum; //The number for this player (1 for player1, 2 for player2...)
+    private ArrayList<String> visitedFlags; //List over flags (as shortname) that player has visited
 
 
 
@@ -32,6 +35,7 @@ public class Player extends AbstractGameObject {
         dead = false;
         savePoint = new Pair(x, y); //Initialize save point
         dir = Direction.NORTH; //Set direction on spawn
+        visitedFlags = new ArrayList<>();
         setPlayerNum(number);
     }
 
@@ -74,10 +78,11 @@ public class Player extends AbstractGameObject {
         else if(board.getPosition(updatedX, updatedY).getName().matches("Flag\\d+")){
             Flag flag = (Flag) board.getPosition(updatedX, updatedY);
             if(flag.pickUp(this)){
+                addScore(1);
                 System.out.println("+1 point, " + points + " total.");
             }
             else{
-                System.out.println("Flag already picked up!");
+                System.out.println("Flag already picked up! / Previous flag not picked up");
             }
         }
         setCoordinates(updatedX, updatedY);
@@ -207,5 +212,13 @@ public class Player extends AbstractGameObject {
     }
     public int getPlayerNum(){
         return playerNum;
+    }
+
+    public ArrayList<String> getVisitedFlags() {
+        return visitedFlags;
+    }
+
+    public void addFlag(String shortName){
+        visitedFlags.add(shortName);
     }
 }
