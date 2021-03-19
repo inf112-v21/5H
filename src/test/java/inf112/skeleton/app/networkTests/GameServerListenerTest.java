@@ -39,9 +39,10 @@ public class GameServerListenerTest {
     }
 
     @AfterEach
-    public void closeAllConnections() { //Closes all connections
+    public void closeAllConnections() throws InterruptedException { //Closes all connections
         clientNetwork.getClient().close();
         serverNetwork.getServer().close();
+        Thread.sleep(50);
     }
 
 

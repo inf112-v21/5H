@@ -13,10 +13,7 @@ import inf112.skeleton.app.cards.Card;
 import inf112.skeleton.app.cards.Deck;
 import inf112.skeleton.app.cards.Hand;
 import inf112.skeleton.app.net.*;
-import inf112.skeleton.app.sprites.AbstractGameObject;
-import inf112.skeleton.app.sprites.Direction;
-import inf112.skeleton.app.sprites.Flag;
-import inf112.skeleton.app.sprites.Player;
+import inf112.skeleton.app.sprites.*;
 import org.lwjgl.opengl.GL20;
 
 import java.io.IOException;
@@ -34,6 +31,7 @@ public class Game implements ApplicationListener {
     private int boardSize;                      //The number of tiles on board, as of now the board is always 1:1, if we allow for other board this needs to be separated into two values
     private ArrayList<Player> alivePlayerList;  //List of all players that are alive in the game
     private ArrayList<Flag> flagList;           //List of all flags on map (This will be used in the future to fix order for flag pickup)
+    private ArrayList<Laser> laserList;         //List of all the laser roots on the map
     private Player winner;                      //The player that won the game
     private int numPlayers;                     //Amount of players expected
     private final boolean isServer;             // If true you start a server, if false you start a client and try to connect to server
@@ -107,6 +105,7 @@ public class Game implements ApplicationListener {
         alivePlayerList = new ArrayList<>();
         alivePlayerList.addAll(board.getPlayerList());
         flagList = board.getFlagList();
+        laserList = board.getLaserList();
         boardSize = board.getSize();
         hasPrintedHandInfo = false;
     }
@@ -163,6 +162,33 @@ public class Game implements ApplicationListener {
             }
         }
         batch.end();
+    }
+
+    private void fireLasers(){
+        for(Laser laser : laserList){
+            Pair dir = dirMap.get(laser.getDirection());
+            Pair currentPos = laser.getCoordinates();
+            while(true) {
+                if(currentPos.getX()+dir.getX() < 0 || currentPos.getX()+dir.getX() > boardSize){
+                    return;
+                }
+                else if(currentPos.getY()+dir.getY() < 0 || currentPos.getY()+dir.getY() > boardSize){
+                    return;
+                }
+                AbstractGameObject object = board.getPosition(currentPos.getX()+dir.getX(), currentPos.getY()+dir.getY());
+                if (object.getShortName().equals("w")){
+                    return;
+                }
+                else if(object.getShortName().matches("p\\d+")){
+                    Player player = (Player) object;
+                    player.damage();
+                    System.out.println(player.getPc());
+                    return;
+                }
+                currentPos = new Pair(currentPos.getX()+dir.getX(), currentPos.getY()+dir.getY());
+                //Add an else here for updating texture and adding a pause between
+            }
+        }
     }
 
 
@@ -424,8 +450,8 @@ public class Game implements ApplicationListener {
                 for(int i=0; i<2; i++){
                     playerSprite.rotate90(false);
                     playerObject.setDirection(getNewDirection(playerObject.getDirection(), false));
-                    endTurn();
                 }
+                endTurn();
                 break;
         }
         if(playerObject.getScore() >= 3){   //If win condition
@@ -555,6 +581,7 @@ public class Game implements ApplicationListener {
      * able to see the final position of the player. (There is probably a cleaner way to do this than sleep the thread.)
      */
     private void endTurn(){
+        fireLasers();
         ArrayList<Player> toBeRemoved = new ArrayList<>(); //List of players that died this round
         for(Player player : alivePlayerList){
             if(player.isDead() || player.getPlayerNum() > numPlayers){    //If player died
@@ -575,7 +602,7 @@ public class Game implements ApplicationListener {
 
         //Pause between moves so the user can see whats happening.
         try {
-            Thread.sleep(500);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

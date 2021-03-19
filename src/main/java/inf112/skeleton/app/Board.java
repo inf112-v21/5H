@@ -17,21 +17,26 @@ public class Board {
     private final HashMap<String, AbstractGameObject> objectMap;    //Map for getting the Game Object from a string, i.e. p1 => (Player) player1
     private int playerNum;
     private int flagNum;
+    private int laserNum;
     private final ArrayList<Player> playerList;
+    private final ArrayList<Laser> laserList;
     private final ArrayList<Flag> flagList;
 
     public Board(){
         //Only need one instance of each of these classes per map, rest of items initialized in readBoard()
         Ground ground = new Ground("src/main/resources/tex/ground.png");
         Hole hole = new Hole("src/main/resources/tex/hole.png");
+
         Wall wall = new Wall("src/main/resources/tex/wall.png");
         objectMap = new HashMap<>();
         objectMap.put("g", ground);
         objectMap.put("h", hole);
+
         objectMap.put("w", wall);
 
         playerList = new ArrayList<>(); //List of players
         flagList = new ArrayList<>(); //List of flags
+        laserList = new ArrayList<>(); //List of lasers
         boardInfo = new ArrayList<>(); //List of list of objects on board
         originalBoard = new ArrayList<>(); //List for saving the original state of the board.
     }
@@ -67,6 +72,14 @@ public class Board {
                         objectMap.put(items[i], flag);
                         flagList.add(flag);
                         lineSprites.add(flag);
+                    }
+                    else if(items[i].matches("l\\d+")) {
+                        laserNum += 1;
+                        int num = Integer.parseInt(items[i].substring(1));
+                        Laser laser = new Laser(k, i, "src/main/resources/tex/laser1.png", num);
+                        objectMap.put(items[i], laser);
+                        laserList.add(laser);
+                        lineSprites.add(laser);
                     }
                     else{
                         lineSprites.add(objectMap.get(items[i]));
@@ -148,5 +161,13 @@ public class Board {
     public ArrayList<Flag> getFlagList(){
         return flagList;
     }
+
+    /**
+     * @return list of flags
+     */
+    public ArrayList<Laser> getLaserList(){
+        return laserList;
+    }
+
 
 }
