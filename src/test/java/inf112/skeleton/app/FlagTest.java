@@ -17,7 +17,7 @@ public class FlagTest {
         board = new Board();
         board.readBoard(1);
         player = board.getPlayerList().get(0);
-        flag = board.getFlagList().get(0);
+        flag = board.getFlagList().get(2);
     }
 
     @Test
