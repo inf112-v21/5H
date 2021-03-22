@@ -163,25 +163,26 @@ public class Game implements ApplicationListener {
     }
 
     public void fireLasers(){
+        System.out.println(laserList);
         for(Laser laser : laserList){
             Pair dir = dirMap.get(laser.getDirection());
             Pair currentPos = laser.getCoordinates();
             while(true) {
                 if(currentPos.getX()+dir.getX() < 0 || currentPos.getX()+dir.getX() > boardSize){
-                    return;
+                    break;
                 }
                 else if(currentPos.getY()+dir.getY() < 0 || currentPos.getY()+dir.getY() > boardSize){
-                    return;
+                    break;
                 }
                 AbstractGameObject object = board.getPosition(currentPos.getX()+dir.getX(), currentPos.getY()+dir.getY());
                 if (object.getShortName().equals("w")){
-                    return;
+                    break;
                 }
                 else if(object.getShortName().matches("p\\d+")){
                     Player player = (Player) object;
                     player.damage();
                     System.out.println(player.getPc());
-                    return;
+                    break;
                 }
                 currentPos = new Pair(currentPos.getX()+dir.getX(), currentPos.getY()+dir.getY());
                 //Add an else here for updating texture and adding a pause between

@@ -1,17 +1,12 @@
 package inf112.skeleton.app;
 
-import com.badlogic.gdx.Net;
 import inf112.skeleton.app.net.NetworkSettings;
-import inf112.skeleton.app.sprites.Flag;
 import inf112.skeleton.app.sprites.Laser;
 import inf112.skeleton.app.sprites.Player;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,6 +17,7 @@ public class LaserTest {
     private Player player2;
     private int player2PcBefore;
     private Player player3;
+    private int player3PcBefore;
     private int player4PcBefore;
     private Player player4;
     private Game game;
@@ -87,15 +83,18 @@ public class LaserTest {
         assertEquals(player1PcBefore, player1.getPc(), "Player 1 took damage somehow when they shouldn't");
     }
     @Test
-    public void moreThanOneLaserFiresInOneMethodCall() {
+    public void wallPreventsDamage() {
         setUpBoard(103);
+        game.fireLasers();
+        assertEquals(player1PcBefore, player1.getPc(), "Player 1 took damage through the wall!");
+
+    }
+    @Test
+    public void moreThanOneLaserFiresInOneMethodCall() {
+        setUpBoard(104);
         game.fireLasers();
         assertEquals(player1PcBefore -1, player1.getPc(),"Laser 1 didn't fire"); //Note it will break here and you don't know if laser 2 fired
         assertEquals(player4PcBefore -1, player4.getPc(), "Laser 2 didn't fire");
-
-
-
-
-
     }
+
     }
