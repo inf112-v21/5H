@@ -485,6 +485,7 @@ public class Game implements ApplicationListener {
             Player playerToMove = (Player) board.getPosition(newX, newY); //Get the player
             if(collision(playerToMove)){ //If the player also collides, handle that collision.
                 playerToMove.move(newX, newY);
+                System.out.println("Moved " + playerToMove.getShortName());
             }
             else{
                 return false;
