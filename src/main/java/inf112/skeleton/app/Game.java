@@ -94,7 +94,7 @@ public class Game implements ApplicationListener {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         board = new Board();            //Initialize a board
-        board.readBoard(1);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
+        board.readBoard(101);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
 
         spriteMap = new HashMap<>();
         //For all game objects on map, add the identifying string and a corresponding sprite to spriteMap.
@@ -162,8 +162,10 @@ public class Game implements ApplicationListener {
         batch.end();
     }
 
-    private void fireLasers(){
+    public void fireLasers(){
+        System.out.println("Firing lasers");
         for(Laser laser : laserList){
+            System.out.println("Firing a laser");
             Pair dir = dirMap.get(laser.getDirection());
             Pair currentPos = laser.getCoordinates();
             while(true) {
@@ -648,4 +650,17 @@ public class Game implements ApplicationListener {
     public void dispose() {
         batch.dispose();
     }
+
+    public void setLaserList(ArrayList<Laser> laserList) {
+        this.laserList = laserList;
+    }
+
+    public void setAlivePlayerList(ArrayList<Player> alivePlayerList) {
+        this.alivePlayerList = alivePlayerList;
+    }
+
+    public ArrayList<Player> getAlivePlayerList() {
+        return alivePlayerList;
+    }
+
 }
