@@ -8,16 +8,20 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.esotericsoftware.kryonet.Connection;
 import inf112.skeleton.app.cards.Card;
 import inf112.skeleton.app.cards.Deck;
 import inf112.skeleton.app.cards.Hand;
-import inf112.skeleton.app.net.*;
+import inf112.skeleton.app.net.GameServerListener;
+import inf112.skeleton.app.net.Network;
+import inf112.skeleton.app.net.NetworkSettings;
+import inf112.skeleton.app.net.PlayerMoved;
 import inf112.skeleton.app.sprites.AbstractGameObject;
 import inf112.skeleton.app.sprites.Direction;
 import inf112.skeleton.app.sprites.Flag;
 import inf112.skeleton.app.sprites.Player;
-import org.lwjgl.opengl.GL20;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,6 +53,17 @@ public class Game implements ApplicationListener {
     private boolean moveMessagePrinted = false; // Holds whether a moveMessage has been printed to console or not
     private PlayerMoved playerMoved;
     private ArrayList<Hand> allMoves; //All moves received by server from Client(s)
+
+
+    //Viewport variables
+    private OrthographicCamera cameraCards;
+    private static final int NUM_VIEWPORTS = 3;
+    Texture textureTest;
+    private Viewport viewport;
+    private SpriteBatch spriteBatchCards;
+    private Sprite spriteCards;
+
+
 
     //Map that holds Direction and the corresponding movement. I.e. north should move player x += 0, y += 1
     private final HashMap<Direction, Pair> dirMap = new HashMap<>(){{
@@ -94,12 +109,34 @@ public class Game implements ApplicationListener {
 
     @Override
     public void create() {
-        batch = new SpriteBatch();
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch = new SpriteBatch();
+
+
+        //Viewport Stuff
+        cameraCards = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()/3);
+        viewport = new FitViewport(cameraCards.viewportWidth, cameraCards.viewportHeight,cameraCards);
+        viewport.setScreenBounds(Gdx.graphics.getWidth(),0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()/3);
+
+//        spriteBatchCards = new SpriteBatch();
+//        Stage stageCards = new Stage(viewport);
+//        // for å sentrere cameraet -> stageCards.getViewport().getCamera().position.setZero();
+//        spriteCards = new Sprite(new Texture("src/main/resources/cards/cards.jpg"));
+//
+
+
+        viewport.apply();
+
+//        batchCards = new SpriteBatch();
+        //float aspectRatio = (float)Gdx.graphics.getHeight() / (float)Gdx.graphics.getWidth();
+//        spriteCards.setSize(Gdx.graphics.getWidth(), (Gdx.graphics.getHeight()/3));
+//        //cameraCards.position.set((float)(Gdx.graphics.getWidth()/2), (float)(Gdx.graphics.getHeight()/2));
+//        cameraCards.translate(cameraCards.viewportHeight/2,cameraCards.viewportHeight/2);
+
+
 
         board = new Board();            //Initialize a board
         board.readBoard(1);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
-
         spriteMap = new HashMap<>();
         //For all game objects on map, add the identifying string and a corresponding sprite to spriteMap.
         for(AbstractGameObject ago : board.getObjectMap().values()){
@@ -111,16 +148,39 @@ public class Game implements ApplicationListener {
         boardSize = board.getSize();
         hasPrintedHandInfo = false;
     }
-
     @Override
-    public void resize(int i, int i1) {
+    public void resize(int width, int height) {
+        //viewport.update(width,height);
     }
+
 
     @Override
     public void render() {
         camera.update();
-        Gdx.gl.glClearColor(0,0,0,1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        cameraCards.update();
+
+        //spriteBatchCards.setProjectionMatrix(viewport.getCamera().combined);
+//        spriteBatchCards.begin();
+//        spriteCards.draw(spriteBatchCards);
+//        spriteBatchCards.end();
+
+
+
+
+        //spriteCards.draw(viewport);
+
+
+        //ViewportStuff try
+//        cameraCards.update();
+//        batchCards.begin();
+//        //batchCards.setProjectionMatrix(cameraCards.combined);
+//        spriteCards.draw(batchCards);
+//        batchCards.end();
+
+        //Gjøre Gameviduet om til en Viewport og plasserer den øverst til høyere
+        int viewportHeight = Gdx.graphics.getHeight()/3;
+        int viewportWidth = Gdx.graphics.getWidth()/ 6;
+        Gdx.gl.glViewport(0, viewportHeight, (viewportWidth*5), viewportHeight*2);
 
 
         if(isServer) { // If this is a server it runs the move logic.
