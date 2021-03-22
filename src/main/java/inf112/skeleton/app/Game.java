@@ -163,9 +163,7 @@ public class Game implements ApplicationListener {
     }
 
     public void fireLasers(){
-        System.out.println("Firing lasers");
         for(Laser laser : laserList){
-            System.out.println("Firing a laser");
             Pair dir = dirMap.get(laser.getDirection());
             Pair currentPos = laser.getCoordinates();
             while(true) {
@@ -661,6 +659,10 @@ public class Game implements ApplicationListener {
 
     public ArrayList<Player> getAlivePlayerList() {
         return alivePlayerList;
+    }
+
+    public void setBoardSize(int boardSize) {
+        this.boardSize = boardSize;
     }
 
 }
