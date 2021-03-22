@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class FlagTest {
-    private Board board;
     private Player player;
     private Flag firstFlag;
     private Flag secondFlag;
@@ -16,7 +15,7 @@ public class FlagTest {
 
     @BeforeEach
     public void setUp(){
-        board = new Board();
+        Board board = new Board();
         board.readBoard(1);
         player = board.getPlayerList().get(0);
         // There are always exactly three flags so accessing them with indexes should be fine, note they are in the wrong order in the list

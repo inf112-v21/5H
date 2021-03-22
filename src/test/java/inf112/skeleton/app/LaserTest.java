@@ -16,30 +16,29 @@ public class LaserTest {
     private int player1PcBefore;
     private Player player2;
     private int player2PcBefore;
-    private Player player3;
-    private int player3PcBefore;
+    //private Player player3;
+    //private int player3PcBefore;
     private int player4PcBefore;
     private Player player4;
     private Game game;
-    private NetworkSettings networkSettings;
-    private ArrayList<Laser> laserList;
     HashMap<Player, Integer> pcBefore;
 
 
     public void setUpBoard(int boardNum) {
-        networkSettings = new NetworkSettings("server", "localhost", 2, 2);
+        NetworkSettings networkSettings = new NetworkSettings("server", "localhost", 2, 2);
         game = new Game(networkSettings, 4);
         board = new Board();
         board.readBoard(boardNum);
         game.board = board;
         game.setBoardSize(board.getSize());
-        laserList = board.getLaserList();
+        ArrayList<Laser> laserList = board.getLaserList();
         game.setLaserList(laserList);
         player1 = board.getPlayerList().get(0);
         player1PcBefore = player1.getPc();
         player2 = board.getPlayerList().get(1);
         player2PcBefore = player2.getPc();
-        player3 = board.getPlayerList().get(2);
+        //player3 = board.getPlayerList().get(2);
+        //player3PcBefore = player3.getPc();
         player4 = board.getPlayerList().get(3);
         player4PcBefore = player4.getPc();
         pcBefore = makePlayerPcHashMap();
@@ -47,7 +46,7 @@ public class LaserTest {
     }
 
     public HashMap<Player, Integer> makePlayerPcHashMap() {
-        HashMap<Player, Integer> hashMap = new HashMap<Player, Integer>();
+        HashMap<Player, Integer> hashMap = new HashMap<>();
         for (Player player : board.getPlayerList()) {
             hashMap.put(player, player.getPc());
         }
