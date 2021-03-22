@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.esotericsoftware.kryonet.Connection;
@@ -62,6 +63,7 @@ public class Game implements ApplicationListener {
     private Viewport viewport;
     private SpriteBatch spriteBatchCards;
     private Sprite spriteCards;
+    private Stage stageCards;
 
 
 
@@ -113,17 +115,18 @@ public class Game implements ApplicationListener {
         batch = new SpriteBatch();
 
 
-        //Viewport Stuff
-        cameraCards = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()/3);
+        //Viewport for Cards - tar opp nederste delen av skjermen.
+        cameraCards = new OrthographicCamera(Gdx.graphics.getWidth(), (float)Gdx.graphics.getHeight()/3);
         viewport = new FitViewport(cameraCards.viewportWidth, cameraCards.viewportHeight,cameraCards);
         viewport.setScreenBounds(Gdx.graphics.getWidth(),0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()/3);
 
-//        spriteBatchCards = new SpriteBatch();
-//        Stage stageCards = new Stage(viewport);
-//        // for å sentrere cameraet -> stageCards.getViewport().getCamera().position.setZero();
-//        spriteCards = new Sprite(new Texture("src/main/resources/cards/cards.jpg"));
-//
+        // Prøver å displaye et bildet der.
+        spriteBatchCards = new SpriteBatch();
+        stageCards = new Stage(viewport,spriteBatchCards);
+        // for å sentrere cameraet -> stageCards.getViewport().getCamera().position.setZero();
 
+        spriteCards = new Sprite(new Texture("src/main/resources/cards/cards.jpg"));
+        //spriteBatchCards.draw(spriteCards);
 
         viewport.apply();
 
@@ -159,11 +162,13 @@ public class Game implements ApplicationListener {
         camera.update();
         cameraCards.update();
 
-        //spriteBatchCards.setProjectionMatrix(viewport.getCamera().combined);
+
+
 //        spriteBatchCards.begin();
-//        spriteCards.draw(spriteBatchCards);
+//        stageCards.draw();
 //        spriteBatchCards.end();
 
+        //spriteBatchCards.setProjectionMatrix(viewport.getCamera().combined);
 
 
 
