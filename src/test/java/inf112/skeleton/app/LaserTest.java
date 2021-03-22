@@ -1,11 +1,8 @@
 package inf112.skeleton.app;
 
 import inf112.skeleton.app.net.NetworkSettings;
-import inf112.skeleton.app.sprites.Laser;
 import inf112.skeleton.app.sprites.Player;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,8 +13,6 @@ public class LaserTest {
     private int player1PcBefore;
     private Player player2;
     private int player2PcBefore;
-    //private Player player3;
-    //private int player3PcBefore;
     private int player4PcBefore;
     private Player player4;
     private Game game;
@@ -31,14 +26,11 @@ public class LaserTest {
         board.readBoard(boardNum);
         game.board = board;
         game.setBoardSize(board.getSize());
-        ArrayList<Laser> laserList = board.getLaserList();
-        game.setLaserList(laserList);
+        game.setLaserList(board.getLaserList());
         player1 = board.getPlayerList().get(0);
         player1PcBefore = player1.getPc();
         player2 = board.getPlayerList().get(1);
         player2PcBefore = player2.getPc();
-        //player3 = board.getPlayerList().get(2);
-        //player3PcBefore = player3.getPc();
         player4 = board.getPlayerList().get(3);
         player4PcBefore = player4.getPc();
         pcBefore = makePlayerPcHashMap();

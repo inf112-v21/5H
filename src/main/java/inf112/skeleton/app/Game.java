@@ -94,7 +94,7 @@ public class Game implements ApplicationListener {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         board = new Board();            //Initialize a board
-        board.readBoard(103);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
+        board.readBoard(110);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
 
         spriteMap = new HashMap<>();
         //For all game objects on map, add the identifying string and a corresponding sprite to spriteMap.
@@ -476,7 +476,7 @@ public class Game implements ApplicationListener {
      * @param player that is moving
      * @return true if player should move/collide with something
      */
-    private boolean collision(Player player){
+    public boolean collision(Player player){
         Pair dir = dirMap.get(player.getDirection());
         Pair playerPos = player.getCoordinates();
         int newX = playerPos.getX()+dir.getX();
@@ -654,16 +654,11 @@ public class Game implements ApplicationListener {
         this.laserList = laserList;
     }
 
-    public void setAlivePlayerList(ArrayList<Player> alivePlayerList) {
-        this.alivePlayerList = alivePlayerList;
-    }
-
-    public ArrayList<Player> getAlivePlayerList() {
-        return alivePlayerList;
-    }
-
     public void setBoardSize(int boardSize) {
         this.boardSize = boardSize;
     }
 
+    public HashMap<Direction, Pair> getDirMap() {
+        return dirMap;
+    }
 }
