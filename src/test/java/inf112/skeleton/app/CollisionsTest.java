@@ -42,6 +42,7 @@ public class CollisionsTest {
     @Test
     public void player2PushesPlayer3() {
         setUpBoard(110);
+        // Find the direction the players should move / be pushed in
         Direction dir = player2.getDirection();
         Pair pair = dirMap.get(dir);
         //Retrieving a copy of Player 3s coordinates
@@ -70,16 +71,35 @@ public class CollisionsTest {
     @Test
     public void Player1CanPushPlayer2WhoPushesPlayer3() {
         setUpBoard(111);
+        // Will only check that the collision method moves player 2 into player 3s tile and player3 into the expected tile
+        Pair player2ExpectedCoordinate = player3.getCoordinates().getCopy();
+        Pair player3ExpectedCoordinate = player3.getCoordinates().getCopy();
+        Pair dir = dirMap.get(player1.getDirection());
+        player3ExpectedCoordinate.setX(player3ExpectedCoordinate.getX() + dir.getX());
+        player3ExpectedCoordinate.setY(player3ExpectedCoordinate.getY() + dir.getY());
+        assertTrue(game.collision(player1), "Collision not allowed"); // Check that the collision is allowed
+        assertEquals(player2ExpectedCoordinate, player2.getCoordinates(), "Player 2 not in expected tile");
+        assertEquals(player3ExpectedCoordinate, player3.getCoordinates(), "Player 3 not in expected tile");
     }
 
     @Test
-    public void Player1CanPushPlayer2OffTheBoardAndKillThem() {
+    public void Player1CanPushPlayer2OffTheBoardAndKillThem() { // Does not check if coordinates are changed as player2s position will reset to startposition after being killed.
         setUpBoard(112);
+        int player2StartHp = player2.getHp();
+        game.collision(player1);
+        assertEquals(player2StartHp -1, player2.getHp() ); // Check if player 2 lost a life
+
     }
 
     @Test
     public void Player3NotAllowedToPushPlayer4ThroughWall() {
         setUpBoard(112);
+        assertFalse(game.collision(player3));
+    }
+
+    @Test void Player1NotAllowedToPushPlayer2BecausePlayer3IsFacingWall() {
+        setUpBoard(113);
+        assertFalse(game.collision(player1));
     }
 
 }

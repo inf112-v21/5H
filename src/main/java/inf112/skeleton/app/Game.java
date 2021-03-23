@@ -94,7 +94,7 @@ public class Game implements ApplicationListener {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         board = new Board();            //Initialize a board
-        board.readBoard(110);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
+        board.readBoard(1);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
 
         spriteMap = new HashMap<>();
         //For all game objects on map, add the identifying string and a corresponding sprite to spriteMap.
@@ -509,7 +509,6 @@ public class Game implements ApplicationListener {
             if(collision(pushedPlayer, dir)){ //Check if pushedPlayer is allowed to move, and if he also collides handle that collision recursively
                 pushedPlayer.move(dir.getX(), dir.getY()); // Move the pushed player to correct tile
                 System.out.println("Moved " + pushedPlayer.getShortName());
-                System.out.println("(" + (newX + dir.getX()) + "," + (newY+dir.getY()) + ")");
             }
             else{ // If the pushed player can not move then this player is not allowed to either.
                 return false;
