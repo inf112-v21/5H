@@ -481,6 +481,9 @@ public class Game implements ApplicationListener {
         Pair playerPos = player.getCoordinates();
         int newX = playerPos.getX()+dir.getX();
         int newY = playerPos.getY()+dir.getY();
+        if ((newX > board.getSize()-1 || newX < 0) || (newY > board.getSize()-1 || newY < 0)) { //If moving out of the board
+            return true; //Return true as this is a legal move/push. Dying/reseting player is handled by Player.move
+        }
         if(board.getPosition(newX, newY).getShortName().matches("p\\d+")){ //If there is a player where we are moving
             Player playerToMove = (Player) board.getPosition(newX, newY); //Get the player
             if(collision(playerToMove)){ //If the player also collides, handle that collision.

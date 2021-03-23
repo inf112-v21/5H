@@ -63,9 +63,10 @@ public class CollisionsTest {
     }
 
     @Test
-    public void player4NotAllowedToMoveOffBoard() {
+    public void player4AllowedToMoveOffBoard() { //Collision should allow players to move off the board so that players can push off other players
         setUpBoard(110);
-        //assertFalse(game.collision(player4), "Player 4 was allowed to move off the board");
+        // Checks that collision return true when trying to move off the board
+        assertTrue(game.collision(player4), "Player 4 was not allowed to move off the board");
     }
 
     @Test
