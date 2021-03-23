@@ -44,18 +44,19 @@ public class CollisionsTest {
 
     @Test
     public void player2PushesPlayer3() {
-        setUpBoard(110);
+        setUpBoard(1100);
         Direction dir = player2.getDirection();
         Pair pair = dirMap.get(dir);
         //Retrieving a copy of Player 3s coordinates
         Pair player3StartCoordinates = player3.getCoordinates().getCopy();
+        System.out.println(player3StartCoordinates);
         Pair player3ExpectedCoordinate = player3.getCoordinates().getCopy();
-        assertTrue(game.collision(player2), "Player2 was not allowed to move");
+        assertTrue(game.collision(player2), "Player2 was not allowed to move"); //If this passes the method call should move player3
         Pair player3EndCoordinate = player3.getCoordinates();
         //Modifying the start coordinate to be what we expect
         player3ExpectedCoordinate.setX(player3ExpectedCoordinate.getX() + pair.getX()); //Using player 2s direction as it is player2 that decides where you are pushed.
         player3ExpectedCoordinate.setY(player3ExpectedCoordinate.getY() + pair.getY());
-        //assertEquals(player3ExpectedCoordinate, player3EndCoordinate, "Player 3 didn't move (where expected or at all)");
+        assertEquals(player3ExpectedCoordinate, player3EndCoordinate, "Player 3 didn't move (where expected or at all)");
         player2.move(pair.getX(), pair.getY()); // We can now move as the tile is unoccupied.
         Pair player2EndCoordinate = player2.getCoordinates();
         assertEquals(player3StartCoordinates, player2EndCoordinate, "Player 2 didn't move into player 3s tile");

@@ -88,4 +88,11 @@ public class LaserTest {
         assertEquals(player4PcBefore -1, player4.getPc(), "Laser 2 didn't fire");
     }
 
+    @Test
+    public void allFourLasersFireAndDamage() {
+        setUpBoard(105);
+        game.fireLasers();
+        assertEquals(player1PcBefore -4, player1.getPc());
+    }
+
     }
