@@ -34,17 +34,14 @@ public class CollisionsTest {
     }
 
     @Test
-    public void player1StoppedByWall() { //Note this tests that the collision method stops wallcollision, a regular move handles this as well.
+    public void player1StoppedByWall() { //Note this tests that the collision method stops wall collision, a regular move handles this as well.
         setUpBoard(110);
-        //Direction dir = player1.getDirection();
-        //Pair pair = dirMap.get(dir);
-        //player1.move(pair.getX(), pair.getY());
         assertFalse(game.collision(player1));
     }
 
     @Test
     public void player2PushesPlayer3() {
-        setUpBoard(1100);
+        setUpBoard(110);
         Direction dir = player2.getDirection();
         Pair pair = dirMap.get(dir);
         //Retrieving a copy of Player 3s coordinates

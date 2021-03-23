@@ -58,17 +58,20 @@ public class Player extends AbstractGameObject {
         if(updatedX > board.getSize()-1 || updatedX < 0){
             resetTile(currentX, currentY);
             die();
+            System.out.println("X out of bounds");
             return;
         }
         else if(updatedY > board.getSize()-1 || updatedY < 0){
             resetTile(currentX, currentY);
             die();
+            System.out.println("Y out of bounds");
             return;
         }
         else if(board.getPosition(updatedX, updatedY).getName().equals("Hole")){
             setCoordinates(updatedX, updatedY);
             resetTile(currentX, currentY);
             die();
+            System.out.println("Fell into hole");
             return;
         }
         else if(board.getPosition(updatedX, updatedY).getName().equals("Wall")){
