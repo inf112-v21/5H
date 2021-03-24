@@ -1,0 +1,22 @@
+Møte 22.03.2021
+Digitalt via Discord
+Tilstede
+  Skjalg Eide Hodneland
+  Emil Flatøy Hodneland
+  Jonas Svåsand
+  >>>>Håkon Mathias Hvidsten Høie
+  Hans Albert Biørn Terland
+
+Standup:
+Hans - Fått til å legge til viewports inn i game klassen.
+Emil - Prøvde å fikse testbuggen
+Skjalg - Fikset flagg.
+Jonas - Fikset og lagt til på flaggtester
+
+Arbeidsoppgaver: 
+
+Hans (+ Håkon) - fortsette med GUI og prøve å drawe inn noe i de nye viewportsene.
+Emil + Skjalg - Klassediagram (+ legge plan for å fikse vegg problemet)
+Jonas - Gjøre ferdig Laser/Kollisjon tester.
+
+
