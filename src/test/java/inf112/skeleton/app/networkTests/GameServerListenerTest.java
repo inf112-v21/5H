@@ -2,8 +2,8 @@ package inf112.skeleton.app.networkTests;
 
 import com.esotericsoftware.kryonet.Connection;
 import inf112.skeleton.app.net.*;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -17,17 +17,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class GameServerListenerTest {
 
-    GameServerListener gameServerListener;
-    Connection connection;
-    NetworkSettings serverNetworkSettings;
-    NetworkSettings clientNetworkSettings;
-    Network serverNetwork;
-    Network clientNetwork;
-    int numPlayers = 8;
+    static GameServerListener gameServerListener;
+    static Connection connection;
+    static NetworkSettings serverNetworkSettings;
+    static NetworkSettings clientNetworkSettings;
+    static Network serverNetwork;
+    static Network clientNetwork;
+    static int numPlayers = 8;
 
 
-    @BeforeEach
-    public void setUp() throws IOException {
+    @BeforeAll
+    static void setUp() throws IOException {
         serverNetworkSettings = new NetworkSettings("server", "localhost", 3074, 3074);
         clientNetworkSettings = new NetworkSettings("client", "localhost", 3074, 3074);
         serverNetwork = new Network(serverNetworkSettings, numPlayers);
@@ -38,8 +38,8 @@ public class GameServerListenerTest {
         connection = gameServerListener.getPlayer(0);
     }
 
-    @AfterEach
-    public void closeAllConnections() throws InterruptedException { //Closes all connections
+    @AfterAll
+    static void closeAllConnections() throws InterruptedException { //Closes all connections
         clientNetwork.getClient().close();
         serverNetwork.getServer().close();
         Thread.sleep(50);
