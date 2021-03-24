@@ -110,6 +110,7 @@ public class Game implements ApplicationListener {
 
     @Override
     public void resize(int i, int i1) {
+
     }
 
     @Override
@@ -117,6 +118,27 @@ public class Game implements ApplicationListener {
         camera.update();
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+
+
+        /* Gjør Gamevinduet om til en viewport, plasserer den øverst til venstre
+        * ViewportHeight - tar i bruk 2/3 av høyden
+        * ViewportWidth - tar i bruk 5/6 av bredden.
+        *
+        * Når man har delt opp slik ser ikke gameviduet så bra ut i fullscreen 16:9
+        *
+        * Videre: Bruk opp plassen nederst.
+        * Det vi trenger da er basically en HUD.
+        * how to make a HUD:
+        * https://gamedev.stackexchange.com/questions/31379/how-do-i-make-an-on-screen-hud-in-libgdx
+        *
+        *  ??? https://stackoverflow.com/questions/22357674/libgdx-stage2d-with-another-camera-for-hud-how-to-handle-the-coordinates ???
+        *
+         */
+        int viewportHeight = Gdx.graphics.getHeight()/3;
+        int viewportWidth = Gdx.graphics.getWidth()/ 6;
+        Gdx.gl.glViewport(0, viewportHeight, (viewportWidth*5), viewportHeight*2);
+
 
 
         if(isServer) { // If this is a server it runs the move logic.
