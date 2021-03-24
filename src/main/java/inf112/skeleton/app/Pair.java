@@ -1,5 +1,7 @@
 package inf112.skeleton.app;
 
+import java.util.Objects;
+
 public class Pair {
     private int x;
     private int y;
@@ -33,5 +35,23 @@ public class Pair {
                 x +
                 "," + y +
                 ')';
+    }
+
+
+    public Pair getCopy() {
+        return new Pair(this.x, this.y);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pair pair = (Pair) o;
+        return getX() == pair.getX() && getY() == pair.getY();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getX(), getY());
     }
 }

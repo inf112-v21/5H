@@ -162,26 +162,27 @@ public class Game implements ApplicationListener {
         batch.end();
     }
 
-    private void fireLasers(){
+    public void fireLasers(){
+        System.out.println(laserList);
         for(Laser laser : laserList){
             Pair dir = dirMap.get(laser.getDirection());
             Pair currentPos = laser.getCoordinates();
             while(true) {
                 if(currentPos.getX()+dir.getX() < 0 || currentPos.getX()+dir.getX() > boardSize){
-                    return;
+                    break;
                 }
                 else if(currentPos.getY()+dir.getY() < 0 || currentPos.getY()+dir.getY() > boardSize){
-                    return;
+                    break;
                 }
                 AbstractGameObject object = board.getPosition(currentPos.getX()+dir.getX(), currentPos.getY()+dir.getY());
                 if (object.getShortName().equals("w")){
-                    return;
+                    break;
                 }
                 else if(object.getShortName().matches("p\\d+")){
                     Player player = (Player) object;
                     player.damage();
                     System.out.println(player.getPc());
-                    return;
+                    break;
                 }
                 currentPos = new Pair(currentPos.getX()+dir.getX(), currentPos.getY()+dir.getY());
                 //Add an else here for updating texture and adding a pause between
@@ -475,24 +476,47 @@ public class Game implements ApplicationListener {
      * @param player that is moving
      * @return true if player should move/collide with something
      */
-    private boolean collision(Player player){
+    public boolean collision(Player player){
         Pair dir = dirMap.get(player.getDirection());
         Pair playerPos = player.getCoordinates();
         int newX = playerPos.getX()+dir.getX();
         int newY = playerPos.getY()+dir.getY();
+        if ((newX > board.getSize()-1 || newX < 0) || (newY > board.getSize()-1 || newY < 0)) { //If moving out of the board
+            return true; //Return true as this is a legal move/push. Dying/resetting player is handled by Player.move
+        }
         if(board.getPosition(newX, newY).getShortName().matches("p\\d+")){ //If there is a player where we are moving
-            Player playerToMove = (Player) board.getPosition(newX, newY); //Get the player
-            if(collision(playerToMove)){ //If the player also collides, handle that collision.
-                playerToMove.move(newX, newY);
+            Player pushedPlayer = (Player) board.getPosition(newX, newY); //Get the player
+            if(collision(pushedPlayer, dir)){ //Check if pushedPlayer is allowed to move, and if he also collides handle that collision recursively
+                pushedPlayer.move(dir.getX(), dir.getY()); // Move the pushed player to correct tile
+                System.out.println("Moved " + pushedPlayer.getShortName());
             }
-            else{
+            else{ // If the pushed player can not move then this player is not allowed to either.
                 return false;
             }
         }
         else return !board.getPosition(newX, newY).getShortName().matches("w"); //If player hits wall return false
         return true;
     }
-
+    public boolean collision(Player player, Pair dir){ // Overload method for recursive calls where the direction is the same as the original player's
+        Pair playerPos = player.getCoordinates();
+        int newX = playerPos.getX()+dir.getX();
+        int newY = playerPos.getY()+dir.getY();
+        if ((newX > board.getSize()-1 || newX < 0) || (newY > board.getSize()-1 || newY < 0)) { //If moving out of the board
+            return true; //Return true as this is a legal move/push. Dying/resetting player is handled by Player.move
+        }
+        if(board.getPosition(newX, newY).getShortName().matches("p\\d+")){ //If there is a player where we are moving
+            Player pushedPlayer = (Player) board.getPosition(newX, newY); //Get the player
+            if(collision(pushedPlayer, dir)){ //Check if pushedPlayer is allowed to move, and if he also collides handle that collision recursively
+                pushedPlayer.move(dir.getX(), dir.getY()); // Move the pushed player to correct tile
+                System.out.println("Moved " + pushedPlayer.getShortName());
+            }
+            else{ // If the pushed player can not move then this player is not allowed to either.
+                return false;
+            }
+        }
+        else return !board.getPosition(newX, newY).getShortName().matches("w"); //If player hits wall return false
+        return true;
+    }
     /**
      * Sends a list of all moves ordered by when the move should be performed to clients so that
      * they can update the board correctly.
@@ -647,5 +671,17 @@ public class Game implements ApplicationListener {
     @Override
     public void dispose() {
         batch.dispose();
+    }
+
+    public void setLaserList(ArrayList<Laser> laserList) {
+        this.laserList = laserList;
+    }
+
+    public void setBoardSize(int boardSize) {
+        this.boardSize = boardSize;
+    }
+
+    public HashMap<Direction, Pair> getDirMap() {
+        return dirMap;
     }
 }

@@ -16,7 +16,6 @@ public class Flag extends AbstractGameObject {
         coordinates = new Pair(x, y);
         visitedBy = new LinkedList<>();
         this.number = number;
-        System.out.println(number);
     }
 
     /**
