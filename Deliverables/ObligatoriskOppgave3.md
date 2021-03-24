@@ -5,38 +5,104 @@
 ### Retrospektiv: 
 
 #### Roller i teamet:
-Vi har alle utført rollene vi har i Teamet, så langt har det gått bra og vi planlegger ikke noen bytter.
-Vi har ikke brukt kundekontakten vår godt nok men har heller ikke hatt så mange spørsmål så langt.
-Likevel vi bør prøve å ha viktige spørsmål klar på forhånd og fremstille de til kundekontakt, Henrik
-slik at han kan sende spørsmålene videre til de relevante personer på forhånd. På denne måten
-kan vi få gode og forberedte/ svar fra lab-leder/foreleser.
 
 #### Kommunikasjon og gruppedynamikk:
-- Alle har bidratt mer i diskusjoner o.l. 
+- Fra forrige gang har vi hatt en litt mer jevn deltagelse i noen diskusjoner, mens i andre er det fortsatt de samme som dominerer.
 
 #### Projekt Metodikk:
 - Vi føler at vi iløpet av oblig 2 fikk til Kanban prinsippene enda bedre enn før.
-Vi fortsetter med dette og å bruke kanban og prøve å bruke det enda bedre enn før. Vi fortsetter også med standup
+Vi fortsetter med dette og å bruke kanban og prøve å ytterligere forbedre kanban bruken vår. Vi fortsetter også med standup
   da vi føler det er en veldig hjelpsom metodikk for å ha gode gruppemøter.
 ##### Oppsumering av forbedringspunkter for denne oblig:
-- Alle committe til kodebasen
-- 
+- Forbedre kanban bruk ytterligere
+- La alle få prøve seg på game.java
 
 #### Metoder vi ønsker å ta i bruk:
-
-
-
 
 ---
 ## Deloppgave 2
 ### Brukerhistorier
 
+**GUI - Kort**
+
+*Brukerhistorie:* Som bruker ønsker jeg å kunne se oppdatert info om hvilke kort jeg får tildelt, og hvilke kort jeg har valgt, slik at jeg kan planlegge turen min.
+
+*Akseptansekrav:* Tilgjengelige og valgte kort vises i GUI.
+
+*Arbeidsoppgaver:*
+- Endre måten posisjon av Sprite kalkuleres i Game.java, se Issue#12 for detaljer.
+- Lage en funksjon som tar en hånd med kort og viser de tilgjengelige kortene i GUI, og de valgte kortene separat i GUI.
+- Sørge for at funksjonen for å rendere kortene blir kalt hver gang spilleren:
+    - Velger et kort
+    - Fjerner et valgt kort
+    - Mottar nye kort.
+- Kan kalle funksjonen i Game.render() for at dette skal bli oppdatert ved alle disse tilfellene, eller i de nødvendige funksjonene.
+
+**GUI - HUD**
+
+*Brukerhistorie:* Som bruker ønsker jeg å kunne ha oversikt over antall liv jeg har igjen i spillet, og mengden skade jeg har tatt, slik at jeg kan holde oversikt over hvordan jeg ligger an i spillet.
+
+*Akseptansekrav:* Liv og skade vises i GUI
+
+*Arbeidsoppgaver:*
+
+- Endre måten posisjon av Sprite kalkuleres i Game.java, se Issue#12 for detaljer.
+- Lage en funksjon i Game.java for å vise liv og skade i GUI (Kan være void og trenger ikke ta inn variabler)
+- Sørge for at funksjonen viser Player.getHp() som total mengde liv
+- Sørge for at funksjonen viser mengde skade, gjerne via Player.getPc() men må da ta forbehold om at denne teller nedover fra 9 til 0. Kan evt. endre hvordan PC counter i Player fungerer da denne ikke blir brukt enda.
+
+**Laser**
+
+*Brukeristorie*:
+Som en spiller ønsker jeg at roboten min skyter laser etter en runde slik at andre spillere sine roboter tar skade.
+
+*ArbeidsOppgaver:*
+Lage en metode i game som itererer over hver spiller og skyter laser ifra roboten. Laseren skal skytes i retningen roboten peker til den treffer en vegg, går utenfor brettet eller treffer en annen spiller. Laser gjør 1 skade på spillere.
+
+*Akseptansekrav:*
+Det er laget en metode som kan kalles etter hver runde, som vil skyte laseren til hver av spillerenes roboter og gjøre skade på roboter som treffes av laseren.
+
+**Kollisjon**
+
+*Brukerhistorie:*
+Som en spiller ønsker jeg at hvis en annen spiller står i veien for roboten min kan jeg skyve hans robot foran min (gitt at veien er klar), slik at jeg kan manipulere andre spilleres posisjon for min egen vinning.
+
+*ArbeidsOppgaver*:
+Lage en metode som sjekker om en annen robot står i veien for en robot som skal flyttes. Hvis det er tilfelle så skal den roboten returneres samt informasjon om den kan dyttes.
+*Akseptansekrav*:
+En metode som sjekker for kollisjon mellom en robot som flyttes og andre roboter. Må kunne plugges inn i Move-logikken på et senere tidspunkt
 
 
 
-#### Forklar kort hvordan dere har prioritert oppgavene fremover:
+
+### Forklar kort hvordan dere har prioritert oppgavene fremover:
 Vår prioritet denne innleveringen har vært å legge til GUI del til spillevinduet. 
 Utover dette har vi lagt til mindre funksjoner til spillet og fikset feil/bugs.
+Vi fokuserer på at noen alltid jobber med oppgaver i Hovedfokus. Hvis det ikke er flere oppgaver i hovedfokus 
+som kan tildeles, kan de som ikke har tildelte oppgaver jobbe med andre oppgaver.
+
+**Oppgaver i Hovedfokus:**
+- GUI
+    - Spillebrettet må ikke ta hele vinduet
+    - Vise kort man har fått tildelt
+    - Vise kort man har valgt
+    - Vise liv, skade og spiller-nummer
+- Fikse kritiske bugs
+    - Desynkronisering mellom spillebrett (både lokalt og over internett)
+    - Travis build errors
+    
+
+**Andre Oppgaver:**
+- Legge til metode som kan skyter laser
+- Fikse flagg til å ha bestemt rekkefølge de skal plukkes opp
+- Legge til metode som håndterer kollisjon
+- Tester for de funksjoner som legges til
+- GUI  
+    - Kunne klikke på kort for å velge dem istedenfor bruke tastatur
+    - Knapp for å sende kort
+
+
+
 #### Bugs
 Se readme / project board for bugs.
 
@@ -84,18 +150,29 @@ Klassediagramene er laget for de ulike pakkene: skeleton.app, skeleton.app.cards
 #### Tester
 **Automatiske tester:**
 
-De automatiske testene våre dekker store deler av kodebasen. Vi tester at Player fungerer korrekt og andre objekter knyttet til den.
-Vi tester også nettverksdelen, hvor vi tester at vi kan connecte klient til server, og sende klasser frem og tilbake mellom dem, og at dette
-blir korrekt registrert av Listeners. Det har vært noen problemer av og til når Travis kjører automatiske tester på nettverket,
-at connections ikke har blitt closed til tross for at vi closer connections i en @AfterEach metode i testene. Vi prøver å finne ut hvorfor dette skjer,
-men feilen har dukket opp rett før innlevering, og skjer bare av og til og ikke i IntelliJ så vi har problemer med å løse de. Hvis tester feiler, kan det være at de vil passere etter å bha blitt kjørt om igjen.
+De automatiske testene våre dekker store deler av kodebasen. For mer detaljert forklaring av hva de automatiske testene dekker, se ObligatoriskOppgave2.md . 
 
+Fra forrige gang har vi utvidet Flagtestene til å håndtere ny oppførsel og lagt til flere tester for Laser og Kollisjon.
+Flaggtestene tester nå at man må plukke opp flagg i korrekt rekkefølge dvs. flagg 1 først, så flagg 2 og flagg 3 til sist.
 
-Vi har også tester på kort, i at de blir lagd korrekt og kan leses. Vi tester også at dekket består av alle de kortene det skal
-ifølge reglene, og at prioritetene til de forskjellige kortene er unike. Vi har ikke lagd automatiske tester til noen deler
-som krever grafisk interaksjon og har dermed Manuelle tester på denne delen av kodebasen.
+Laser og Kollisjonstestene skiller seg litt ut fra de andre klassene da de benytter game klassen, dette skaper en del errors, men de kjører tross dette. 
+Vi ønsker å fikse dette ved en senere annledning hvis det lar seg gjøre.
+
+Disse to testene skiller seg også fra de andre da de er mer avhengige av brettene. Testene inneholder mindre kode i selve testene, 
+og er gjerne ganske like bortsett fra hvilket brett de benytter. Når det skal testes om en spiller kolliderer eller blir beskutt av laser,
+gjør vi dette ved å lage ett brett med disse situasjonene. Det er derfor laget flere testbrett som brukes utelukkende i testene for å teste oppsatte
+scenarioer. Testbrett har nummer >= 100. Det finnes også bilder av alle brett i deliverables/Brett folderen.
+
+F.eks. for testen Player1CanPushPlayer2WhoPushesPlayer3() er det satt opp et brett, Brett111 vist under, hvor disse tre spillerne står på rekke, 
+slik at player1 pusher de to andre når den prøver å bevege seg fremover (retning nord).
+![Brett111](Brett/Brett111.png)
+
 
 **Manuelle tester:**
+
+Det er laget noen manuelle tester for oppførsel vi ikke kan teste automatisk. Dette inngår f.eks.
+å se at det å velge et kort og så sende det etter å ha valgt 5 kort vil føre til at roboten oppfører seg slik
+kortvalgene tilsier.
 
 *@BeforeEach*
 - Setup:
@@ -120,8 +197,13 @@ som krever grafisk interaksjon og har dermed Manuelle tester på denne delen av 
 - Select cards so that the player goes on all the 3 flags. The player should then win (Order does not matter yet)
 
 #### Produktets funksjonalitet:
-Vårt produkt oppfyller MVP, fra forrige oblig.
-
-
+I forrige obligatoriske oppgave fullførte vi MVP.
+I denne innleveringen har vi lagt til følgende funksjonalitet:
+- GUI
+    - Vise kort i hånd
+    - Vise valgte kort
+    
+- Flagg oppførsel følger reglene
+- Laser og kollisjon (ikke implementert)
 
 #### Kommentarer til kode og utførelse
