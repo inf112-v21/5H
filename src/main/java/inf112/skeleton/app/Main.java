@@ -23,7 +23,7 @@ public class Main {
         //Application setup
         Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
         cfg.setTitle("RoboRally - " + settings.getState().toUpperCase());
-        cfg.setWindowedMode(900, 900);
+        cfg.setWindowedMode(1280, 720);
         cfg.setResizable(true);
         cfg.useVsync(true);
         cfg.setIdleFPS(60);

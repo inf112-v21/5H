@@ -12,7 +12,7 @@ public class NetworkSettings {
     private final int udpPort;
 
     public NetworkSettings(String state, String ip, int tcpPort, int udpPort){
-        this.state = state;
+        this.state = state.toLowerCase();
         this.ip = ip;
         this.tcpPort = tcpPort;
         this.udpPort = udpPort;

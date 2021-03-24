@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.esotericsoftware.kryonet.Connection;
 import inf112.skeleton.app.cards.Card;
 import inf112.skeleton.app.cards.Deck;
@@ -15,7 +16,6 @@ import inf112.skeleton.app.cards.Hand;
 import inf112.skeleton.app.net.*;
 import inf112.skeleton.app.sprites.*;
 import org.lwjgl.opengl.GL20;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +38,8 @@ public class Game implements ApplicationListener {
     private Hand hand;                          //The hand of this player
     private boolean hasPrintedHandInfo;          //true if player has been informed of the state of the hand and selected cards, false if changes has been made since last print.
     private boolean hasPrintedState;            //true if player has been informed of current state of game, false otherwise.
+    private FitViewport gameViewPort;
+    private FitViewport guiViewPort;
 
     //Network related variables:
     private final Network network;
@@ -92,6 +94,13 @@ public class Game implements ApplicationListener {
     public void create() {
         batch = new SpriteBatch();
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        System.out.println(Gdx.graphics.getWidth() + " : " + Gdx.graphics.getHeight());
+        gameViewPort = new FitViewport(camera.viewportWidth, camera.viewportHeight, camera);
+        gameViewPort.setScreenBounds(0, (Gdx.graphics.getHeight()/9)*3, (Gdx.graphics.getWidth()/16)*12, (Gdx.graphics.getHeight()));
+        System.out.println(gameViewPort.getScreenWidth() + " : " + gameViewPort.getScreenHeight());
+        guiViewPort = new FitViewport(camera.viewportWidth, camera.viewportHeight, camera);
+        guiViewPort.setScreenBounds(0, 0, (Gdx.graphics.getWidth()), (Gdx.graphics.getHeight()));
+        System.out.println(guiViewPort.getScreenWidth() + " : " + guiViewPort.getScreenHeight());
 
         board = new Board();            //Initialize a board
         board.readBoard(1);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
@@ -106,6 +115,7 @@ public class Game implements ApplicationListener {
         laserList = board.getLaserList();
         boardSize = board.getSize();
         hasPrintedHandInfo = false;
+
     }
 
     @Override
@@ -120,28 +130,6 @@ public class Game implements ApplicationListener {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 
-
-        /* Gjør Gamevinduet om til en viewport, plasserer den øverst til venstre
-        * ViewportHeight - tar i bruk 2/3 av høyden
-        * ViewportWidth - tar i bruk 5/6 av bredden.
-        *
-        * Når man har delt opp slik ser ikke gameviduet så bra ut i fullscreen 16:9
-        *
-        * Videre: Bruk opp plassen nederst.
-        * Det vi trenger da er basically en HUD.
-        * how to make a HUD:
-        * https://gamedev.stackexchange.com/questions/31379/how-do-i-make-an-on-screen-hud-in-libgdx
-        *
-        *  ??? https://stackoverflow.com/questions/22357674/libgdx-stage2d-with-another-camera-for-hud-how-to-handle-the-coordinates ???
-        *
-        * Viewports er ikke noe StandAlone.
-         */
-        int viewportHeight = Gdx.graphics.getHeight()/3;
-        int viewportWidth = Gdx.graphics.getWidth()/ 6;
-        Gdx.gl.glViewport(0, viewportHeight, (viewportWidth*5), viewportHeight*2);
-
-
-
         if(isServer) { // If this is a server it runs the move logic.
             serverRenderLogic();
         }
@@ -151,6 +139,18 @@ public class Game implements ApplicationListener {
 
         //The rendering part of the function:
         batch.begin();
+        if(phase == Phase.WAIT_CONNECT){
+            guiViewPort.apply();
+            Sprite guiSprite = new Sprite(new Texture("src/main/resources/tex/guitest.png"));
+            for(int x = 0; x < guiViewPort.getScreenWidth(); x++) {
+                for (int y = 0; y < guiViewPort.getScreenHeight(); y++) {
+                    renderSprite(guiSprite, x, y);
+                    guiSprite.draw(batch);
+                }
+            }
+            gameViewPort.apply();
+        }
+
         if(phase == Phase.FINISHED){ //If the game is over
             Sprite winnerSprite = spriteMap.get(winner.getShortName());
             winnerSprite.setSize(camera.viewportWidth, camera.viewportHeight);
@@ -170,14 +170,20 @@ public class Game implements ApplicationListener {
             for(int y = 0; y < boardSize; y++){
                 //Render ground under whole board
                 Sprite ground = spriteMap.get("g");
-                renderSprite(ground, x, y);
+                ground.setSize((gameViewPort.getScreenWidth()/boardSize), gameViewPort.getScreenHeight()/boardSize);
+                ground.setX(x*(gameViewPort.getScreenWidth()/boardSize));
+                ground.setY(y*(gameViewPort.getScreenHeight()/boardSize));
+                //renderSprite(ground, x, y);
                 ground.draw(batch);
 
                 //Render anything on top of ground
                 AbstractGameObject object = board.getPosition(x, y);
                 if(!object.getShortName().equals("g")){
                     Sprite sprite = spriteMap.get(object.getShortName());
-                    renderSprite(sprite, x , y);
+                    sprite.setSize((gameViewPort.getScreenWidth()/boardSize), gameViewPort.getScreenHeight()/boardSize);
+                    sprite.setX(x*(gameViewPort.getScreenWidth()/boardSize));
+                    sprite.setY(y*(gameViewPort.getScreenHeight()/boardSize));
+                    //renderSprite(sprite, x , y);
                     sprite.draw(batch);
                 }
             }
