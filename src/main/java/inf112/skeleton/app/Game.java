@@ -134,6 +134,7 @@ public class Game implements ApplicationListener {
         *
         *  ??? https://stackoverflow.com/questions/22357674/libgdx-stage2d-with-another-camera-for-hud-how-to-handle-the-coordinates ???
         *
+        * Viewports er ikke noe StandAlone.
          */
         int viewportHeight = Gdx.graphics.getHeight()/3;
         int viewportWidth = Gdx.graphics.getWidth()/ 6;
