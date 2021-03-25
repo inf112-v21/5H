@@ -15,7 +15,10 @@ import inf112.skeleton.app.cards.Card;
 import inf112.skeleton.app.cards.Deck;
 import inf112.skeleton.app.cards.Hand;
 import inf112.skeleton.app.net.*;
-import inf112.skeleton.app.sprites.*;
+import inf112.skeleton.app.sprites.AbstractGameObject;
+import inf112.skeleton.app.sprites.Direction;
+import inf112.skeleton.app.sprites.Laser;
+import inf112.skeleton.app.sprites.Player;
 import org.lwjgl.opengl.GL20;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -211,7 +214,7 @@ public class Game implements ApplicationListener {
             gameServerListener.resetReceivedMoves();
         }
         else if(phase == Phase.CARD_SELECT){ //If player should choose cards
-            if (!(hand.getNumberOfCardsSelected() == 5)) { //If the player has not registered enough cards.
+            if ((hand.getNumberOfCardsSelected() != 5)) { //If the player has not registered enough cards.
                 if(!hasPrintedHandInfo){
                     printCardInfo();
                     hasPrintedHandInfo = true;
@@ -385,7 +388,6 @@ public class Game implements ApplicationListener {
         if(hand == null) return;
         ArrayList<Card> allCards = hand.getAllCards();
         ArrayList<Card> selectedCards = hand.getSelectedCards();
-        int count = 0;
         font.getData().setScale(1); //Reset font size to 1
         for(Card c : allCards){ //Loop through all cards and print the ones not selected
             Sprite cSprite = spriteMap.get(c.getType()); //Get sprite for current card
@@ -405,7 +407,6 @@ public class Game implements ApplicationListener {
                 font.draw(batch, ""+ c.getPriority(), (701 + allOffsetX), (666 - allOffsetY));
                 font.setColor(Color.WHITE);
                 allOffsetX += 100;
-                count++;
             }
         }
         for(Card c : selectedCards){ //Loop through selected cards and draw them
@@ -628,12 +629,9 @@ public class Game implements ApplicationListener {
                     handToMove = hand; //Select the new hand.
                     continue;
                 }
-                if(hand.getNumberOfCardsSelected() == handToMove.getNumberOfCardsSelected()){ //If they are on equal amounts of cards
-                    if(hand.getSelectedCards().size() > 0){
-                        if(hand.getFirstCard().getPriority() > handToMove.getFirstCard().getPriority()){ //If the new hand has higher priority on first card
-                            handToMove = hand; //Select the new hand.
-                        }
-                    }
+                if(hand.getNumberOfCardsSelected() == handToMove.getNumberOfCardsSelected() && hand.getSelectedCards().size() > 0 && hand.getFirstCard().getPriority() > handToMove.getFirstCard().getPriority()){ //If they are on equal amounts of cards && If the new hand has higher priority on first card
+                    handToMove = hand; //Select the new hand.
+
                 }
             }
             Card card = handToMove.getSelectedCards().remove(0);    //Get the move Card

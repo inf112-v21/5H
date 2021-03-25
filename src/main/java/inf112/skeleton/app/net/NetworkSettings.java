@@ -1,7 +1,5 @@
 package inf112.skeleton.app.net;
 
-import java.util.Locale;
-
 /**
  * Class that holds all the settings for network:
  * IP

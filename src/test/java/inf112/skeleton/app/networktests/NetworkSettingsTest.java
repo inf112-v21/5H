@@ -1,4 +1,4 @@
-package inf112.skeleton.app.networkTests;
+package inf112.skeleton.app.networktests;
 
 import inf112.skeleton.app.net.NetworkSettings;
 import org.junit.jupiter.api.BeforeEach;

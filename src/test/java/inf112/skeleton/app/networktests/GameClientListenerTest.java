@@ -1,4 +1,4 @@
-package inf112.skeleton.app.networkTests;
+package inf112.skeleton.app.networktests;
 
 import com.esotericsoftware.kryonet.Connection;
 import inf112.skeleton.app.net.GameClientListener;
@@ -10,13 +10,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GameClientListenerTest {
-    private boolean needMoveInput = false;
 
-    private PlayerMoves playerMoves;
-    private boolean playerHasMoved;
-    GameClientListener gameClientListener;
-    GameServerListener gameServerListener;
+public class GameClientListenerTest {
+
+    private GameClientListener gameClientListener;
+    private GameServerListener gameServerListener;
 
     @BeforeEach
     public void setUp(){

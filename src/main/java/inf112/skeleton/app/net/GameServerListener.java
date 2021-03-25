@@ -20,7 +20,7 @@ public class GameServerListener extends Listener {
     private final ArrayList<Connection> isConnected = new ArrayList<>(); // A list of all currently connected clients.
 
     //How many connections are allowed, based on how many players game can handle
-    private static int maxConnections;
+    private int maxConnections;
 
     //Received moves, mapped from Player.getShortName() to Hand
     public ArrayList<Hand> receivedMoves;
@@ -90,7 +90,7 @@ public class GameServerListener extends Listener {
 
     // will send a request of a move from a given player
     // Currently not used
-    public void request_move(Connection connection) {
+    public void requestMove(Connection connection) {
         resetReceivedMove();
         RequestToClient moveRequest = new RequestToClient();
         moveRequest.setRequestType("Move");

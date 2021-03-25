@@ -9,20 +9,20 @@ import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
 public class CollisionsTest {
-    private Board board;
     private Player player1;
     private Player player2;
     private Player player3;
     private Player player4;
     private Game game;
-    HashMap<Direction, Pair> dirMap;
+    private HashMap<Direction, Pair> dirMap;
 
 
     public void setUpBoard(int boardNum) {
         NetworkSettings networkSettings = new NetworkSettings("server", "localhost", 2, 2);
         game = new Game(networkSettings, 4);
-        board = new Board();
+        Board board = new Board();
         board.readBoard(boardNum);
         game.board = board;
         game.setBoardSize(board.getSize());
@@ -69,7 +69,7 @@ public class CollisionsTest {
     }
 
     @Test
-    public void Player1CanPushPlayer2WhoPushesPlayer3() {
+    public void player1CanPushPlayer2WhoPushesPlayer3() {
         setUpBoard(111);
         // Will only check that the collision method moves player 2 into player 3s tile and player3 into the expected tile
         Pair player2ExpectedCoordinate = player3.getCoordinates().getCopy();
@@ -83,7 +83,7 @@ public class CollisionsTest {
     }
 
     @Test
-    public void Player1CanPushPlayer2OffTheBoardAndKillThem() { // Does not check if coordinates are changed as player2s position will reset to startposition after being killed.
+    public void player1CanPushPlayer2OffTheBoardAndKillThem() { // Does not check if coordinates are changed as player2s position will reset to startposition after being killed.
         setUpBoard(112);
         int player2StartHp = player2.getHp();
         game.collision(player1);
@@ -92,12 +92,13 @@ public class CollisionsTest {
     }
 
     @Test
-    public void Player3NotAllowedToPushPlayer4ThroughWall() {
+    public void player3NotAllowedToPushPlayer4ThroughWall() {
         setUpBoard(112);
         assertFalse(game.collision(player3));
     }
 
-    @Test void Player1NotAllowedToPushPlayer2BecausePlayer3IsFacingWall() {
+    @Test
+    public void player1NotAllowedToPushPlayer2BecausePlayer3IsFacingWall() {
         setUpBoard(113);
         assertFalse(game.collision(player1));
     }
