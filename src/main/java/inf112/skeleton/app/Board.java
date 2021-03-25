@@ -26,12 +26,10 @@ public class Board {
         //Only need one instance of each of these classes per map, rest of items initialized in readBoard()
         Ground ground = new Ground("src/main/resources/tex/ground.png");
         Hole hole = new Hole("src/main/resources/tex/hole.png");
-
         Wall wall = new Wall("src/main/resources/tex/wall.png");
         objectMap = new HashMap<>();
         objectMap.put("g", ground);
         objectMap.put("h", hole);
-
         objectMap.put("w", wall);
 
         playerList = new ArrayList<>(); //List of players

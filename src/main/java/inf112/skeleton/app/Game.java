@@ -4,8 +4,10 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryonet.Connection;
@@ -15,10 +17,10 @@ import inf112.skeleton.app.cards.Hand;
 import inf112.skeleton.app.net.*;
 import inf112.skeleton.app.sprites.*;
 import org.lwjgl.opengl.GL20;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 /**
  * Class for handling GUI and game setup/logic
  */
@@ -38,6 +40,12 @@ public class Game implements ApplicationListener {
     private Hand hand;                          //The hand of this player
     private boolean hasPrintedHandInfo;          //true if player has been informed of the state of the hand and selected cards, false if changes has been made since last print.
     private boolean hasPrintedState;            //true if player has been informed of current state of game, false otherwise.
+    private String statusMessage;               //Status message to print to user.
+
+    //Optimization/fixing memory leak issue from previous versions
+    private Player thisPlayer; //The current instance's player object
+    private BitmapFont font; //Font for rendering text to gui
+    private Texture bgTexture;
 
     //Network related variables:
     private final Network network;
@@ -101,11 +109,22 @@ public class Game implements ApplicationListener {
         for(AbstractGameObject ago : board.getObjectMap().values()){
             spriteMap.put(ago.getShortName(), new Sprite(new Texture(ago.getTexturePath())));
         }
+        spriteMap.put("backUp", new Sprite(new Texture("src/main/resources/tex/cards/backUp.png")));
+        spriteMap.put("move1", new Sprite(new Texture("src/main/resources/tex/cards/move1.png")));
+        spriteMap.put("move2", new Sprite(new Texture("src/main/resources/tex/cards/move2.png")));
+        spriteMap.put("move3", new Sprite(new Texture("src/main/resources/tex/cards/move3.png")));
+        spriteMap.put("turnLeft", new Sprite(new Texture("src/main/resources/tex/cards/turnLeft.png")));
+        spriteMap.put("turnRight", new Sprite(new Texture("src/main/resources/tex/cards/turnRight.png")));
+        spriteMap.put("uTurn", new Sprite(new Texture("src/main/resources/tex/cards/uTurn.png")));
+
         alivePlayerList = new ArrayList<>();
         alivePlayerList.addAll(board.getPlayerList());
         laserList = board.getLaserList();
         boardSize = board.getSize();
         hasPrintedHandInfo = false;
+        font = new BitmapFont();
+        bgTexture = new Texture("src/main/resources/tex/background.png");
+        statusMessage = "";
     }
 
     @Override
@@ -118,7 +137,6 @@ public class Game implements ApplicationListener {
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-
         if(isServer) { // If this is a server it runs the move logic.
             serverRenderLogic();
         }
@@ -128,6 +146,7 @@ public class Game implements ApplicationListener {
 
         //The rendering part of the function:
         batch.begin();
+        batch.draw(bgTexture, 0, 0);
         if(phase == Phase.FINISHED){ //If the game is over
             Sprite winnerSprite = spriteMap.get(winner.getShortName());
             winnerSprite.setSize(camera.viewportWidth, camera.viewportHeight);
@@ -159,38 +178,12 @@ public class Game implements ApplicationListener {
                 }
             }
         }
+        renderUIElements();
+        renderCards();
+        batch.flush();
         batch.end();
     }
-
-    public void fireLasers(){
-        System.out.println(laserList);
-        for(Laser laser : laserList){
-            Pair dir = dirMap.get(laser.getDirection());
-            Pair currentPos = laser.getCoordinates();
-            while(true) {
-                if(currentPos.getX()+dir.getX() < 0 || currentPos.getX()+dir.getX() > boardSize){
-                    break;
-                }
-                else if(currentPos.getY()+dir.getY() < 0 || currentPos.getY()+dir.getY() > boardSize){
-                    break;
-                }
-                AbstractGameObject object = board.getPosition(currentPos.getX()+dir.getX(), currentPos.getY()+dir.getY());
-                if (object.getShortName().equals("w")){
-                    break;
-                }
-                else if(object.getShortName().matches("p\\d+")){
-                    Player player = (Player) object;
-                    player.damage();
-                    System.out.println(player.getPc());
-                    break;
-                }
-                currentPos = new Pair(currentPos.getX()+dir.getX(), currentPos.getY()+dir.getY());
-                //Add an else here for updating texture and adding a pause between
-            }
-        }
-    }
-
-
+        
     /**
      * Handles the logic specific to when the instance is a server.
      * Creates and sends data as opposed to receiving and handling data like in clientRenderLogic.
@@ -198,7 +191,7 @@ public class Game implements ApplicationListener {
     private void serverRenderLogic() {
         if(phase == Phase.WAIT_CONNECT){
             if(!hasPrintedState){
-                System.out.println("Awaiting " + (numPlayers-1) + " more players. Please stand by.");
+                statusMessage = "Awaiting " + (numPlayers-1) + " more players. Please stand by.";
             }
             hasPrintedState = true;
             if(gameServerListener.getConnectedPlayers()+1 == numPlayers){
@@ -208,13 +201,13 @@ public class Game implements ApplicationListener {
                     connection.sendTCP(gi);
                 }
                 phase = Phase.DEAL_CARDS;
-                System.out.println("Changed phase to Deal Cards");
+                statusMessage = "Dealing cards...";
             }
         }
         else if(phase == Phase.DEAL_CARDS){ //If we are in the DEAL_CARDS phase
             dealCardsToAllPlayers(); //Sends a hand of cards to all players
-            System.out.println("Dealt cards");
             phase = Phase.CARD_SELECT;
+            statusMessage = "Select cards to move. Click SUBMIT CARDS when ready (not implemented yet)";
             gameServerListener.resetReceivedMoves();
         }
         else if(phase == Phase.CARD_SELECT){ //If player should choose cards
@@ -230,25 +223,22 @@ public class Game implements ApplicationListener {
             else{
                 gameServerListener.receivedMoves.add(hand);
                 phase = Phase.WAIT_FOR_CLIENT_MOVE;
+                statusMessage = "Awaiting other player moves...";
                 hasPrintedState = false;
             }
         }
         else if(phase == Phase.WAIT_FOR_CLIENT_MOVE){
             if(gameServerListener.numReceivedMoves == gameServerListener.getConnectedPlayers()){
                 phase = Phase.SEND_CARDS;
+                statusMessage = "Sending cards to all clients.";
                 allMoves = gameServerListener.receivedMoves;
                 hasPrintedState = false;
-            }
-            else{
-                if(!hasPrintedState){
-                    System.out.println("Awaiting client card submissions, please wait.");
-                    hasPrintedState = true;
-                }
             }
         }
         else if (phase == Phase.SEND_CARDS){
             sendListOfAllMoves();
             phase = Phase.MOVE;
+            statusMessage = "Players moving!";
         }
         else if(phase == Phase.MOVE){
             doOnePlayerMove(); //Advances moves by one
@@ -275,17 +265,11 @@ public class Game implements ApplicationListener {
             hand = network.getGameClientListener().getHand();
             phase = Phase.CARD_SELECT;
             if (!moveMessagePrinted) { // If it has not printed that it's your move yet, it will
-                System.out.println("Your move");
+                statusMessage = "Select cards to move. Click SUBMIT CARDS when ready (not implemented yet)";
                 moveMessagePrinted = true;
             }
             if (!(hand.getNumberOfCardsSelected() == 5)) { //If the player has not registered enough cards.
-                if(!hasPrintedHandInfo){
-                    printCardInfo();
-                    hasPrintedHandInfo = true;
-                }
-                if(selectMove()){ //If a move is done
-                    hasPrintedHandInfo = false; //Update this value so it prints the new state of hand.
-                }
+                selectMove();
             }
             else { // If a move is registered it will start the sending process
                 if (network.getClient().isConnected()) { // Checks once more if a disconnect has happened
@@ -300,10 +284,11 @@ public class Game implements ApplicationListener {
                         e.printStackTrace();
                     }
                 }
-                System.out.println("Moves sent"); // Tells player of client that their move has been registered.
+                statusMessage = "Moves sent, awaiting other player moves..."; // Tells player of client that their move has been registered.
                 network.getGameClientListener().resetNeedMoveInput(); // Set the needMoveInput to false as no input is longer needed until it receives request to move again
                 moveMessagePrinted = false; // Reset moveMessagePrinted
                 phase = Phase.MOVE;
+                statusMessage = "Players moving!";
                 network.getGameClientListener().resetHandReceived(); //Reset the bool for having received a hand of cards
             }
         }
@@ -355,9 +340,120 @@ public class Game implements ApplicationListener {
      * @param y The y value of the sprite
      */
     private void renderSprite(Sprite sprite, int x, int y) {
-        sprite.setSize(camera.viewportWidth/boardSize, camera.viewportWidth/boardSize);
-        sprite.setX(x*(camera.viewportWidth/boardSize));
-        sprite.setY(y*(camera.viewportHeight/boardSize));
+        sprite.setSize((camera.viewportWidth/2/boardSize), camera.viewportWidth/2/boardSize);
+        sprite.setX(x*((camera.viewportWidth/16*8)/boardSize));
+        sprite.setY(y*((camera.viewportHeight/9*8)/boardSize));
+    }
+
+    /**
+     * Renders UI elements to the user's screen.
+     */
+    private void renderUIElements(){
+        //Draw status message
+        if(!statusMessage.equals("")){
+            font.getData().setScale(1);
+            font.draw(batch, statusMessage, 720, 35);
+        }
+        if(hand == null) return;
+        if(thisPlayer == null){ //Gets this instance's player object if we don't have it saved
+            if(isServer){
+                thisPlayer = alivePlayerList.get(0);
+            }
+            else{
+                thisPlayer = (Player) board.getObjectMap().get(hand.getPlayerShortName());
+            }
+        }
+        Sprite drawPlayer = spriteMap.get(thisPlayer.getShortName()); //Get player as sprite
+        drawPlayer.setX(177);
+        drawPlayer.setY(647);
+        drawPlayer.setSize(68,68);
+        drawPlayer.draw(batch); //Draw player object in the GUI
+
+        //Draw HP and PC
+        font.getData().setScale(5); //Size up font so its readable
+        font.draw(batch, ""+thisPlayer.getHp(), 444, 709);
+        font.draw(batch, ""+thisPlayer.getPc(), 574, 709);
+    }
+
+    /**
+     * Function for displaying all and selected cards in GUI.
+     */
+    private void renderCards(){
+        int allOffsetX = 0;   //Keep track of x offset of all cards
+        int allOffsetY = 0; //Keep track of y offset of all cards
+        int selectedOffsetX = 0;  //Keep track of x offset of selected cards
+        if(hand == null) return;
+        ArrayList<Card> allCards = hand.getAllCards();
+        ArrayList<Card> selectedCards = hand.getSelectedCards();
+        int count = 0;
+        font.getData().setScale(1); //Reset font size to 1
+        for(Card c : allCards){ //Loop through all cards and print the ones not selected
+            Sprite cSprite = spriteMap.get(c.getType()); //Get sprite for current card
+            if(!selectedCards.contains(c)){ //If card is selected draw it in the selectedCards box
+                if(allOffsetX > 500){
+                    allOffsetX = 0;
+                    allOffsetY = 150;
+                }
+                cSprite.setScale(1f);
+                cSprite.setX(645 + allOffsetX);
+                cSprite.setY(530 - allOffsetY);
+                cSprite.draw(batch); //Draw card
+                font.setColor(Color.WHITE);
+                font.draw(batch, ""+ (allCards.indexOf(c)+1), (690+allOffsetX), (549 - allOffsetY)); //Draw number used to select card
+                //Draw priority:
+                font.setColor(Color.YELLOW);
+                font.draw(batch, ""+ c.getPriority(), (701 + allOffsetX), (666 - allOffsetY));
+                font.setColor(Color.WHITE);
+                allOffsetX += 100;
+                count++;
+            }
+        }
+        for(Card c : selectedCards){ //Loop through selected cards and draw them
+            Sprite cSprite = spriteMap.get(c.getType()); //Get sprite for current card
+            int indexOfCard = allCards.indexOf(c);
+            cSprite.setScale(1f);
+            cSprite.setX(645 + (selectedOffsetX));
+            cSprite.setY(160);
+            cSprite.draw(batch);
+            font.draw(batch, ""+(indexOfCard+1), (690 + selectedOffsetX), 179); //Draw number used to select card
+            //Draw priority:
+            font.setColor(Color.YELLOW);
+            font.draw(batch, ""+ c.getPriority(), (701 + selectedOffsetX), 296);
+            font.setColor(Color.WHITE);
+            selectedOffsetX += 100;
+        }
+    }
+
+    /**
+     * Function for path tracing from a laser to an object that can be hit by it, damages players if
+     * the object is a player as opposed to a wall.
+     */
+    public void fireLasers(){
+        System.out.println(laserList);
+        for(Laser laser : laserList){
+            Pair dir = dirMap.get(laser.getDirection());
+            Pair currentPos = laser.getCoordinates();
+            while(true) {
+                if(currentPos.getX()+dir.getX() < 0 || currentPos.getX()+dir.getX() > boardSize){
+                    break;
+                }
+                else if(currentPos.getY()+dir.getY() < 0 || currentPos.getY()+dir.getY() > boardSize){
+                    break;
+                }
+                AbstractGameObject object = board.getPosition(currentPos.getX()+dir.getX(), currentPos.getY()+dir.getY());
+                if (object.getShortName().equals("w")){
+                    break;
+                }
+                else if(object.getShortName().matches("p\\d+")){
+                    Player player = (Player) object;
+                    player.damage();
+                    System.out.println(player.getPc());
+                    break;
+                }
+                currentPos = new Pair(currentPos.getX()+dir.getX(), currentPos.getY()+dir.getY());
+                //Add an else here for updating texture and adding a pause between
+            }
+        }
     }
 
     /**
