@@ -399,7 +399,7 @@ public class Game implements ApplicationListener {
                 cSprite.setY(530 - allOffsetY);
                 cSprite.draw(batch); //Draw card
                 font.setColor(Color.WHITE);
-                font.draw(batch, ""+ (count+1), (690+allOffsetX), (549 - allOffsetY)); //Draw number used to select card
+                font.draw(batch, ""+ (allCards.indexOf(c)+1), (690+allOffsetX), (549 - allOffsetY)); //Draw number used to select card
                 //Draw priority:
                 font.setColor(Color.YELLOW);
                 font.draw(batch, ""+ c.getPriority(), (701 + allOffsetX), (666 - allOffsetY));
