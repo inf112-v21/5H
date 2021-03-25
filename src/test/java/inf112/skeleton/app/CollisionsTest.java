@@ -20,7 +20,7 @@ public class CollisionsTest {
 
 
     public void setUpBoard(int boardNum) {
-        NetworkSettings networkSettings = new NetworkSettings("server", "localhost", 2, 2);
+        NetworkSettings networkSettings = new NetworkSettings("test", "localhost", 2, 2);
         game = new Game(networkSettings, 4);
         Board board = new Board();
         board.readBoard(boardNum);

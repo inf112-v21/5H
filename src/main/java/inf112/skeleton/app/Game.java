@@ -78,8 +78,11 @@ public class Game implements ApplicationListener {
         //Set network variables
         isServer = settings.getState().equals("server"); //True if instance is server
         network = new Network(settings, numPlayers);
-
-        if (isServer) { //If this instance of game is supposed to be a server it starts one
+        if (settings.getState().equals("test")) {
+            //Do nothing as I don't want to connect to any servers for tests with this settings, only want a game object to call methods from.
+            int IntelliJWantsThisIfStatementToDoSomething;
+        }
+        else if (isServer) { //If this instance of game is supposed to be a server it starts one
             try {
                 network.startServer();
                 gameServerListener = network.getGameServerListener();
