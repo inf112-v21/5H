@@ -4,7 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GameSetup {
-    private static final String IPV4_PATTERN = "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\\.(?!$)|$)){4}$";
+    private static final String IPV4_PATTERN;
+
+    static {
+        IPV4_PATTERN = "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\\.(?!$)|$)){4}$";
+    }
+
     private static String playerCount;
     /**
      * Function for querying the user for connection settings.

@@ -1,4 +1,4 @@
-package inf112.skeleton.app.networkTests;
+package inf112.skeleton.app.networktests;
 
 import com.esotericsoftware.kryonet.Connection;
 import inf112.skeleton.app.net.*;
@@ -17,13 +17,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class GameServerListenerTest {
 
-    static GameServerListener gameServerListener;
-    static Connection connection;
-    static NetworkSettings serverNetworkSettings;
-    static NetworkSettings clientNetworkSettings;
-    static Network serverNetwork;
-    static Network clientNetwork;
-    static int numPlayers = 8;
+    private static GameServerListener gameServerListener;
+    private static Connection connection;
+    private static NetworkSettings serverNetworkSettings;
+    private static NetworkSettings clientNetworkSettings;
+    private static Network serverNetwork;
+    private static Network clientNetwork;
+    private static int numPlayers = 8;
 
 
     @BeforeAll

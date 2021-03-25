@@ -4,12 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import inf112.skeleton.app.cards.Card;
-import inf112.skeleton.app.cards.Hand;
 import inf112.skeleton.app.cards.Deck;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
 
 class DeckTest {
 	Deck deck;

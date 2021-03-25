@@ -5,7 +5,8 @@ import inf112.skeleton.app.sprites.Player;
 import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class LaserTest {
     private Board board;
@@ -16,7 +17,7 @@ public class LaserTest {
     private int player4PcBefore;
     private Player player4;
     private Game game;
-    HashMap<Player, Integer> pcBefore;
+    private HashMap<Player, Integer> pcBefore;
 
 
     public void setUpBoard(int boardNum) {

@@ -8,15 +8,13 @@ import org.junit.jupiter.api.Test;
 import inf112.skeleton.app.cards.Card;
 import inf112.skeleton.app.cards.Hand;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 class HandTest {
-	Hand hand;
-	Deck deck;
-	ArrayList<Card> cards;
-	ArrayList<Card> currentDeck;
-	String shortname;
+	private Hand hand;
+	private Deck deck;
+	private ArrayList<Card> cards;
+	private ArrayList<Card> currentDeck;
+	private String shortname;
 
 	@BeforeEach
 	public void setUp() {
