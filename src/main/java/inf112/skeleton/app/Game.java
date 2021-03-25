@@ -2,7 +2,6 @@ package inf112.skeleton.app;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
@@ -18,11 +17,10 @@ import inf112.skeleton.app.cards.Hand;
 import inf112.skeleton.app.net.*;
 import inf112.skeleton.app.sprites.*;
 import org.lwjgl.opengl.GL20;
-
-import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 /**
  * Class for handling GUI and game setup/logic
  */
@@ -42,8 +40,11 @@ public class Game implements ApplicationListener {
     private Hand hand;                          //The hand of this player
     private boolean hasPrintedHandInfo;          //true if player has been informed of the state of the hand and selected cards, false if changes has been made since last print.
     private boolean hasPrintedState;            //true if player has been informed of current state of game, false otherwise.
+
+    //Optimization/attempts at fixing memory leak
     private boolean hasDrawnBG;
     private Player thisPlayer; //The current instance's player object
+    private BitmapFont font; //Font for rendering text to gui
 
     //Network related variables:
     private final Network network;
@@ -107,12 +108,21 @@ public class Game implements ApplicationListener {
         for(AbstractGameObject ago : board.getObjectMap().values()){
             spriteMap.put(ago.getShortName(), new Sprite(new Texture(ago.getTexturePath())));
         }
+        spriteMap.put("backUp", new Sprite(new Texture("src/main/resources/tex/cards/backUp.png")));
+        spriteMap.put("move1", new Sprite(new Texture("src/main/resources/tex/cards/move1.png")));
+        spriteMap.put("move2", new Sprite(new Texture("src/main/resources/tex/cards/move2.png")));
+        spriteMap.put("move3", new Sprite(new Texture("src/main/resources/tex/cards/move3.png")));
+        spriteMap.put("turnLeft", new Sprite(new Texture("src/main/resources/tex/cards/turnLeft.png")));
+        spriteMap.put("turnRight", new Sprite(new Texture("src/main/resources/tex/cards/turnRight.png")));
+        spriteMap.put("uTurn", new Sprite(new Texture("src/main/resources/tex/cards/uTurn.png")));
+
         alivePlayerList = new ArrayList<>();
         alivePlayerList.addAll(board.getPlayerList());
         laserList = board.getLaserList();
         boardSize = board.getSize();
         hasPrintedHandInfo = false;
         hasDrawnBG = false;
+        font = new BitmapFont();
     }
 
     @Override
@@ -124,7 +134,6 @@ public class Game implements ApplicationListener {
         camera.update();
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
 
         if(isServer) { // If this is a server it runs the move logic.
             serverRenderLogic();
@@ -170,11 +179,16 @@ public class Game implements ApplicationListener {
                 }
             }
         }
-        renderCards();
         renderUIElements();
+        renderCards();
+        batch.flush();
         batch.end();
     }
 
+    /**
+     * Function for path tracing from a laser to an object that can be hit by it, damages players if
+     * the object is a player as opposed to a wall.
+     */
     public void fireLasers(){
         System.out.println(laserList);
         for(Laser laser : laserList){
@@ -377,33 +391,31 @@ public class Game implements ApplicationListener {
      * Renders UI elements to the user's screen.
      */
     private void renderUIElements(){
-        Player player;
-        if(hand == null)return;
-        if(isServer){
-            player = alivePlayerList.get(0);
+        if(hand == null) return;
+        if(thisPlayer == null){ //Gets this instance's player object if we don't have it saved
+            if(isServer){
+                thisPlayer = alivePlayerList.get(0);
+            }
+            else{
+                thisPlayer = (Player) board.getObjectMap().get(hand.getPlayerShortName());
+            }
         }
-        else{
-            player = (Player) board.getObjectMap().get(hand.getPlayerShortName());
-        }
-        Sprite drawPlayer = new Sprite(new Texture(player.getTexturePath()));
+        Sprite drawPlayer = spriteMap.get(thisPlayer.getShortName()); //Get player as sprite
         drawPlayer.setX(177);
         drawPlayer.setY(647);
         drawPlayer.setSize(68,68);
-        drawPlayer.draw(batch);
+        drawPlayer.draw(batch); //Draw player object in the GUI
 
         //Draw HP and PC
-        BitmapFont font = new BitmapFont(); //Initialize font
-        font.getData().setScale(5);
-        font.draw(batch, ""+player.getHp(), 444, 709);
-        font.draw(batch, ""+player.getPc(), 574, 709);
+        font.getData().setScale(5); //Size up font so its readable
+        font.draw(batch, ""+thisPlayer.getHp(), 444, 709);
+        font.draw(batch, ""+thisPlayer.getPc(), 574, 709);
     }
 
     /**
      * Function for displaying all and selected cards in GUI.
      */
     private void renderCards(){
-        BitmapFont font = new BitmapFont(); //Initialize font
-
         int allOffsetX = 0;   //Keep track of x offset of all cards
         int allOffsetY = 0; //Keep track of y offset of all cards
         int selectedOffsetX = 0;  //Keep track of x offset of selected cards
@@ -411,21 +423,10 @@ public class Game implements ApplicationListener {
         ArrayList<Card> allCards = hand.getAllCards();
         ArrayList<Card> selectedCards = hand.getSelectedCards();
         int count = 0;
-        for(Card c : allCards){ //Loop through all cards and print them
-            Sprite cSprite = new Sprite(new Texture("src/main/resources/tex/cards/" + c.getType() + ".png")); //Create sprite for current card
-            if(selectedCards.contains(c)){ //If card is selected draw it in the selectedCards box
-                cSprite.setScale(1f);
-                cSprite.setX(645 + selectedOffsetX);
-                cSprite.setY(160);
-                cSprite.draw(batch);
-                font.draw(batch, ""+(count+1), (690 + selectedOffsetX), 179); //Draw number used to select card
-                //Draw priority:
-                font.setColor(Color.YELLOW);
-                font.draw(batch, ""+ c.getPriority(), (701 + selectedOffsetX), 296);
-                font.setColor(Color.WHITE);
-                selectedOffsetX += 100;
-            }
-            else{ //Else draw in all cards
+        font.getData().setScale(1); //Reset font size to 1
+        for(Card c : allCards){ //Loop through all cards and print the ones not selected
+            Sprite cSprite = spriteMap.get(c.getType()); //Get sprite for current card
+            if(!selectedCards.contains(c)){ //If card is selected draw it in the selectedCards box
                 if(allOffsetX > 500){
                     allOffsetX = 0;
                     allOffsetY = 150;
@@ -441,8 +442,22 @@ public class Game implements ApplicationListener {
                 font.draw(batch, ""+ c.getPriority(), (701 + allOffsetX), (666 - allOffsetY));
                 font.setColor(Color.WHITE);
                 allOffsetX += 100;
+                count++;
             }
-            count++;
+        }
+        for(Card c : selectedCards){ //Loop through selected cards and draw them
+            Sprite cSprite = spriteMap.get(c.getType()); //Get sprite for current card
+            int indexOfCard = allCards.indexOf(c);
+            cSprite.setScale(1f);
+            cSprite.setX(645 + (selectedOffsetX));
+            cSprite.setY(160);
+            cSprite.draw(batch);
+            font.draw(batch, ""+(indexOfCard+1), (690 + selectedOffsetX), 179); //Draw number used to select card
+            //Draw priority:
+            font.setColor(Color.YELLOW);
+            font.draw(batch, ""+ c.getPriority(), (701 + selectedOffsetX), 296);
+            font.setColor(Color.WHITE);
+            selectedOffsetX += 100;
         }
 
     }
