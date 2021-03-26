@@ -1,0 +1,17 @@
+Møte 26.03.2021
+Digitalt via Discord
+Tilstede
+  Skjalg Eide Hodneland
+  Emil Flatøy Hodneland
+  Jonas Svåsand
+  Håkon Mathias Hvidsten Høie
+  Hans Albert Biørn Terland
+
+Standup:
+
+Emil: Ryddet opp i koden for å få Codacy til å gi oss litt bedre score
+Hans : Sett på GUI, Referat for onsdag.
+Håkon: Sett og lest på kode
+Jonas: Tester for laser og kollisjon, fikset på koden for dette.  Skrevet på oblig3 md.
+Skjalg: Fikset GUI
+

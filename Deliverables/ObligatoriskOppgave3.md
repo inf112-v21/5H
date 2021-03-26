@@ -5,19 +5,26 @@
 ### Retrospektiv: 
 
 #### Roller i teamet:
+Vi har ikke lenger libgdx ansvarlig da Håkon har tatt over som kundekontakt etter at Henrik har forlatt gruppen.
+Skjalg er nå bare "Kodeansvarlig" og har overordnet ansvar for kode, at ting følger konvensjoner etc.
+Spesifikasjonsansvarlig er også ansvarlig for design-dokumenter og klassediagram.
+
 
 #### Kommunikasjon og gruppedynamikk:
 - Fra forrige gang har vi hatt en litt mer jevn deltagelse i noen diskusjoner, mens i andre er det fortsatt de samme som dominerer.
+- Har innført møter i forelesningstimene når det ikke er forelesning.
 
 #### Projekt Metodikk:
 - Vi føler at vi iløpet av oblig 2 fikk til Kanban prinsippene enda bedre enn før.
 Vi fortsetter med dette og å bruke kanban og prøve å ytterligere forbedre kanban bruken vår. Vi fortsetter også med standup
   da vi føler det er en veldig hjelpsom metodikk for å ha gode gruppemøter.
-##### Oppsumering av forbedringspunkter for denne oblig:
+  
+#### Oppsumering av forbedringspunkter for denne oblig:
 - Forbedre kanban bruk ytterligere
 - La alle få prøve seg på game.java
 
 #### Metoder vi ønsker å ta i bruk:
+- Vi ønsker å bruke skisser/low-fidelity prototypes for design av GUI
 
 ---
 ## Deloppgave 2
@@ -100,7 +107,7 @@ som kan tildeles, kan de som ikke har tildelte oppgaver jobbe med andre oppgaver
 - GUI  
     - Kunne klikke på kort for å velge dem istedenfor bruke tastatur
     - Knapp for å sende kort
- - Legge til en phase "EnOfRegister" som håndterer alt som skjer mellom hvert register, f.eks. laser, og andre brettfunksjoner. 
+ - Legge til en phase "EndOfRegister" som håndterer alt som skjer mellom hvert register, f.eks. laser, og andre brettfunksjoner. 
 
 
 
@@ -120,7 +127,7 @@ Software som trengs:
 For å kjøre koden:
 1. Åpne prosjektet i IntelliJ (eller annen IDE), kjør Main.java.
 2. Velg "server", antall spillere du ønsker i spillet, og porter. (hvis du velger 1 spiller så      avslutter spillet etter en runde, da du vinner)
-    - Angående valg av porter så kan du bruke port 1 hvis du spiller lokalt. Hvis du spiller via internett må du velge egne porter og hosten må portforwarde. Hvilke porter som er tilgjengelig for dette er avhengig av Internettleverandør, nettverksinstillinger og installert programvare.
+    - Angående valg av porter så kan du bruke port 1 hvis du spiller lokalt. Hvis du spiller via internett må du velge egne porter og hosten må portforwarde. Hvilke porter som er tilgjengelig for dette er avhengig av Internettleverandør, nettverksinstillinger og installert programvare. For vår testing har vi brukt port 3074.
 3. Avhenger om du vil spille alene eller med andre
     - Dersom du ønsker å spille med andre må porten du velger være port-forwardet i ruter instillingene dine,
 da følger de andre samme steg som deg, men velger "client" i punkt 2. Du som server må finne ip-adressen din, eksempelvis på
