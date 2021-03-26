@@ -100,6 +100,7 @@ som kan tildeles, kan de som ikke har tildelte oppgaver jobbe med andre oppgaver
 - GUI  
     - Kunne klikke på kort for å velge dem istedenfor bruke tastatur
     - Knapp for å sende kort
+ - Legge til en phase "EnOfRegister" som håndterer alt som skjer mellom hvert register, f.eks. laser, og andre brettfunksjoner. 
 
 
 
@@ -134,7 +135,7 @@ For å bygge koden:
 - Kjør `mvn clean install`. (Testet til å funke på alle platformer, skal få build success)
 
 #### Bygging:
-- Vi har alle windows som OS og bruker Travis for å sjekke om det bygger på Linux/Mac.
+- Vi har alle windows som OS og bruker Travis for å sjekke om det bygger på Linux/Mac. Ifølge Travis bygger prosjektet vårt.
 
 #### Klassediagram:
 Vi har generert klassedigram med Object Aid Explorer. Dette er en Eclipse Plugin som finnes her: https://marketplace.eclipse.org/content/objectaid-uml-explorer.
@@ -202,8 +203,17 @@ I denne innleveringen har vi lagt til følgende funksjonalitet:
 - GUI
     - Vise kort i hånd
     - Vise valgte kort
+    - Vise liv, skade og spillebrikke i GUI
+    - Litt annet i GUI for senere implementasjoner (knapper o.l.)
     
 - Flagg oppførsel følger reglene
-- Laser og kollisjon (ikke implementert)
+- Laser
+    - Ikke implementert i selve spilllogikken da vi ikke har laget logikken for fasen hvor laserer avfyres
+- Kollisjon
+  - Ikke implementert i flyttelogikken, da vi avventer dette.
 
 #### Kommentarer til kode og utførelse
+
+Commits er som forrige gang ujevne. Dette har seg med at det er mange commits fra mindre prosjekter (laser, kollisjon og tester for disse) samt bugfixes, mens de andre gruppemedlemmene jobbet med å 
+få til GUI. Dette viste seg å være en svært vanskelig jobb, og mesteparten av arbeidet fra disse gruppemedlemmene ble da å få forståelse. Vi prøvde så å implementere GUI i felleskap og fikk det ikke helt til
+men til slutt klarte Skjalg å få til en kjørende versjon basert på forarbeidet til resten. Dette fører til ujevne commits da arbeidet til de som originalt jobbet med GUI ikke er reflektert i commitsene.
