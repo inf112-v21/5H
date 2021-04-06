@@ -130,5 +130,31 @@ public class LaserTest {
         assertEquals(expectedPc, makePlayerPcHashMap(), "Damage not as expected");
     }
 
+    @Test
+    public void playerLaserStoppedByWall() {
+        setUpBoard(107);
+        game.fireLasers(game.getPlayerLasers());
+        assertEquals(pcBefore, makePlayerPcHashMap(), "Wall did not stop laser!");
+
+    }
+
+    //Test with both board and player lasers
+
+    @Test
+    public void playerLaserAndBoardLaserFires() {
+        setUpBoard(101);
+        player1.setDirection(Direction.EAST);
+        player4.setDirection(Direction.WEST);
+        game.fireLasers(board.getLaserList());
+        game.fireLasers(game.getPlayerLasers());
+        HashMap<Player, Integer> expectedPc = new HashMap<>();
+        expectedPc.put(player1, 7);
+        expectedPc.put(player2, 9);
+        expectedPc.put(player3, 8);
+        expectedPc.put(player4, 8);
+        assertEquals(expectedPc, makePlayerPcHashMap(), "Damage not as expected");
+
+    }
+
 }
 
