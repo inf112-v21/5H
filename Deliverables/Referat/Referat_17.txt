@@ -1,0 +1,49 @@
+Møte 06.04.2021
+Digitalt via Discord
+Tilstede
+  Skjalg Eide Hodneland
+  Emil Flatøy Hodneland
+  Jonas Svåsand
+  Håkon Mathias Hvidsten Høie
+  Hans Albert Biørn Terland
+
+Ingen standup da det har vært påske siden siste møte
+
+
+Retrospektiv:
+
+Rollene fungerer bra.
+
+
+Prosjektmetodikk- 
+Det fungerer bra. Vi liker stnadup og kanban.
+
+
+Retrospektiv av hele prosessen:
+
+Hva som gått bra:
+	- Kanban og standup har gått bra. 
+	- Løsning av tekniske problemer i felles har gått bra.
+	- God kommunikasjon fra start
+	- Prioriteringer har gått bra. At vi fullførte MVP først og fokuserte senere på andre ting
+	 f.eks. GUI.
+Hva vi ville gjort annerledes:
+	- Litt mer parprogrammering
+	- Burde brukt stages og tiledmap
+	- Gått igjennom tutorials i libgdx (og KryoNet) i felles slik at alle hadde lik forståelse
+
+
+Plan fremover:
+
+Vi har laget en liste over alle features vi kunne ønsket oss å ha med. Vi legger til dem i projectboard,
+alle tar de featuresene de har lyst å ha med, eller lyst å implementere converter dem til issues og assigner seg selv.
+De lager også userstories, akseptansekrav og arbeidsoppgaver (hvis nødvendig). Så tar hver enkelt og implementerer
+disse valgte features inn i kodebasen.
+
+Vi gjør det på denne måten da det ikke er noen features vi ser som kritiske å få med og dermed lar gruppemedlemmer
+implementere det de ønsker selv, enten basert på hva de føler de klarer å lage eller hva de synes er en viktig del av spillet.
+
+
+
+
+
