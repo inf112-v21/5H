@@ -456,9 +456,14 @@ public class Game implements ApplicationListener {
             }
         }
     }
-
     public ArrayList<Laser> getPlayerLasers() {
-            return null;
+        ArrayList<Laser> playerLasers = new ArrayList<>();
+
+        for (Player player : alivePlayerList) {
+            Laser playerLaser = new Laser(player.getCoordinates().getX(), player.getCoordinates().getY(),player.getDirection(), player.getShortName());
+            playerLasers.add(playerLaser);
+        }
+            return playerLasers;
     }
 
     /**
