@@ -107,7 +107,8 @@ public class CollisionsTest {
     public void player2CanNotReversePlayer4CanReverseAndPushPlayer3() {
         setUpBoard(114);
         Pair player2Dir = dirMap.get(player2.getDirection());
-        Pair reversePlayer2Dir = player2Dir.getReverseDirection();
+        Pair reversePlayer2Dir = player2Dir.getReverseDirection(); //Get reverse direction as this test checks for moving a player in their reverse direction
+        // Need to call with the direction specified as we are not moving in the direction the player currently has
         assertFalse(game.collision(player2, reversePlayer2Dir), "Player2 was allowed to reverse when they should not be allowed to");
         Pair player4ExpectedCoordinate = player3.getCoordinates().getCopy();
         Pair player3ExpectedCoordinate = player3.getCoordinates().getCopy();
