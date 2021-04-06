@@ -54,4 +54,9 @@ public class Pair {
     public int hashCode() {
         return Objects.hash(getX(), getY());
     }
+
+    public Pair getReverseDirection() {
+        return new Pair(this.x * -1, this.y * -1);
+    }
 }
+
