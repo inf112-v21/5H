@@ -1,6 +1,7 @@
 package inf112.skeleton.app;
 
 import inf112.skeleton.app.net.NetworkSettings;
+import inf112.skeleton.app.sprites.Direction;
 import inf112.skeleton.app.sprites.Player;
 import org.junit.jupiter.api.Test;
 import java.util.HashMap;
@@ -113,10 +114,20 @@ public class LaserTest {
         expectedPc.put(player3, 8);
         expectedPc.put(player4, 8);
         assertEquals(expectedPc, makePlayerPcHashMap(), "Damage not as expected");
+    }
 
-
-
-
+    @Test
+    public void player1and2DamagesAnother3and4Unharmed() {
+        setUpBoard(106);
+        player1.setDirection(Direction.EAST);
+        player2.setDirection(Direction.WEST);
+        game.fireLasers(game.getPlayerLasers());
+        HashMap<Player, Integer> expectedPc = new HashMap<>();
+        expectedPc.put(player1, 8);
+        expectedPc.put(player2, 8);
+        expectedPc.put(player3, 9);
+        expectedPc.put(player4, 9);
+        assertEquals(expectedPc, makePlayerPcHashMap(), "Damage not as expected");
     }
 
 }
