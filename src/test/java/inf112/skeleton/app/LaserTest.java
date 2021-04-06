@@ -27,7 +27,6 @@ public class LaserTest {
         board.readBoard(boardNum);
         game.board = board;
         game.setBoardSize(board.getSize());
-        game.setLaserList(board.getLaserList());
         player1 = board.getPlayerList().get(0);
         player1PcBefore = player1.getPc();
         player2 = board.getPlayerList().get(1);
@@ -49,14 +48,14 @@ public class LaserTest {
     @Test
     public void noPlayerTakesDamage() {
         setUpBoard(100);
-        game.fireLasers();
+        game.fireLasers(board.getLaserList());
         assertEquals(pcBefore, makePlayerPcHashMap());
     }
 
     @Test
     public void player1TakesDamageOtherPlayersDoesNot() {
         setUpBoard(101); //Testboard for this problem
-        game.fireLasers();
+        game.fireLasers(board.getLaserList());
         //Make a hashmap with expected pc values based on pc values before
         HashMap<Player, Integer> expectedPc = pcBefore;
         // Player 1 is expected to take 1 damage so subtract 1 from player1s pc value
@@ -69,7 +68,7 @@ public class LaserTest {
     @Test
     public void player1DoesNotTakeDamageThroughPlayer2() {
         setUpBoard(102);
-        game.fireLasers();
+        game.fireLasers(board.getLaserList());
         //Player 2 will take damage and stop the laser so it shouldn't hit player 1
         assertEquals(player2PcBefore-1, player2.getPc(), "Laser did not hit or did too much damage to player2");
         assertEquals(player1PcBefore, player1.getPc(), "Player 1 took damage somehow when they shouldn't");
@@ -77,14 +76,14 @@ public class LaserTest {
     @Test
     public void wallPreventsDamage() {
         setUpBoard(103);
-        game.fireLasers();
+        game.fireLasers(board.getLaserList());
         assertEquals(player1PcBefore, player1.getPc(), "Player 1 took damage through the wall!");
 
     }
     @Test
     public void moreThanOneLaserFiresInOneMethodCall() {
         setUpBoard(104);
-        game.fireLasers();
+        game.fireLasers(board.getLaserList());
         assertEquals(player1PcBefore -1, player1.getPc(),"Laser 1 didn't fire"); //Note it will break here and you don't know if laser 2 fired
         assertEquals(player4PcBefore -1, player4.getPc(), "Laser 2 didn't fire");
     }
@@ -92,7 +91,7 @@ public class LaserTest {
     @Test
     public void allFourLasersFireAndDamage() {
         setUpBoard(105);
-        game.fireLasers();
+        game.fireLasers(board.getLaserList());
         assertEquals(player1PcBefore -4, player1.getPc());
     }
 

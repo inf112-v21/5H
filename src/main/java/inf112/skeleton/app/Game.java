@@ -35,7 +35,6 @@ public class Game implements ApplicationListener {
     public Board board;                         //The board being played
     private int boardSize;                      //The number of tiles on board, as of now the board is always 1:1, if we allow for other board this needs to be separated into two values
     private ArrayList<Player> alivePlayerList;  //List of all players that are alive in the game
-    private ArrayList<Laser> laserList;         //List of all the laser roots on the map
     private Player winner;                      //The player that won the game
     private int numPlayers;                     //Amount of players expected
     private final boolean isServer;             // If true you start a server, if false you start a client and try to connect to server
@@ -125,7 +124,6 @@ public class Game implements ApplicationListener {
 
         alivePlayerList = new ArrayList<>();
         alivePlayerList.addAll(board.getPlayerList());
-        laserList = board.getLaserList();
         boardSize = board.getSize();
         hasPrintedHandInfo = false;
         font = new BitmapFont();
@@ -432,8 +430,7 @@ public class Game implements ApplicationListener {
      * Function for path tracing from a laser to an object that can be hit by it, damages players if
      * the object is a player as opposed to a wall.
      */
-    public void fireLasers(){
-        System.out.println(laserList);
+    public void fireLasers(ArrayList<Laser> laserList){
         for(Laser laser : laserList){
             Pair dir = dirMap.get(laser.getDirection());
             Pair currentPos = laser.getCoordinates();
@@ -458,6 +455,10 @@ public class Game implements ApplicationListener {
                 //Add an else here for updating texture and adding a pause between
             }
         }
+    }
+
+    public ArrayList<Laser> getPlayerLasers() {
+            return null;
     }
 
     /**
@@ -767,10 +768,6 @@ public class Game implements ApplicationListener {
     @Override
     public void dispose() {
         batch.dispose();
-    }
-
-    public void setLaserList(ArrayList<Laser> laserList) {
-        this.laserList = laserList;
     }
 
     public void setBoardSize(int boardSize) {
