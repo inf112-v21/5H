@@ -493,14 +493,18 @@ public class Game implements ApplicationListener {
             case "move1":  //Move in the direction the player is facing
                 Direction dir = playerObject.getDirection();
                 Pair pair = dirMap.get(dir);
-                playerObject.move(pair.getX(), pair.getY());
+                if (collision(playerObject)) {
+                    playerObject.move(pair.getX(), pair.getY());
+                }
                 endTurn();
                 break;
             case "move2":  //Move in the direction the player is facing
                 dir = playerObject.getDirection();
                 pair = dirMap.get(dir);
                 for (int i = 0; i < 2; i++) {
-                    playerObject.move(pair.getX(), pair.getY());
+                    if (collision(playerObject)) {
+                        playerObject.move(pair.getX(), pair.getY());
+                    }
                     endTurn();
                 }
                 break;
@@ -508,14 +512,19 @@ public class Game implements ApplicationListener {
                 dir = playerObject.getDirection();
                 pair = dirMap.get(dir);
                 for (int i = 0; i < 3; i++) {
-                    playerObject.move(pair.getX(), pair.getY());
+                    if (collision(playerObject)) {
+                        playerObject.move(pair.getX(), pair.getY());
+                    }
                     endTurn();
                 }
                 break;
             case "backUp":  //Move in the direction the player is facing
                 dir = playerObject.getDirection();
                 pair = dirMap.get(dir);
-                playerObject.move(-pair.getX(), -pair.getY());
+                Pair reversedDirection = pair.getReverseDirection();
+                if (collision(playerObject, reversedDirection)) {
+                    playerObject.move(pair.getX(), pair.getY());
+                }
                 endTurn();
                 break;
             case "turnRight":  //Rotate the player right
