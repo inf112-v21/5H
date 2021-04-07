@@ -1,6 +1,8 @@
 package inf112.skeleton.app;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import inf112.skeleton.app.sprites.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import inf112.skeleton.app.cards.Card;
@@ -79,11 +81,17 @@ class DeckTest {
 	
 	@Test
 	public void dealTest() {
-		ArrayList<Card> hand = deck.deal(9);
+		Player player = new Player(1,1,Player.texturePath, 1);
+		assertEquals(9, player.getPc(), "Player initiated with wrong damage");
+		ArrayList<Card> hand = deck.deal(player.getPc());
 
 		boolean validDeck;
-		validDeck = hand.size() == 9;
-		assertTrue(validDeck, "Hand should have size 9, but hasn't");
+		assertEquals(9, hand.size(), "Hand should have size 9, but doesn't");
+
+		player.damage();
+		hand = deck.deal(player.getPc());
+		assertEquals(8, hand.size(), "Hand should have size 8, but doesn't");
+
 
 	}
 
