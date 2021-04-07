@@ -93,5 +93,6 @@ public class Hand {
 
     public void setLockedCards(ArrayList<Card> lockedCards) {
         this.lockedCards = lockedCards;
+        selectedCards = lockedCards;
     }
 }
