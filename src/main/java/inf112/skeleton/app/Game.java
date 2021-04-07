@@ -109,7 +109,7 @@ public class Game implements ApplicationListener {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         board = new Board();            //Initialize a board
-        board.readBoard(114);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
+        board.readBoard(1);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
 
         spriteMap = new HashMap<>();
         //For all game objects on map, add the identifying string and a corresponding sprite to spriteMap.
@@ -227,6 +227,8 @@ public class Game implements ApplicationListener {
                 phase = Phase.WAIT_FOR_CLIENT_MOVE;
                 statusMessage = "Awaiting other player moves...";
                 hasPrintedState = false;
+                lockedCards = false;
+                amountLockedCards = 0;
             }
         } else if (phase == Phase.WAIT_FOR_CLIENT_MOVE) {
             if (gameServerListener.numReceivedMoves == gameServerListener.getConnectedPlayers()) {
@@ -273,7 +275,10 @@ public class Game implements ApplicationListener {
         if (network.getGameClientListener().hasReceivedHand()) {
             hand = network.getGameClientListener().getHand();
             lockedCards = network.getGameClientListener().getLockedCards();
-            amountLockedCards = network.getGameClientListener().getAmountLockedCards();
+            if (lockedCards) {
+                amountLockedCards = network.getGameClientListener().getAmountLockedCards();
+                hand.setLockedCards(getLockedCards());
+            }
             phase = Phase.CARD_SELECT;
             if (!moveMessagePrinted) { // If it has not printed that it's your move yet, it will
                 statusMessage = "Select cards to move. Click SUBMIT CARDS when ready (not implemented yet)";
@@ -299,6 +304,8 @@ public class Game implements ApplicationListener {
                 phase = Phase.MOVE;
                 statusMessage = "Players moving!";
                 network.getGameClientListener().resetHandReceived(); //Reset the bool for having received a hand of cards
+                network.getGameClientListener().resetLockedCardsandAmountLockedCards();
+
             }
         }
         if (phase == Phase.MOVE) {
@@ -314,6 +321,19 @@ public class Game implements ApplicationListener {
                 }
             }
         }
+    }
+
+    private ArrayList<Card> getLockedCards() {
+        ArrayList<Card> lockedCards = new ArrayList<>();
+        if (!this.lockedCards) {
+            return null;
+        }
+        int index = 5 - amountLockedCards;
+        while (index < 5 && index >= 0) {
+            lockedCards.add(previousHand.getAllCards().get(index));
+            index++;
+        }
+        return lockedCards;
     }
 
     /**
@@ -692,6 +712,7 @@ public class Game implements ApplicationListener {
                 if (hand.getAllCards().size() < 5) {
                     lockedCards = true;
                     amountLockedCards = 5 - hand.getAllCards().size();
+                    hand.setLockedCards(getLockedCards());
                 }
             }
             //If the player is client, create hand and send to client.

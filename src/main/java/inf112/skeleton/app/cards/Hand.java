@@ -29,23 +29,32 @@ public class Hand {
      * @return true if the move was registered, false otherwise.
      */
     public boolean selectCard(int cardNum){
+        boolean returnBool;
         if (cardNum > fullHand.size()-1) {
             System.out.println("Card selection outside current hand size");
+            return false;
         }
         if(selectedCards.size() >= 5){
             System.out.println("Max amount selected!");
             return false;
         }
-        else if(selectedCards.contains(fullHand.get(cardNum))){
+        else if(playerSelectedCards.contains(fullHand.get(cardNum))){
             unSelect(cardNum);
             System.out.println("Unselected");
-            return true;
         }
         else{
-            selectedCards.add(fullHand.get(cardNum));
+            playerSelectedCards.add(fullHand.get(cardNum));
             System.out.println("Card: "+ fullHand.get(cardNum).getType() + " selected.");
-            return true;
         }
+        if (hasLockedCards) {
+            selectedCards = new ArrayList<>();
+            selectedCards.addAll(playerSelectedCards);
+            selectedCards.addAll(lockedCards);
+        }
+        else {
+            selectedCards = playerSelectedCards;
+        }
+        return true;
     }
 
     /**
@@ -53,7 +62,7 @@ public class Hand {
      * @param cardNum The integer index of card in hand.
      */
     public void unSelect(int cardNum){
-        selectedCards.remove(fullHand.get(cardNum));
+        playerSelectedCards.remove(fullHand.get(cardNum));
     }
 
     /**
@@ -80,5 +89,9 @@ public class Hand {
 
     public Card getFirstCard() {
         return selectedCards.get(0);
+    }
+
+    public void setLockedCards(ArrayList<Card> lockedCards) {
+        this.lockedCards = lockedCards;
     }
 }
