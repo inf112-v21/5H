@@ -104,4 +104,15 @@ class DeckTest {
 		assertEquals(currentDeck, deck.getCurrentDeck());
 	}
 
+	@Test
+	public void canRemoveCardFromDeck() {
+		int initialDeckSize = currentDeck.size();
+		Card cardToRemove = new Card();
+		cardToRemove.create("move1", 500);
+		deck.removeCardFromDeck(cardToRemove);
+		assertEquals(initialDeckSize -1, deck.getCurrentDeck().size(), "The deck did not decrease in size");
+		assertFalse(deck.getCurrentDeck().contains(cardToRemove), "Card still in deck, but deck decreased in size");
+
+	}
+
 }
