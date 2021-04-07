@@ -247,15 +247,6 @@ public class Game implements ApplicationListener {
         }
     }
 
-    private void createPlayerHandHashMap() {
-        playerCardsHashMap = new HashMap<>();
-        for (Hand hand : gameServerListener.getReceivedMoves()) {
-            String shortName = hand.getPlayerShortName(); //Get name of player who owns hand
-            Player player = (Player) board.getObjectMap().get(shortName); //Get Player object who owns hand
-            playerCardsHashMap.put(player,hand.getAllCards() );
-        }
-    }
-
     /**
      * Function for handling the logic specific to clients.
      */
@@ -320,6 +311,15 @@ public class Game implements ApplicationListener {
                     doOnePlayerMove(); //Do a move
                 }
             }
+        }
+    }
+
+    private void createPlayerHandHashMap() {
+        playerCardsHashMap = new HashMap<>();
+        for (Hand hand : gameServerListener.getReceivedMoves()) {
+            String shortName = hand.getPlayerShortName(); //Get name of player who owns hand
+            Player player = (Player) board.getObjectMap().get(shortName); //Get Player object who owns hand
+            playerCardsHashMap.put(player,hand.getAllCards() );
         }
     }
 
