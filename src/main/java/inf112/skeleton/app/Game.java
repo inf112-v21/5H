@@ -23,6 +23,7 @@ import org.lwjgl.opengl.GL20;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Class for handling GUI and game setup/logic
@@ -440,7 +441,14 @@ public class Game implements ApplicationListener {
                 allOffsetX += 100;
             }
         }
+        boolean addedSpaceLockedCards = false;
         for (Card c : selectedCards) { //Loop through selected cards and draw them
+            if (lockedCards && !addedSpaceLockedCards)  {
+                if (Objects.requireNonNull(getLockedCards()).contains(c)) {
+                    selectedOffsetX += 100 * (5-selectedCards.size());
+                    addedSpaceLockedCards = true;
+                }
+            }
             Sprite cSprite = spriteMap.get(c.getType()); //Get sprite for current card
             int indexOfCard = allCards.indexOf(c);
             cSprite.setScale(1f);
