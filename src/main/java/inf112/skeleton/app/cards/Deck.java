@@ -82,4 +82,13 @@ public class Deck {
 	public ArrayList<Card> getCurrentDeck() {
 		return currentDeck;
 	}
+
+	/**
+	 * @param card card that you want removed
+	 * Method is used when you need to remove a card from the deck due to it being locked to a player
+	 */
+	public void removeCardFromDeck(Card cardToRemove) {
+		currentDeck.removeIf(card -> card.equals(cardToRemove));
+
+	}
 }
