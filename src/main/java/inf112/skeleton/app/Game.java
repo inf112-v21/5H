@@ -68,6 +68,7 @@ public class Game implements ApplicationListener {
     private HashMap<Player, ArrayList<Card>> playerCardsHashMap;
     private boolean lockedCards = false;
     private int amountLockedCards;
+    private boolean setLockedCards = false;
 
     /**
      * Constructor for the game class.
@@ -222,8 +223,9 @@ public class Game implements ApplicationListener {
                     hasPrintedHandInfo = false;
                 }
             } else {
+                previousHand = hand.getCopy();
                 gameServerListener.receivedMoves.add(hand);
-                previousHand = hand;
+                hand = previousHand; // To show in GUI
                 phase = Phase.WAIT_FOR_CLIENT_MOVE;
                 statusMessage = "Awaiting other player moves...";
                 hasPrintedState = false;
@@ -238,7 +240,7 @@ public class Game implements ApplicationListener {
                 hasPrintedState = false;
             }
         } else if (phase == Phase.SEND_CARDS) {
-            createPlayerHandHashMap();
+            createPlayerCardsHashMap();
             sendListOfAllMoves();
             phase = Phase.MOVE;
             statusMessage = "Players moving!";
@@ -268,7 +270,10 @@ public class Game implements ApplicationListener {
             lockedCards = network.getGameClientListener().getLockedCards();
             if (lockedCards) {
                 amountLockedCards = network.getGameClientListener().getAmountLockedCards();
-                hand.setLockedCards(getLockedCards());
+                if (!setLockedCards) {
+                    hand.setLockedCards(getLockedCards());
+                    setLockedCards = true;
+                }
             }
             phase = Phase.CARD_SELECT;
             if (!moveMessagePrinted) { // If it has not printed that it's your move yet, it will
@@ -296,6 +301,7 @@ public class Game implements ApplicationListener {
                 statusMessage = "Players moving!";
                 network.getGameClientListener().resetHandReceived(); //Reset the bool for having received a hand of cards
                 network.getGameClientListener().resetLockedCardsAndAmountLockedCards();
+                setLockedCards = false;
 
             }
         }
@@ -314,12 +320,12 @@ public class Game implements ApplicationListener {
         }
     }
 
-    private void createPlayerHandHashMap() {
+    private void createPlayerCardsHashMap() {
         playerCardsHashMap = new HashMap<>();
         for (Hand hand : gameServerListener.getReceivedMoves()) {
             String shortName = hand.getPlayerShortName(); //Get name of player who owns hand
             Player player = (Player) board.getObjectMap().get(shortName); //Get Player object who owns hand
-            playerCardsHashMap.put(player,hand.getSelectedCards());
+            playerCardsHashMap.put(player,hand.getSelectedCardsCopy());
         }
     }
 

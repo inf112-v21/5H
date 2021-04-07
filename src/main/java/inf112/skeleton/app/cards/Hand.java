@@ -63,6 +63,7 @@ public class Hand {
      */
     public void unSelect(int cardNum){
         playerSelectedCards.remove(fullHand.get(cardNum));
+        selectedCards.remove(fullHand.get(cardNum));
     }
 
     /**
@@ -87,6 +88,14 @@ public class Hand {
         return selectedCards;
     }
 
+    public void setSelectedCards(ArrayList<Card> selectedCards) {
+        this.selectedCards = selectedCards;
+    }
+
+    public ArrayList<Card> getSelectedCardsCopy() {
+        return new ArrayList<>(selectedCards);
+    }
+
     public Card getFirstCard() {
         return selectedCards.get(0);
     }
@@ -94,5 +103,12 @@ public class Hand {
     public void setLockedCards(ArrayList<Card> lockedCards) {
         this.lockedCards = lockedCards;
         selectedCards = lockedCards;
+    }
+
+    public Hand getCopy() {
+        Hand copy = new Hand();
+        copy.create(getAllCards(), getPlayerShortName());
+        copy.setSelectedCards(getSelectedCardsCopy());
+        return copy;
     }
 }
