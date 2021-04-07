@@ -125,7 +125,7 @@ public class GameClientListener extends Listener {
     public int getAmountLockedCards() {
         return amountLockedCards;
     }
-    public void resetLockedCardsandAmountLockedCards() {
+    public void resetLockedCardsAndAmountLockedCards() {
         lockedCards = false;
         amountLockedCards = 0;
     }

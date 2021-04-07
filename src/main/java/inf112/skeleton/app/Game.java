@@ -295,7 +295,7 @@ public class Game implements ApplicationListener {
                 phase = Phase.MOVE;
                 statusMessage = "Players moving!";
                 network.getGameClientListener().resetHandReceived(); //Reset the bool for having received a hand of cards
-                network.getGameClientListener().resetLockedCardsandAmountLockedCards();
+                network.getGameClientListener().resetLockedCardsAndAmountLockedCards();
 
             }
         }
@@ -319,7 +319,7 @@ public class Game implements ApplicationListener {
         for (Hand hand : gameServerListener.getReceivedMoves()) {
             String shortName = hand.getPlayerShortName(); //Get name of player who owns hand
             Player player = (Player) board.getObjectMap().get(shortName); //Get Player object who owns hand
-            playerCardsHashMap.put(player,hand.getAllCards() );
+            playerCardsHashMap.put(player,hand.getSelectedCards());
         }
     }
 
@@ -330,7 +330,7 @@ public class Game implements ApplicationListener {
         }
         int index = 5 - amountLockedCards;
         while (index < 5 && index >= 0) {
-            lockedCards.add(previousHand.getAllCards().get(index));
+            lockedCards.add(previousHand.getSelectedCards().get(index));
             index++;
         }
         return lockedCards;
