@@ -63,10 +63,10 @@ public class Deck {
 		Collections.shuffle(currentDeck);
 	}
 
-	public ArrayList<Card> deal() {
+	public ArrayList<Card> deal(int cardsToDeal) {
 		ArrayList<Card> hand = new ArrayList<>();
 		Random random = new Random();
-		for(int i=0; i<9; i++){
+		for(int i=0; i<cardsToDeal; i++){
 			hand.add(currentDeck.remove(random.nextInt(currentDeck.size())));
 		}
 		return hand;

@@ -79,7 +79,7 @@ class DeckTest {
 	
 	@Test
 	public void dealTest() {
-		ArrayList<Card> hand = deck.deal();
+		ArrayList<Card> hand = deck.deal(9);
 
 		boolean validDeck;
 		validDeck = hand.size() == 9;
@@ -90,7 +90,7 @@ class DeckTest {
 	@Test
 	public void resetDeckTest() {
 
-		deck.deal(); // To remove some cards
+		deck.deal(9); // To remove some cards
 		ArrayList<Card> oldDeck = deck.getCurrentDeck();
 		deck.resetDeck();
 		ArrayList<Card> newDeck = deck.getCurrentDeck();

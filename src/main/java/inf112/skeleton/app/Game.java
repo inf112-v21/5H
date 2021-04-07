@@ -655,12 +655,12 @@ public class Game implements ApplicationListener {
             //If player is server, simply set the hand.
             if (player.getShortName().equals("p1")) {
                 hand = new Hand();
-                hand.create(deck.deal(), player.getShortName());
+                hand.create(deck.deal(player.getPc()), player.getShortName());
             }
             //If the player is client, create hand and send to client.
             else {
                 Hand currentHand = new Hand();
-                currentHand.create(deck.deal(), player.getShortName());
+                currentHand.create(deck.deal(player.getPc()), player.getShortName());
                 Connection connectedClient = gameServerListener.getPlayer(player.getPlayerNum() - 2);
                 if (connectedClient != null) { // Checks that player is connected
                     connectedClient.sendTCP(currentHand); // Sends the requestObject to the retrieved client
