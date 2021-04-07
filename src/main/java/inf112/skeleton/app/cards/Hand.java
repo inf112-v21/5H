@@ -5,7 +5,11 @@ import java.util.ArrayList;
 public class Hand {
     private ArrayList<Card> fullHand;
     private ArrayList<Card> selectedCards;
+    private ArrayList<Card> playerSelectedCards;
+    private boolean hasLockedCards;
+    private ArrayList<Card> lockedCards;
     private String playerShortName;
+
 
     /**
      * Initializes the player hand.
@@ -14,7 +18,9 @@ public class Hand {
     public void create(ArrayList<Card> cards, String playerShortName){
         fullHand = cards;
         selectedCards = new ArrayList<>();
+        playerSelectedCards = new ArrayList<>();
         this.playerShortName = playerShortName;
+        hasLockedCards = fullHand.size() < 5;
     }
 
     /**
@@ -23,6 +29,9 @@ public class Hand {
      * @return true if the move was registered, false otherwise.
      */
     public boolean selectCard(int cardNum){
+        if (cardNum > fullHand.size()-1) {
+            System.out.println("Card selection outside current hand size");
+        }
         if(selectedCards.size() >= 5){
             System.out.println("Max amount selected!");
             return false;

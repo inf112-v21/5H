@@ -18,6 +18,8 @@ public class GameClientListener extends Listener {
 
     private GameInfoTCP gameInfo;
     private boolean hasReceivedGameInfo;
+    private boolean lockedCards = false;
+    private int amountLockedCards;
 
     /**
      * @param connection the connection to Server
@@ -41,6 +43,10 @@ public class GameClientListener extends Listener {
         if(receivedObject instanceof Hand){
             hand = (Hand) receivedObject;
             handReceived = true;
+            if (hand.getAllCards().size() < 5) {
+                lockedCards = true;
+                amountLockedCards = 5 - hand.getAllCards().size();
+            }
         }
         if(receivedObject instanceof GameInfoTCP){
             gameInfo = (GameInfoTCP) receivedObject;
@@ -112,5 +118,15 @@ public class GameClientListener extends Listener {
      */
     public GameInfoTCP getGameInfo() {
         return gameInfo;
+    }
+    public boolean getLockedCards() {
+        return lockedCards;
+    }
+    public int getAmountLockedCards() {
+        return amountLockedCards;
+    }
+    public void resetLockedCardsandAmountLockedCards() {
+        lockedCards = false;
+        amountLockedCards = 0;
     }
 }

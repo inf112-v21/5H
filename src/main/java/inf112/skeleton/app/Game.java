@@ -64,6 +64,10 @@ public class Game implements ApplicationListener {
         put(Direction.SOUTH, new Pair(0, -1));
     }};
     private HashMap<String, Sprite> spriteMap;    //Map for getting the corresponding sprite to a string, i.e. g => (Sprite) ground
+    private Hand previousHand;
+    private HashMap<Player, ArrayList<Card>> playerCardsHashMap;
+    private boolean lockedCards = false;
+    private int amountLockedCards;
 
     /**
      * Constructor for the game class.
@@ -219,6 +223,7 @@ public class Game implements ApplicationListener {
                 }
             } else {
                 gameServerListener.receivedMoves.add(hand);
+                previousHand = hand;
                 phase = Phase.WAIT_FOR_CLIENT_MOVE;
                 statusMessage = "Awaiting other player moves...";
                 hasPrintedState = false;
@@ -231,11 +236,21 @@ public class Game implements ApplicationListener {
                 hasPrintedState = false;
             }
         } else if (phase == Phase.SEND_CARDS) {
+            createPlayerHandHashMap();
             sendListOfAllMoves();
             phase = Phase.MOVE;
             statusMessage = "Players moving!";
         } else if (phase == Phase.MOVE) {
             doOnePlayerMove(); //Advances moves by one
+        }
+    }
+
+    private void createPlayerHandHashMap() {
+        playerCardsHashMap = new HashMap<>();
+        for (Hand hand : gameServerListener.getReceivedMoves()) {
+            String shortName = hand.getPlayerShortName(); //Get name of player who owns hand
+            Player player = (Player) board.getObjectMap().get(shortName); //Get Player object who owns hand
+            playerCardsHashMap.put(player,hand.getAllCards() );
         }
     }
 
@@ -257,6 +272,8 @@ public class Game implements ApplicationListener {
         // Checks if this client has yet to submit moves
         if (network.getGameClientListener().hasReceivedHand()) {
             hand = network.getGameClientListener().getHand();
+            lockedCards = network.getGameClientListener().getLockedCards();
+            amountLockedCards = network.getGameClientListener().getAmountLockedCards();
             phase = Phase.CARD_SELECT;
             if (!moveMessagePrinted) { // If it has not printed that it's your move yet, it will
                 statusMessage = "Select cards to move. Click SUBMIT CARDS when ready (not implemented yet)";
@@ -267,6 +284,7 @@ public class Game implements ApplicationListener {
             } else { // If a move is registered it will start the sending process
                 if (network.getClient().isConnected()) { // Checks once more if a disconnect has happened
                     network.getClient().sendTCP(hand); // Sends the move object to the server
+                    previousHand = hand;
                 } else { // reconnects if necessary
                     try {
                         network.reconnectClient();
@@ -651,11 +669,30 @@ public class Game implements ApplicationListener {
      */
     private void dealCardsToAllPlayers() {
         Deck deck = new Deck();
+        //Check if any players have taken enough damage to have locked cards, if they do they will hold onto some of their cards for this turn
+        // These cards should therefore be removed from the deck as there should only be one copy of each card
+        for (Player player : alivePlayerList) {
+            if (player.getPc() < 5) {
+                int playerDamage = player.getPc();
+                ArrayList<Card> playerCards = playerCardsHashMap.get(player); // Get the cards player had last turn
+                int index = 4;
+                while (playerDamage < 5 && index >= 0) {
+                    deck.removeCardFromDeck(playerCards.get(index)); // Removes card from deck starting with last card in hand which is locked first.
+                    playerDamage++;
+                    index--;
+                }
+            }
+        }
+        // Loop over players again to deal cards
         for (Player player : alivePlayerList) { //For all alive players
             //If player is server, simply set the hand.
             if (player.getShortName().equals("p1")) {
                 hand = new Hand();
                 hand.create(deck.deal(player.getPc()), player.getShortName());
+                if (hand.getAllCards().size() < 5) {
+                    lockedCards = true;
+                    amountLockedCards = 5 - hand.getAllCards().size();
+                }
             }
             //If the player is client, create hand and send to client.
             else {

@@ -85,7 +85,6 @@ class DeckTest {
 		assertEquals(9, player.getPc(), "Player initiated with wrong damage");
 		ArrayList<Card> hand = deck.deal(player.getPc());
 
-		boolean validDeck;
 		assertEquals(9, hand.size(), "Hand should have size 9, but doesn't");
 
 		player.damage();
