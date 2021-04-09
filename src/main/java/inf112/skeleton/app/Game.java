@@ -111,7 +111,7 @@ public class Game implements ApplicationListener {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         board = new Board();            //Initialize a board
-        board.readBoard(2);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
+        board.readBoard(1);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
 
         spriteMap = new HashMap<>();
         //For all game objects on map, add the identifying string and a corresponding sprite to spriteMap.
@@ -784,7 +784,6 @@ public class Game implements ApplicationListener {
      * able to see the final position of the player. (There is probably a cleaner way to do this than sleep the thread.)
      */
     private void endTurn() {
-        fireLasers(board.getLaserList());
         ArrayList<Player> toBeRemoved = new ArrayList<>(); //List of players that died this round
         for (Player player : alivePlayerList) {
             if (player.isDead() || player.getPlayerNum() > numPlayers) {    //If player died
