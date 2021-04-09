@@ -63,11 +63,9 @@ Vinn ved å være den første til å ha roboten sin innom alle tre flaggene vinn
 
 ### Kjente Feil og mangler
 
-- Foreløpig eksisterer ikke skade i spillet og man kan ikke power down.
-  - Derav er det heller ingen begrensing på kort man får tildelt eller kan velge.
+- Powerdown mangler og dermed ingen måte å fjerne damage annet en å dø
 - Roboter skyter ikke laser
 - Brettet består bare av simple felt, ingen rullebånd, skiftenøkler osv.
 - Vegger tar opp ett helt felt på brettet
-- Roboter kan gå igjennom hverandre
-- Travis CI build, en gang bygget ikke prosjektet grunnet at porter ikke closet skikkelig i gameServerListenerTest.java, har ikke klart å reprodusere denne feilen siden så vanskelig å teste om den virker skikkelig nå. Problemet virker som det lå i at @AfterEach ikke closet portene skikkelig. Vi har prøvd forskjellige løsninger men får fortsatt feilen av og til.
+- Hvis spiller mister alle 3 liv, så er det mulighet for at det oppstår en bug hvor feil spiller fjernes fra brettet og den spilleren som skulle være ute av spillet, fortsetter med negativ hp. Spillet vil da heller ikke kunne fortsette da serveren forventer kort fra denne spilleren som skulle vært død, men lokalt vet spillet at spilleren er død og ignorer kort.
 
