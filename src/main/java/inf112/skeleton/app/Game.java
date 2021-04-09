@@ -23,6 +23,7 @@ import org.lwjgl.opengl.GL20;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Class for handling GUI and game setup/logic
@@ -64,6 +65,11 @@ public class Game implements ApplicationListener {
         put(Direction.SOUTH, new Pair(0, -1));
     }};
     private HashMap<String, Sprite> spriteMap;    //Map for getting the corresponding sprite to a string, i.e. g => (Sprite) ground
+    private Hand previousHand;
+    private HashMap<Player, ArrayList<Card>> playerCardsHashMap;
+    private boolean lockedCards = false;
+    private int amountLockedCards;
+    private boolean setLockedCards = false;
 
     /**
      * Constructor for the game class.
@@ -105,7 +111,7 @@ public class Game implements ApplicationListener {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         board = new Board();            //Initialize a board
-        board.readBoard(114);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
+        board.readBoard(1);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
 
         spriteMap = new HashMap<>();
         //For all game objects on map, add the identifying string and a corresponding sprite to spriteMap.
@@ -218,10 +224,14 @@ public class Game implements ApplicationListener {
                     hasPrintedHandInfo = false;
                 }
             } else {
+                previousHand = hand.getCopy();
                 gameServerListener.receivedMoves.add(hand);
+                hand = previousHand; // To show in GUI
                 phase = Phase.WAIT_FOR_CLIENT_MOVE;
                 statusMessage = "Awaiting other player moves...";
                 hasPrintedState = false;
+                lockedCards = false;
+                amountLockedCards = 0;
             }
         } else if (phase == Phase.WAIT_FOR_CLIENT_MOVE) {
             if (gameServerListener.numReceivedMoves == gameServerListener.getConnectedPlayers()) {
@@ -231,6 +241,7 @@ public class Game implements ApplicationListener {
                 hasPrintedState = false;
             }
         } else if (phase == Phase.SEND_CARDS) {
+            createPlayerCardsHashMap();
             sendListOfAllMoves();
             phase = Phase.MOVE;
             statusMessage = "Players moving!";
@@ -257,6 +268,14 @@ public class Game implements ApplicationListener {
         // Checks if this client has yet to submit moves
         if (network.getGameClientListener().hasReceivedHand()) {
             hand = network.getGameClientListener().getHand();
+            lockedCards = network.getGameClientListener().getLockedCards();
+            if (lockedCards) {
+                amountLockedCards = network.getGameClientListener().getAmountLockedCards();
+                if (!setLockedCards) {
+                    hand.setLockedCards(getLockedCards());
+                    setLockedCards = true;
+                }
+            }
             phase = Phase.CARD_SELECT;
             if (!moveMessagePrinted) { // If it has not printed that it's your move yet, it will
                 statusMessage = "Select cards to move. Click SUBMIT CARDS when ready (not implemented yet)";
@@ -267,6 +286,7 @@ public class Game implements ApplicationListener {
             } else { // If a move is registered it will start the sending process
                 if (network.getClient().isConnected()) { // Checks once more if a disconnect has happened
                     network.getClient().sendTCP(hand); // Sends the move object to the server
+                    previousHand = hand;
                 } else { // reconnects if necessary
                     try {
                         network.reconnectClient();
@@ -281,6 +301,9 @@ public class Game implements ApplicationListener {
                 phase = Phase.MOVE;
                 statusMessage = "Players moving!";
                 network.getGameClientListener().resetHandReceived(); //Reset the bool for having received a hand of cards
+                network.getGameClientListener().resetLockedCardsAndAmountLockedCards();
+                setLockedCards = false;
+
             }
         }
         if (phase == Phase.MOVE) {
@@ -296,6 +319,28 @@ public class Game implements ApplicationListener {
                 }
             }
         }
+    }
+
+    private void createPlayerCardsHashMap() {
+        playerCardsHashMap = new HashMap<>();
+        for (Hand hand : gameServerListener.getReceivedMoves()) {
+            String shortName = hand.getPlayerShortName(); //Get name of player who owns hand
+            Player player = (Player) board.getObjectMap().get(shortName); //Get Player object who owns hand
+            playerCardsHashMap.put(player,hand.getSelectedCardsCopy());
+        }
+    }
+
+    private ArrayList<Card> getLockedCards() {
+        ArrayList<Card> lockedCards = new ArrayList<>();
+        if (!this.lockedCards) {
+            return null;
+        }
+        int index = 5 - amountLockedCards;
+        while (index < 5 && index >= 0) {
+            lockedCards.add(previousHand.getSelectedCards().get(index));
+            index++;
+        }
+        return lockedCards;
     }
 
     /**
@@ -396,7 +441,12 @@ public class Game implements ApplicationListener {
                 allOffsetX += 100;
             }
         }
+        boolean addedSpaceLockedCards = false;
         for (Card c : selectedCards) { //Loop through selected cards and draw them
+            if (lockedCards && !addedSpaceLockedCards && Objects.requireNonNull(getLockedCards()).contains(c))  {
+                    selectedOffsetX += 100 * (5-selectedCards.size());
+                    addedSpaceLockedCards = true;
+            }
             Sprite cSprite = spriteMap.get(c.getType()); //Get sprite for current card
             int indexOfCard = allCards.indexOf(c);
             cSprite.setScale(1f);
@@ -651,16 +701,36 @@ public class Game implements ApplicationListener {
      */
     private void dealCardsToAllPlayers() {
         Deck deck = new Deck();
+        //Check if any players have taken enough damage to have locked cards, if they do they will hold onto some of their cards for this turn
+        // These cards should therefore be removed from the deck as there should only be one copy of each card
+        for (Player player : alivePlayerList) {
+            if (player.getPc() < 5) {
+                int playerDamage = player.getPc();
+                ArrayList<Card> playerCards = playerCardsHashMap.get(player); // Get the cards player had last turn
+                int index = 4;
+                while (playerDamage < 5 && index >= 0) {
+                    deck.removeCardFromDeck(playerCards.get(index)); // Removes card from deck starting with last card in hand which is locked first.
+                    playerDamage++;
+                    index--;
+                }
+            }
+        }
+        // Loop over players again to deal cards
         for (Player player : alivePlayerList) { //For all alive players
             //If player is server, simply set the hand.
             if (player.getShortName().equals("p1")) {
                 hand = new Hand();
-                hand.create(deck.deal(), player.getShortName());
+                hand.create(deck.deal(player.getPc()), player.getShortName());
+                if (hand.getAllCards().size() < 5) {
+                    lockedCards = true;
+                    amountLockedCards = 5 - hand.getAllCards().size();
+                    hand.setLockedCards(getLockedCards());
+                }
             }
             //If the player is client, create hand and send to client.
             else {
                 Hand currentHand = new Hand();
-                currentHand.create(deck.deal(), player.getShortName());
+                currentHand.create(deck.deal(player.getPc()), player.getShortName());
                 Connection connectedClient = gameServerListener.getPlayer(player.getPlayerNum() - 2);
                 if (connectedClient != null) { // Checks that player is connected
                     connectedClient.sendTCP(currentHand); // Sends the requestObject to the retrieved client

@@ -5,7 +5,11 @@ import java.util.ArrayList;
 public class Hand {
     private ArrayList<Card> fullHand;
     private ArrayList<Card> selectedCards;
+    private ArrayList<Card> playerSelectedCards;
+    private boolean hasLockedCards;
+    private ArrayList<Card> lockedCards;
     private String playerShortName;
+
 
     /**
      * Initializes the player hand.
@@ -14,7 +18,9 @@ public class Hand {
     public void create(ArrayList<Card> cards, String playerShortName){
         fullHand = cards;
         selectedCards = new ArrayList<>();
+        playerSelectedCards = new ArrayList<>();
         this.playerShortName = playerShortName;
+        hasLockedCards = fullHand.size() < 5;
     }
 
     /**
@@ -23,20 +29,31 @@ public class Hand {
      * @return true if the move was registered, false otherwise.
      */
     public boolean selectCard(int cardNum){
+        if (cardNum > fullHand.size()-1) {
+            System.out.println("Card selection outside current hand size");
+            return false;
+        }
         if(selectedCards.size() >= 5){
             System.out.println("Max amount selected!");
             return false;
         }
-        else if(selectedCards.contains(fullHand.get(cardNum))){
+        else if(playerSelectedCards.contains(fullHand.get(cardNum))){
             unSelect(cardNum);
             System.out.println("Unselected");
-            return true;
         }
         else{
-            selectedCards.add(fullHand.get(cardNum));
+            playerSelectedCards.add(fullHand.get(cardNum));
             System.out.println("Card: "+ fullHand.get(cardNum).getType() + " selected.");
-            return true;
         }
+        if (hasLockedCards) {
+            selectedCards = new ArrayList<>();
+            selectedCards.addAll(playerSelectedCards);
+            selectedCards.addAll(lockedCards);
+        }
+        else {
+            selectedCards = playerSelectedCards;
+        }
+        return true;
     }
 
     /**
@@ -44,6 +61,7 @@ public class Hand {
      * @param cardNum The integer index of card in hand.
      */
     public void unSelect(int cardNum){
+        playerSelectedCards.remove(fullHand.get(cardNum));
         selectedCards.remove(fullHand.get(cardNum));
     }
 
@@ -69,7 +87,27 @@ public class Hand {
         return selectedCards;
     }
 
+    public void setSelectedCards(ArrayList<Card> selectedCards) {
+        this.selectedCards = selectedCards;
+    }
+
+    public ArrayList<Card> getSelectedCardsCopy() {
+        return new ArrayList<>(selectedCards);
+    }
+
     public Card getFirstCard() {
         return selectedCards.get(0);
+    }
+
+    public void setLockedCards(ArrayList<Card> lockedCards) {
+        this.lockedCards = lockedCards;
+        selectedCards = lockedCards;
+    }
+
+    public Hand getCopy() {
+        Hand copy = new Hand();
+        copy.create(getAllCards(), getPlayerShortName());
+        copy.setSelectedCards(getSelectedCardsCopy());
+        return copy;
     }
 }

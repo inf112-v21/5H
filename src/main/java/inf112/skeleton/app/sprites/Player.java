@@ -15,6 +15,7 @@ public class Player extends AbstractGameObject {
     private Direction dir;  //Facing direction
     private int playerNum; //The number for this player (1 for player1, 2 for player2...)
     private ArrayList<String> visitedFlags; //List over flags (as shortname) that player has visited
+    public static String texturePath = "src/main/resources/tex/player";
 
 
 

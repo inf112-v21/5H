@@ -1,0 +1,22 @@
+Møte 09.04.2021
+Digitalt via Discord
+Tilstede
+  >>>Skjalg Eide Hodneland
+  Emil Flatøy Hodneland
+  Jonas Svåsand
+  >>>Håkon Mathias Hvidsten Høie
+  Hans Albert Biørn Terland
+
+
+
+Standup:
+Jonas:
+- Implementert kollisjon, laser og at damage påvirker antall kort man får utdelt samt låser kort
+  hvis man ikke får utdelt nok neste runde.
+
+
+Vi kjørte en spilletest for å sjekke at det som var implementert fungerer. 
+
+Diskuterte litt om fremgang og bestemte at neste møte blir på tirsdag 13.04 14:15. 
+
+

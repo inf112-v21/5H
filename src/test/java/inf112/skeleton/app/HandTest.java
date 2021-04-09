@@ -28,7 +28,7 @@ class HandTest {
 
 	@Test
 	public void numberOfCardsTest() {
-		int output = deck.deal().size();
+		int output = deck.deal(9).size();
 		assertEquals(9, output, "Dealt deck should have 9 cards, but didnt");
 	}
 

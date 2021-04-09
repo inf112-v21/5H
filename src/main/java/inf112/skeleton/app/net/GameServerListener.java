@@ -154,4 +154,7 @@ public class GameServerListener extends Listener {
         numReceivedMoves = 0;
     }
 
+    public ArrayList<Hand> getReceivedMoves() {
+        return receivedMoves;
+    }
 }

@@ -1,5 +1,7 @@
 package inf112.skeleton.app.cards;
 
+import java.util.Objects;
+
 public class Card {
 	private String type;
 	private int priority;
@@ -28,5 +30,19 @@ public class Card {
 	@Override
 	public String toString() {
 		return type + " [" + priority + "]";
+	}
+
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Card card = (Card) o;
+		return getPriority() == card.getPriority() && Objects.equals(getType(), card.getType());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getType(), getPriority());
 	}
 }

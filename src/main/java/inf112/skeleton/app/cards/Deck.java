@@ -63,10 +63,10 @@ public class Deck {
 		Collections.shuffle(currentDeck);
 	}
 
-	public ArrayList<Card> deal() {
+	public ArrayList<Card> deal(int cardsToDeal) {
 		ArrayList<Card> hand = new ArrayList<>();
 		Random random = new Random();
-		for(int i=0; i<9; i++){
+		for(int i=0; i<cardsToDeal; i++){
 			hand.add(currentDeck.remove(random.nextInt(currentDeck.size())));
 		}
 		return hand;
@@ -81,5 +81,14 @@ public class Deck {
 	}
 	public ArrayList<Card> getCurrentDeck() {
 		return currentDeck;
+	}
+
+	/**
+	 * @param cardToRemove card that you want removed
+	 * Method is used when you need to remove a card from the deck due to it being locked to a player
+	 */
+	public void removeCardFromDeck(Card cardToRemove) {
+		currentDeck.removeIf(card -> card.equals(cardToRemove));
+
 	}
 }
