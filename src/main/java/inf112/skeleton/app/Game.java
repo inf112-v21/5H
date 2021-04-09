@@ -3,6 +3,7 @@ package inf112.skeleton.app;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -20,6 +21,7 @@ import inf112.skeleton.app.sprites.Direction;
 import inf112.skeleton.app.sprites.Laser;
 import inf112.skeleton.app.sprites.Player;
 import org.lwjgl.opengl.GL20;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,6 +58,9 @@ public class Game implements ApplicationListener {
     private boolean moveMessagePrinted = false; // Holds whether a moveMessage has been printed to console or not
     private PlayerMoves playerMoves;
     private ArrayList<Hand> allMoves; //All moves received by server from Client(s)
+
+    //Music variables
+    Sound sound;
 
     //Map that holds Direction and the corresponding movement. I.e. north should move player x += 0, y += 1
     private final HashMap<Direction, Pair> dirMap = new HashMap<>() {{
@@ -132,6 +137,10 @@ public class Game implements ApplicationListener {
         font = new BitmapFont();
         bgTexture = new Texture("src/main/resources/tex/background.png");
         statusMessage = "";
+
+        //Start music
+        sound = Gdx.audio.newSound(Gdx.files.internal("src/main/resources/music/testMusic.wav"));
+        sound.loop();
     }
 
     @Override
