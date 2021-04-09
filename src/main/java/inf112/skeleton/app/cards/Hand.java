@@ -29,7 +29,6 @@ public class Hand {
      * @return true if the move was registered, false otherwise.
      */
     public boolean selectCard(int cardNum){
-        boolean returnBool;
         if (cardNum > fullHand.size()-1) {
             System.out.println("Card selection outside current hand size");
             return false;

@@ -443,11 +443,9 @@ public class Game implements ApplicationListener {
         }
         boolean addedSpaceLockedCards = false;
         for (Card c : selectedCards) { //Loop through selected cards and draw them
-            if (lockedCards && !addedSpaceLockedCards)  {
-                if (Objects.requireNonNull(getLockedCards()).contains(c)) {
+            if (lockedCards && !addedSpaceLockedCards && Objects.requireNonNull(getLockedCards()).contains(c))  {
                     selectedOffsetX += 100 * (5-selectedCards.size());
                     addedSpaceLockedCards = true;
-                }
             }
             Sprite cSprite = spriteMap.get(c.getType()); //Get sprite for current card
             int indexOfCard = allCards.indexOf(c);
