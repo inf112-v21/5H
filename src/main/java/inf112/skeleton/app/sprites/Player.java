@@ -4,6 +4,7 @@ import inf112.skeleton.app.Board;
 import inf112.skeleton.app.Pair;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Player extends AbstractGameObject {
     private int points;
@@ -17,6 +18,12 @@ public class Player extends AbstractGameObject {
     private ArrayList<String> visitedFlags; //List over flags (as shortname) that player has visited
     public static String texturePath = "src/main/resources/tex/player";
 
+    private final HashMap<Direction, Pair> dirMap = new HashMap<>() {{
+        put(Direction.NORTH, new Pair(0, 1));
+        put(Direction.WEST, new Pair(-1, 0));
+        put(Direction.EAST, new Pair(1, 0));
+        put(Direction.SOUTH, new Pair(0, -1));
+    }};
 
 
     /**
@@ -79,20 +86,26 @@ public class Player extends AbstractGameObject {
             System.out.println("Hit a wall.");
             return;
         }
-        else if(board.getPosition(updatedX, updatedY).getName().matches("Flag\\d+")){
-            Flag flag = (Flag) board.getPosition(updatedX, updatedY);
-            if(flag.pickUp(this)){
-                addScore(1);
-                System.out.println("+1 point, " + points + " total.");
-            }
-            else{
-                System.out.println("Flag already picked up! / Previous flag not picked up");
-            }
-        }
+
         setCoordinates(updatedX, updatedY);
         board.updateCoordinate(getShortName(), updatedX, updatedY);
         resetTile(currentX, currentY);
     }
+
+    public void pickupFlag() {
+        if (board.getPosition(getCoordinates().getX(), getCoordinates().getY()).getName().matches("Flag\\d+")) {
+            Flag flag = (Flag) board.getPosition(getCoordinates().getX(), getCoordinates().getY());
+            if (flag.pickUp(this)) {
+                addScore(1);
+                visitedFlags.add(flag.getShortName());
+                System.out.println("+1 point, " + points + " total.");
+            } else {
+                System.out.println("Flag already picked up! / Previous flag not picked up");
+            }
+        }
+    }
+
+
 
     /**
      * Resets the tile in position (x,y) to its original state

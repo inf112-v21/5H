@@ -15,10 +15,7 @@ import inf112.skeleton.app.cards.Card;
 import inf112.skeleton.app.cards.Deck;
 import inf112.skeleton.app.cards.Hand;
 import inf112.skeleton.app.net.*;
-import inf112.skeleton.app.sprites.AbstractGameObject;
-import inf112.skeleton.app.sprites.Direction;
-import inf112.skeleton.app.sprites.Laser;
-import inf112.skeleton.app.sprites.Player;
+import inf112.skeleton.app.sprites.*;
 import org.lwjgl.opengl.GL20;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -326,7 +323,7 @@ public class Game implements ApplicationListener {
         for (Hand hand : gameServerListener.getReceivedMoves()) {
             String shortName = hand.getPlayerShortName(); //Get name of player who owns hand
             Player player = (Player) board.getObjectMap().get(shortName); //Get Player object who owns hand
-            playerCardsHashMap.put(player,hand.getSelectedCardsCopy());
+            playerCardsHashMap.put(player, hand.getSelectedCardsCopy());
         }
     }
 
@@ -443,9 +440,9 @@ public class Game implements ApplicationListener {
         }
         boolean addedSpaceLockedCards = false;
         for (Card c : selectedCards) { //Loop through selected cards and draw them
-            if (lockedCards && !addedSpaceLockedCards && Objects.requireNonNull(getLockedCards()).contains(c))  {
-                    selectedOffsetX += 100 * (5-selectedCards.size());
-                    addedSpaceLockedCards = true;
+            if (lockedCards && !addedSpaceLockedCards && Objects.requireNonNull(getLockedCards()).contains(c)) {
+                selectedOffsetX += 100 * (5 - selectedCards.size());
+                addedSpaceLockedCards = true;
             }
             Sprite cSprite = spriteMap.get(c.getType()); //Get sprite for current card
             int indexOfCard = allCards.indexOf(c);
@@ -471,9 +468,9 @@ public class Game implements ApplicationListener {
             Pair dir = dirMap.get(laser.getDirection());
             Pair currentPos = laser.getCoordinates();
             while (true) {
-                if (currentPos.getX() + dir.getX() < 0 || currentPos.getX() + dir.getX() > boardSize -1) {
+                if (currentPos.getX() + dir.getX() < 0 || currentPos.getX() + dir.getX() > boardSize - 1) {
                     break;
-                } else if (currentPos.getY() + dir.getY() < 0 || currentPos.getY() + dir.getY() > boardSize-1) {
+                } else if (currentPos.getY() + dir.getY() < 0 || currentPos.getY() + dir.getY() > boardSize - 1) {
                     break;
                 }
                 AbstractGameObject object = board.getPosition(currentPos.getX() + dir.getX(), currentPos.getY() + dir.getY());
@@ -841,4 +838,59 @@ public class Game implements ApplicationListener {
         alivePlayerList = new ArrayList<>();
         alivePlayerList.addAll(board.getPlayerList());
     }
+
+
+    public void runConveyorBelt() {
+        for (Player player : alivePlayerList) {
+            if (board.getPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("ConveyorBelt")) {
+                ConveyorBelt conveyorBelt = (ConveyorBelt) board.getPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
+                Pair cvDir = dirMap.get(conveyorBelt.getDir());
+                int newX = player.getCoordinates().getX() + cvDir.getX();
+                int newY = player.getCoordinates().getY() + cvDir.getY();
+                if (board.getPosition(newX, newY).getName().matches("ConveyorBelt")) {
+                    //If moving to  new conveyorBelt position should not need to think about collision
+                    // If theres a player there they will also be moved by the conveyorbelt so no collision should occur!
+                    player.move(cvDir.getX(), cvDir.getY());
+                }
+               else{
+                    if (collision(player)) {
+                        player.move(cvDir.getX(), cvDir.getY());
+                        }
+                    }
+                }
+            }
+        }
+    public void runExpressConveyorBelt() {
+        for (Player player : alivePlayerList) {
+            if (board.getPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("ExpressConveyorBelt")) {
+                ConveyorBelt conveyorBelt = (ConveyorBelt) board.getPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
+                Pair cvDir = dirMap.get(conveyorBelt.getDir());
+                int newX = player.getCoordinates().getX() + cvDir.getX();
+                int newY = player.getCoordinates().getY() + cvDir.getY();
+                if (board.getPosition(newX, newY).getName().matches("ExpressConveyorBelt")) {
+                    //If moving to  new expressconveyorBelt position should not need to think about collision
+                    // If theres a player there they will also be moved by the expressconveyorbelt so no collision should occur!
+                    player.move(cvDir.getX(), cvDir.getY());
+                }
+                else{
+                    if (collision(player)) {
+                        player.move(cvDir.getX(), cvDir.getY());
+                    }
+                }
+            }
+        }
+    }
+
+    public void runGear() {
+        for (Player player : alivePlayerList) {
+            if (board.getPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("Gear")) {
+                Gear gear = (Gear) board.getPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
+                Sprite playerSprite = spriteMap.get(player.getShortName());
+                playerSprite.rotate90(true);
+                player.setDirection(getNewDirection(player.getDirection(), gear.isClockwise()));
+
+            }
+        }
+    }
+
 }
