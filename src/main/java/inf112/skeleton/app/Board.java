@@ -102,6 +102,12 @@ public class Board {
                         expressConveyorBeltList.add(expressConveyorBelt);
                         lineSprites.add(expressConveyorBelt);
                     }
+                    else if(items[i].matches("o\\w")) {
+                        String direction = items[i].substring(1);
+                        Gear gear = new Gear(direction);
+                        objectMap.put(items[i], gear);
+                        lineSprites.add(gear);
+                    }
                     else{
                         lineSprites.add(objectMap.get(items[i]));
                     }

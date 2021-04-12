@@ -2,7 +2,7 @@ package inf112.skeleton.app.sprites;
 
 public class Gear extends AbstractGameObject {
 
-    public static String texturePath;
+    public static String texturePath = "src/main/resources/tex/gear";
 
     public boolean isClockwise() {
         return clockwise;
@@ -12,18 +12,16 @@ public class Gear extends AbstractGameObject {
 
 
     public Gear(String direction) {
-        super(texturePath);
+        super(texturePath + direction + ".png");
         setName("Gear");
-        if (direction.equals("left")) {
-            setShortName("gl");
+        if (direction.equals("l")) {
+            setShortName("ol");
             clockwise = false;
-
         }
-        else if (direction.equals("right")) {
-            setShortName("gr");
+        else if (direction.equals("r")) {
+            setShortName("or");
             clockwise  = true;
         }
-
     }
 
 
