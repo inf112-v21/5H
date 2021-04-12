@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Interpolation;
 import com.esotericsoftware.kryonet.Connection;
 import inf112.skeleton.app.cards.Card;
 import inf112.skeleton.app.cards.Deck;
@@ -108,12 +109,39 @@ public class Game implements ApplicationListener {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         board = new Board();            //Initialize a board
-        board.readBoard(1);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
+        board.readBoard(3);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
 
         spriteMap = new HashMap<>();
         //For all game objects on map, add the identifying string and a corresponding sprite to spriteMap.
         for (AbstractGameObject ago : board.getObjectMap().values()) {
-            spriteMap.put(ago.getShortName(), new Sprite(new Texture(ago.getTexturePath())));
+            Sprite sprite = new Sprite(new Texture(ago.getTexturePath()));
+            boolean rotate = false;
+            Direction rotateDir = null;
+            if (ago instanceof ConveyorBelt) {
+                rotate = true;
+                rotateDir = ((ConveyorBelt) ago).getDir();
+            }
+            else if (ago instanceof ExpressConveyorBelt) {
+                rotate = true;
+                rotateDir = ((ExpressConveyorBelt) ago).getDir();
+                }
+            if (rotate) {
+                switch (rotateDir) {
+                    case NORTH:
+                        break;
+                    case WEST:
+                        sprite.rotate90(false);
+                        break;
+                    case EAST:
+                        sprite.rotate90(true);
+                        break;
+                    case SOUTH:
+                        sprite.rotate90(true);
+                        sprite.rotate90(true);
+                        break;
+                }
+            }
+            spriteMap.put(ago.getShortName(), sprite);
         }
         spriteMap.put("backUp", new Sprite(new Texture("src/main/resources/tex/cards/backUp.png")));
         spriteMap.put("move1", new Sprite(new Texture("src/main/resources/tex/cards/move1.png")));
@@ -840,6 +868,9 @@ public class Game implements ApplicationListener {
     }
 
 
+    /**
+     * Runs all the conveyorbelts (including express) and moves players on them one tile in the direction of the belt
+     */
     public void runConveyorBelt() {
         for (Player player : alivePlayerList) {
             if (board.getPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("ConveyorBelt")) {
@@ -860,6 +891,10 @@ public class Game implements ApplicationListener {
                 }
             }
         }
+
+    /**
+     * Runs all the expressconveyorbelts and moves player on them one tile in the direction of the belt
+     */
     public void runExpressConveyorBelt() {
         for (Player player : alivePlayerList) {
             if (board.getPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("ExpressConveyorBelt")) {
@@ -881,12 +916,15 @@ public class Game implements ApplicationListener {
         }
     }
 
+    /**
+     * Runs all the gears on the board and turns the players on them accordingly
+     */
     public void runGear() {
         for (Player player : alivePlayerList) {
             if (board.getPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("Gear")) {
                 Gear gear = (Gear) board.getPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
                 Sprite playerSprite = spriteMap.get(player.getShortName());
-                playerSprite.rotate90(true);
+                playerSprite.rotate90(gear.isClockwise());
                 player.setDirection(getNewDirection(player.getDirection(), gear.isClockwise()));
 
             }
