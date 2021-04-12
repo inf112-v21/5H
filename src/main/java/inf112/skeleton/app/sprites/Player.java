@@ -93,7 +93,8 @@ public class Player extends AbstractGameObject {
     }
 
     public void pickupFlag() {
-        if (board.getPosition(getCoordinates().getX(), getCoordinates().getY()).getName().matches("Flag\\d+")) {
+        if (board.getOriginalPosition(getCoordinates().getX(), getCoordinates().getY()).getName().matches("Flag\\d+")) {
+            System.out.println("Player on flag");
             Flag flag = (Flag) board.getPosition(getCoordinates().getX(), getCoordinates().getY());
             if (flag.pickUp(this)) {
                 addScore(1);

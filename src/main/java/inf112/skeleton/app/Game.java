@@ -109,7 +109,7 @@ public class Game implements ApplicationListener {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         board = new Board();            //Initialize a board
-        board.readBoard(3);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
+        board.readBoard(2);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
 
         spriteMap = new HashMap<>();
         //For all game objects on map, add the identifying string and a corresponding sprite to spriteMap.
@@ -125,6 +125,10 @@ public class Game implements ApplicationListener {
                 rotate = true;
                 rotateDir = ((ExpressConveyorBelt) ago).getDir();
                 }
+            else if (ago instanceof Laser) {
+                rotate = true;
+                rotateDir = ((Laser) ago).getDirection();
+            }
             if (rotate) {
                 switch (rotateDir) {
                     case NORTH:
@@ -873,8 +877,8 @@ public class Game implements ApplicationListener {
      */
     public void runConveyorBelt() {
         for (Player player : alivePlayerList) {
-            if (board.getPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("ConveyorBelt")) {
-                ConveyorBelt conveyorBelt = (ConveyorBelt) board.getPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
+            if (board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("ConveyorBelt")) {
+                ConveyorBelt conveyorBelt = (ConveyorBelt) board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
                 Pair cvDir = dirMap.get(conveyorBelt.getDir());
                 int newX = player.getCoordinates().getX() + cvDir.getX();
                 int newY = player.getCoordinates().getY() + cvDir.getY();
@@ -897,8 +901,8 @@ public class Game implements ApplicationListener {
      */
     public void runExpressConveyorBelt() {
         for (Player player : alivePlayerList) {
-            if (board.getPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("ExpressConveyorBelt")) {
-                ConveyorBelt conveyorBelt = (ConveyorBelt) board.getPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
+            if (board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("ExpressConveyorBelt")) {
+                ConveyorBelt conveyorBelt = (ConveyorBelt) board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
                 Pair cvDir = dirMap.get(conveyorBelt.getDir());
                 int newX = player.getCoordinates().getX() + cvDir.getX();
                 int newY = player.getCoordinates().getY() + cvDir.getY();
@@ -921,8 +925,8 @@ public class Game implements ApplicationListener {
      */
     public void runGear() {
         for (Player player : alivePlayerList) {
-            if (board.getPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("Gear")) {
-                Gear gear = (Gear) board.getPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
+            if (board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("Gear")) {
+                Gear gear = (Gear) board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
                 Sprite playerSprite = spriteMap.get(player.getShortName());
                 playerSprite.rotate90(gear.isClockwise());
                 player.setDirection(getNewDirection(player.getDirection(), gear.isClockwise()));

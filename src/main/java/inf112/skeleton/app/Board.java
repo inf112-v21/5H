@@ -80,15 +80,15 @@ public class Board {
                         flagList.add(flag);
                         lineSprites.add(flag);
                     }
-                    else if(items[i].matches("l\\d+")) {
+                    else if(items[i].matches("l\\w+")) {
                         laserNum += 1;
-                        int num = Integer.parseInt(items[i].substring(1));
-                        Laser laser = new Laser(k, i, "src/main/resources/tex/laser1.png", num);
+                        String direction = items[i].substring(1);
+                        Laser laser = new Laser(k, i, "src/main/resources/tex/laser1.png", direction);
                         objectMap.put(items[i], laser);
                         laserList.add(laser);
                         lineSprites.add(laser);
                     }
-                    else if(items[i].matches("^cb\\w")) {
+                    else if(items[i].matches("cb\\w")) {
                         String direction = items[i].substring(2);
                         ConveyorBelt conveyorBelt = new ConveyorBelt(ConveyorBelt.texturePath, direction);
                         objectMap.put(items[i], conveyorBelt);
