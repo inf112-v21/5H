@@ -109,7 +109,7 @@ public class Game implements ApplicationListener {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         board = new Board();            //Initialize a board
-        board.readBoard(120);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
+        board.readBoard(1);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
 
         spriteMap = new HashMap<>();
         //For all game objects on map, add the identifying string and a corresponding sprite to spriteMap.
@@ -877,24 +877,33 @@ public class Game implements ApplicationListener {
      */
     public void runConveyorBelt() {
         for (Player player : alivePlayerList) {
+            Pair cbDir;
             if (board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("ConveyorBelt")) {
                 ConveyorBelt conveyorBelt = (ConveyorBelt) board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
-                Pair cvDir = dirMap.get(conveyorBelt.getDir());
-                int newX = player.getCoordinates().getX() + cvDir.getX();
-                int newY = player.getCoordinates().getY() + cvDir.getY();
-                if (board.getPosition(newX, newY).getName().matches("ConveyorBelt")) {
-                    //If moving to  new conveyorBelt position should not need to think about collision
-                    // If theres a player there they will also be moved by the conveyorbelt so no collision should occur!
-                    player.move(cvDir.getX(), cvDir.getY());
-                }
-               else{
-                    if (collision(player)) {
-                        player.move(cvDir.getX(), cvDir.getY());
-                        }
-                    }
-                }
+                cbDir = dirMap.get(conveyorBelt.getDir());
             }
+            else if (board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("ExpressConveyorBelt")) {
+                ExpressConveyorBelt ExpressConveyorBelt = (ExpressConveyorBelt) board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
+                cbDir = dirMap.get(ExpressConveyorBelt.getDir());
+            }
+            else {
+                continue;
+            }
+            int newX = player.getCoordinates().getX() + cbDir.getX();
+            int newY = player.getCoordinates().getY() + cbDir.getY();
+            if (board.getPosition(newX, newY).getName().matches("ConveyorBelt")) {
+                //If moving to  new conveyorBelt position should not need to think about collision
+                // If theres a player there they will also be moved by the conveyorbelt so no collision should occur!
+                player.move(cbDir.getX(), cbDir.getY());
+            }
+           else{
+                if (collision(player)) {
+                    player.move(cbDir.getX(), cbDir.getY());
+                    }
+           }
         }
+    }
+
 
     /**
      * Runs all the expressconveyorbelts and moves player on them one tile in the direction of the belt
@@ -902,18 +911,18 @@ public class Game implements ApplicationListener {
     public void runExpressConveyorBelt() {
         for (Player player : alivePlayerList) {
             if (board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("ExpressConveyorBelt")) {
-                ConveyorBelt conveyorBelt = (ConveyorBelt) board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
-                Pair cvDir = dirMap.get(conveyorBelt.getDir());
-                int newX = player.getCoordinates().getX() + cvDir.getX();
-                int newY = player.getCoordinates().getY() + cvDir.getY();
+                ExpressConveyorBelt ExpressConveyorBelt = (ExpressConveyorBelt) board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
+                Pair cbDir = dirMap.get(ExpressConveyorBelt.getDir());
+                int newX = player.getCoordinates().getX() + cbDir.getX();
+                int newY = player.getCoordinates().getY() + cbDir.getY();
                 if (board.getPosition(newX, newY).getName().matches("ExpressConveyorBelt")) {
                     //If moving to  new expressconveyorBelt position should not need to think about collision
                     // If theres a player there they will also be moved by the expressconveyorbelt so no collision should occur!
-                    player.move(cvDir.getX(), cvDir.getY());
+                    player.move(cbDir.getX(), cbDir.getY());
                 }
                 else{
                     if (collision(player)) {
-                        player.move(cvDir.getX(), cvDir.getY());
+                        player.move(cbDir.getX(), cbDir.getY());
                     }
                 }
             }
@@ -922,6 +931,7 @@ public class Game implements ApplicationListener {
 
     /**
      * Runs all the gears on the board and turns the players on them accordingly
+     * Also turns the sprites for the board visualization
      */
     public void runGear() {
         for (Player player : alivePlayerList) {
@@ -929,6 +939,18 @@ public class Game implements ApplicationListener {
                 Gear gear = (Gear) board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
                 Sprite playerSprite = spriteMap.get(player.getShortName());
                 playerSprite.rotate90(gear.isClockwise());
+                player.setDirection(getNewDirection(player.getDirection(), gear.isClockwise()));
+
+            }
+        }
+    }
+    public void runGear(Boolean test) { //Overload to use in test situation that does not rotate sprite
+        if (!test) {
+            return;
+        }
+        for (Player player : alivePlayerList) {
+            if (board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("Gear")) {
+                Gear gear = (Gear) board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
                 player.setDirection(getNewDirection(player.getDirection(), gear.isClockwise()));
 
             }
