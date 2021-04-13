@@ -114,12 +114,5 @@ public class PlayerTest {
         assertEquals(pos, player.getCoordinates(), "Expected position not to change but it did.");
     }
 
-    @Test
-    public void playerScoreIncreasesWhenItGoesOnAFlagTest(){
-        board.updateCoordinate("f1", 1,1);
-        player.setCoordinates(1,0);
-        int score = player.getScore();
-        player.move(0,1);
-        assertNotEquals(score, player.getScore());
-    }
+
 }

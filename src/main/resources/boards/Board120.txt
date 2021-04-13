@@ -2,11 +2,11 @@ g h g g g g g g g g g g
 g g g g g g g g g w f3 g
 g g g g w w g g g w h g
 g g g f2 g g g g g w w g
-g g g f1 g g p3 g g g g g
-g g g g g p1 lw p4 g g g g
-g g g g g g p2 g g g g g
+g g p1 f1 g g g g g g g g
+g g g g g g g p3 g g g g
+g g g g g g g g g g g g
 g g g g w w w w g g g g
 g g g g g g g w g g g g
 g g g g g g g w g g g g
-g g g g g g g w g g g g
-g g g g g g g g g g g g
+g g g p2 g g g w g g g g
+g g g g g g g g g g p4 g

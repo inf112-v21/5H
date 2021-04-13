@@ -23,6 +23,9 @@ public class Board {
     private final ArrayList<Player> playerList;
     private final ArrayList<Laser> laserList;
     private final ArrayList<Flag> flagList;
+    private final ArrayList<ConveyorBelt> conveyorBeltList;
+    private final ArrayList<ExpressConveyorBelt> expressConveyorBeltList;
+
 
     public Board(){
         //Only need one instance of each of these classes per map, rest of items initialized in readBoard()
@@ -39,6 +42,10 @@ public class Board {
         laserList = new ArrayList<>(); //List of lasers
         boardInfo = new ArrayList<>(); //List of list of objects on board
         originalBoard = new ArrayList<>(); //List for saving the original state of the board.
+        conveyorBeltList = new ArrayList<>();
+        expressConveyorBeltList = new ArrayList<>();
+
+
     }
 
     /**
@@ -73,13 +80,33 @@ public class Board {
                         flagList.add(flag);
                         lineSprites.add(flag);
                     }
-                    else if(items[i].matches("l\\d+")) {
+                    else if(items[i].matches("l\\w+")) {
                         laserNum += 1;
-                        int num = Integer.parseInt(items[i].substring(1));
-                        Laser laser = new Laser(k, i, "src/main/resources/tex/laser1.png", num);
+                        String direction = items[i].substring(1);
+                        Laser laser = new Laser(k, i, "src/main/resources/tex/laser1.png", direction);
                         objectMap.put(items[i], laser);
                         laserList.add(laser);
                         lineSprites.add(laser);
+                    }
+                    else if(items[i].matches("cb\\w")) {
+                        String direction = items[i].substring(2);
+                        ConveyorBelt conveyorBelt = new ConveyorBelt(ConveyorBelt.texturePath, direction);
+                        objectMap.put(items[i], conveyorBelt);
+                        conveyorBeltList.add(conveyorBelt);
+                        lineSprites.add(conveyorBelt);
+                    }
+                    else if(items[i].matches("eb\\w")) {
+                        String direction = items[i].substring(2);
+                        ExpressConveyorBelt expressConveyorBelt = new ExpressConveyorBelt(ExpressConveyorBelt.texturePath, direction);
+                        objectMap.put(items[i], expressConveyorBelt);
+                        expressConveyorBeltList.add(expressConveyorBelt);
+                        lineSprites.add(expressConveyorBelt);
+                    }
+                    else if(items[i].matches("o\\w")) {
+                        String direction = items[i].substring(1);
+                        Gear gear = new Gear(direction);
+                        objectMap.put(items[i], gear);
+                        lineSprites.add(gear);
                     }
                     else{
                         lineSprites.add(objectMap.get(items[i]));

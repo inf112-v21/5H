@@ -7,9 +7,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 
-public class FlagTest {
+public class    FlagTest {
     private Player player;
     private Flag firstFlag;
     private Flag secondFlag;
@@ -18,14 +19,16 @@ public class FlagTest {
     @BeforeEach
     public void setUp(){
         Board board = new Board();
-        board.readBoard(1);
+        board.readBoard(120);
         player = board.getPlayerList().get(0);
         // There are always exactly three flags so accessing them with indexes should be fine, note they are in the wrong order in the list
         firstFlag = board.getFlagList().get(2);
         secondFlag = board.getFlagList().get(1);
         thirdFlag = board.getFlagList().get(0);
-
     }
+
+
+
 
     @Test
     public void flagRegistersVisitedPlayers(){
@@ -58,4 +61,11 @@ public class FlagTest {
         assertTrue(pickUp, "Could not pickup flags after failing picking it up earlier");
     }
 
+     @Test
+     public void playerScoreIncreasesWhenItGoesOnAFlagTest(){
+         int score = player.getScore();
+         player.move(0,1);
+         player.pickupFlag();
+         assertNotEquals(score, player.getScore());
+     }
 }

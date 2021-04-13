@@ -5,16 +5,14 @@ import inf112.skeleton.app.Pair;
 public class Laser extends AbstractGameObject{
     
     private Direction direction;
-    private Pair coordinates;
-    private int number;
+    private final Pair coordinates;
     static String texturePath = "src/main/resources/tex/laser1.png";
     
-    public Laser (int x, int y, String texturePath, int number){ // For creating board lasers
+    public Laser (int x, int y, String texturePath, String dir){ // For creating board lasers
         super(texturePath);
-        setName("Laser"+number);
-        setShortName("l"+number);
-        this.direction = Direction.WEST; //Testvvalue
-        this.number = number;
+        setName("Laser"+dir);
+        setShortName("l"+dir);
+        setDirection(dir);
         coordinates = new Pair(x,y);
     }
     public Laser (int x, int y, Direction dir, String playerShortName){ // For creating player lasers
@@ -25,7 +23,26 @@ public class Laser extends AbstractGameObject{
         coordinates = new Pair(x,y);
     }
 
+    private void setDirection(String dir) {
+        switch (dir) {
+            case "n":
+                this.direction = Direction.NORTH;
+                break;
+            case "e":
+                this.direction = Direction.EAST;
+                break;
+            case "s":
+                this.direction = Direction.SOUTH;
+                break;
+            case "w":
+                this.direction = Direction.WEST;
+                break;
+            default:
+                this.direction = Direction.NORTH;
+                break;// temp
 
+        }
+    }
 
     public Direction getDirection() {
         return direction;
@@ -40,7 +57,4 @@ public class Laser extends AbstractGameObject{
         return coordinates;
     }
 
-    public int getNumber() {
-        return number;
-    }
 }

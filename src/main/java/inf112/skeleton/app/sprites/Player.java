@@ -14,10 +14,8 @@ public class Player extends AbstractGameObject {
     private boolean dead;
     private Direction dir;  //Facing direction
     private int playerNum; //The number for this player (1 for player1, 2 for player2...)
-    private ArrayList<String> visitedFlags; //List over flags (as shortname) that player has visited
+    private final ArrayList<String> visitedFlags; //List over flags (as shortname) that player has visited
     public static String texturePath = "src/main/resources/tex/player";
-
-
 
     /**
      * @param x X spawn location
@@ -79,35 +77,39 @@ public class Player extends AbstractGameObject {
             System.out.println("Hit a wall.");
             return;
         }
-        else if(board.getPosition(updatedX, updatedY).getName().matches("Flag\\d+")){
-            Flag flag = (Flag) board.getPosition(updatedX, updatedY);
-            if(flag.pickUp(this)){
-                addScore(1);
-                System.out.println("+1 point, " + points + " total.");
-            }
-            else{
-                System.out.println("Flag already picked up! / Previous flag not picked up");
-            }
-        }
+
         setCoordinates(updatedX, updatedY);
         board.updateCoordinate(getShortName(), updatedX, updatedY);
         resetTile(currentX, currentY);
     }
 
+    public void pickupFlag() {
+        if (board.getOriginalPosition(getCoordinates().getX(), getCoordinates().getY()).getName().matches("Flag\\d+")) {
+            Flag flag = (Flag) board.getOriginalPosition(getCoordinates().getX(), getCoordinates().getY());
+            if (flag.pickUp(this)) {
+                addScore(1);
+                visitedFlags.add(flag.getShortName());
+                System.out.println("+1 point, " + points + " total.");
+            } else {
+                System.out.println("Flag already picked up! / Previous flag not picked up");
+            }
+        }
+    }
+
+
+
     /**
      * Resets the tile in position (x,y) to its original state
      * @param x coordinate
      * @param y coordinate
-     * @return false (why?)
      */
-    private boolean resetTile(int x, int y) {
+    private void resetTile(int x, int y) {
         AbstractGameObject tile = board.getOriginalPosition(x,y);
         if(tile.getShortName().matches("p\\d+")){
             board.updateCoordinate("g", x, y);
-            return false;
+            return;
         }
         board.updateCoordinate(tile.getShortName(), x, y);
-        return false;
     }
 
     /**
