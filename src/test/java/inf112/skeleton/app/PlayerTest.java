@@ -114,17 +114,5 @@ public class PlayerTest {
         assertEquals(pos, player.getCoordinates(), "Expected position not to change but it did.");
     }
 
-    /** Test not currently working with new flagpickup,  due to how its written. should be replaced
-    @Test
-    public void playerScoreIncreasesWhenItGoesOnAFlagTest(){
-        board.updateCoordinate("f1", 1,1);
-        player.setCoordinates(1,0);
-        int score = player.getScore();
-        player.move(0,1);
-        System.out.println(player.getCoordinates());
-        player.pickupFlag();
-        assertNotEquals(score, player.getScore());
-    }
-    */
 
 }
