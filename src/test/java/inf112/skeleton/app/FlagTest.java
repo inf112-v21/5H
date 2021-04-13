@@ -15,11 +15,10 @@ public class    FlagTest {
     private Flag firstFlag;
     private Flag secondFlag;
     private Flag thirdFlag;
-    private Board board;
 
     @BeforeEach
     public void setUp(){
-        board = new Board();
+        Board board = new Board();
         board.readBoard(120);
         player = board.getPlayerList().get(0);
         // There are always exactly three flags so accessing them with indexes should be fine, note they are in the wrong order in the list
@@ -65,11 +64,7 @@ public class    FlagTest {
      @Test
      public void playerScoreIncreasesWhenItGoesOnAFlagTest(){
          int score = player.getScore();
-         System.out.println(player.getShortName());
-         System.out.println(player.getCoordinates());
-         System.out.println(firstFlag.getCoordinates());
          player.move(0,1);
-         System.out.println(player.getCoordinates());
          player.pickupFlag();
          assertNotEquals(score, player.getScore());
      }

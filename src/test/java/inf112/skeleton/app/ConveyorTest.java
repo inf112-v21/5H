@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -18,8 +16,6 @@ public class ConveyorTest {
 
     private Player player1;
     private Player player2;
-    private Player player3;
-    private Player player4;
     private Game game;
     private HashMap<Direction, Pair> dirMap;
     private Board board;
@@ -34,8 +30,6 @@ public class ConveyorTest {
         game.setBoardSize(board.getSize());
         player1 = board.getPlayerList().get(0);
         player2 = board.getPlayerList().get(1);
-        player3 = board.getPlayerList().get(2);
-        player4 = board.getPlayerList().get(3);
         game.createAlivePlayerList();
         dirMap = game.getDirMap();
 

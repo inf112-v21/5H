@@ -34,6 +34,7 @@ public class ExpressConveyorBelt extends AbstractGameObject {
                 break;
             default:
                 this.dir = Direction.NORTH; // temp
+                break;
 
         }
     }

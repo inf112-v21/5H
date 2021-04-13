@@ -4,7 +4,6 @@ import inf112.skeleton.app.Board;
 import inf112.skeleton.app.Pair;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Player extends AbstractGameObject {
     private int points;
@@ -15,16 +14,8 @@ public class Player extends AbstractGameObject {
     private boolean dead;
     private Direction dir;  //Facing direction
     private int playerNum; //The number for this player (1 for player1, 2 for player2...)
-    private ArrayList<String> visitedFlags; //List over flags (as shortname) that player has visited
+    private final ArrayList<String> visitedFlags; //List over flags (as shortname) that player has visited
     public static String texturePath = "src/main/resources/tex/player";
-
-    private final HashMap<Direction, Pair> dirMap = new HashMap<>() {{
-        put(Direction.NORTH, new Pair(0, 1));
-        put(Direction.WEST, new Pair(-1, 0));
-        put(Direction.EAST, new Pair(1, 0));
-        put(Direction.SOUTH, new Pair(0, -1));
-    }};
-
 
     /**
      * @param x X spawn location
@@ -94,7 +85,6 @@ public class Player extends AbstractGameObject {
 
     public void pickupFlag() {
         if (board.getOriginalPosition(getCoordinates().getX(), getCoordinates().getY()).getName().matches("Flag\\d+")) {
-            System.out.println("Player on flag");
             Flag flag = (Flag) board.getOriginalPosition(getCoordinates().getX(), getCoordinates().getY());
             if (flag.pickUp(this)) {
                 addScore(1);
@@ -112,16 +102,14 @@ public class Player extends AbstractGameObject {
      * Resets the tile in position (x,y) to its original state
      * @param x coordinate
      * @param y coordinate
-     * @return false (why?)
      */
-    private boolean resetTile(int x, int y) {
+    private void resetTile(int x, int y) {
         AbstractGameObject tile = board.getOriginalPosition(x,y);
         if(tile.getShortName().matches("p\\d+")){
             board.updateCoordinate("g", x, y);
-            return false;
+            return;
         }
         board.updateCoordinate(tile.getShortName(), x, y);
-        return false;
     }
 
     /**

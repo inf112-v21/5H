@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Interpolation;
 import com.esotericsoftware.kryonet.Connection;
 import inf112.skeleton.app.cards.Card;
 import inf112.skeleton.app.cards.Deck;
@@ -142,6 +141,8 @@ public class Game implements ApplicationListener {
                     case SOUTH:
                         sprite.rotate90(true);
                         sprite.rotate90(true);
+                        break;
+                    default:
                         break;
                 }
             }
@@ -933,26 +934,15 @@ public class Game implements ApplicationListener {
      * Runs all the gears on the board and turns the players on them accordingly
      * Also turns the sprites for the board visualization
      */
-    public void runGear() {
-        for (Player player : alivePlayerList) {
-            if (board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("Gear")) {
-                Gear gear = (Gear) board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
-                Sprite playerSprite = spriteMap.get(player.getShortName());
-                playerSprite.rotate90(gear.isClockwise());
-                player.setDirection(getNewDirection(player.getDirection(), gear.isClockwise()));
-
-            }
-        }
-    }
-    public void runGear(Boolean test) { //Overload to use in test situation that does not rotate sprite
-        if (!test) {
-            return;
-        }
+    public void runGear(boolean test) {
         for (Player player : alivePlayerList) {
             if (board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("Gear")) {
                 Gear gear = (Gear) board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
                 player.setDirection(getNewDirection(player.getDirection(), gear.isClockwise()));
-
+                if (!test) {
+                    Sprite playerSprite = spriteMap.get(player.getShortName());
+                    playerSprite.rotate90(gear.isClockwise());
+                }
             }
         }
     }

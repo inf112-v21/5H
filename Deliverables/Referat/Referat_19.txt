@@ -1,0 +1,21 @@
+Møte 13.04.2021
+Digitalt via Discord
+Tilstede
+  Skjalg Eide Hodneland
+  Emil Flatøy Hodneland
+  Jonas Svåsand
+  Håkon Mathias Hvidsten Høie
+  Hans Albert Biørn Terland
+
+
+
+Standup:
+Jonas:
+- laget gears og conveyorbelts (med noen junit tester) og fikset litt på laser/flagg.
+
+
+Vi diskuterte alle sine oppgaver fremover og framdriftsplan frem til innleveringen. Planen er å
+fortsette med arbeidet og være ferdig til møte mandag neste uke. Da tar vi å begynner på
+spilltester og fikser bug / gjør små improvements. Vi bruker så resten av tiden i møtene den uken
+på å skrive innleveringsteksten og øvrige gjøremål for innleveringen.
+

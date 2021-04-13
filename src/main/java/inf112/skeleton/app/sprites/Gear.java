@@ -4,11 +4,12 @@ public class Gear extends AbstractGameObject {
 
     public static String texturePath = "src/main/resources/tex/gear";
 
+    private boolean clockwise;
+
     public boolean isClockwise() {
         return clockwise;
     }
 
-    private boolean clockwise;
 
 
     public Gear(String direction) {

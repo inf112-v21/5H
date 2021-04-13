@@ -30,7 +30,8 @@ public class ConveyorBelt extends AbstractGameObject {
                 this.dir = Direction.WEST;
                 break;
             default:
-                this.dir = Direction.NORTH; // temp
+                this.dir = Direction.NORTH;
+                break;
 
             }
         }

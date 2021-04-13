@@ -38,7 +38,8 @@ public class Laser extends AbstractGameObject{
                 this.direction = Direction.WEST;
                 break;
             default:
-                this.direction = Direction.NORTH; // temp
+                this.direction = Direction.NORTH;
+                break;// temp
 
         }
     }
