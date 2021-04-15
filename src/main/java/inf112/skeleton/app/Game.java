@@ -67,6 +67,7 @@ public class Game implements ApplicationListener {
     private boolean lockedCards = false;
     private int amountLockedCards;
     private boolean setLockedCards = false;
+    private int moveCounter;
 
     /**
      * Constructor for the game class.
@@ -827,15 +828,30 @@ public class Game implements ApplicationListener {
             }
         }
         alivePlayerList.removeAll(toBeRemoved); //Remove dead players from list of alive players
+
+        //Call all functions supposed to run after every player has played one card
+        moveCounter += 1;
+        if(moveCounter >= alivePlayerList.size()){ //If we have moved enough time for all players to move
+            moveCounter = 0;
+            runExpressConveyorBelt();
+            runConveyorBelt();
+            runGear(false);
+            fireLasers(board.getLaserList());
+            fireLasers(getPlayerLasers());
+            for ( Player player : alivePlayerList) {
+                player.pickupFlag();
+            }
+        }
+
         if (alivePlayerList.size() == 1) { //If there is only one player left, the player wins.
             winner = alivePlayerList.get(0);
             phase = Phase.FINISHED;
         } else if (isServer) {
             if (playerMoves.getMoves().size() == 0) {
                 phase = Phase.DEAL_CARDS;
+                moveCounter = 0;
             }
         }
-
         //Pause between moves so the user can see whats happening.
         try {
             Thread.sleep(2000);
