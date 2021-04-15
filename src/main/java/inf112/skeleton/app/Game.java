@@ -569,8 +569,19 @@ public class Game implements ApplicationListener {
      *                     Will change the needed objects to change the representation on the board
      */
     private void move(Player playerObject, Sprite playerSprite, String move) {
-        System.out.println(playerObject.getShortName() + " moved - " + move);
+        if(playerObject.getPowerDown()) {
+            System.out.println(playerObject.getShortName() + "is in PowerDown...");
+            move = "powerdown";
+        }
+        if(!move.equals("powerdown"))
+            System.out.println(playerObject.getShortName() + " moved - " + move);
+
         switch (move) {
+            case "powerdown":  //Powerdown for the player
+                if(!playerObject.getPowerDown())
+                    playerObject.setPowerDown(true);
+                endTurn();
+                break;
             case "move1":  //Move in the direction the player is facing
                 Direction dir = playerObject.getDirection();
                 Pair pair = dirMap.get(dir);
