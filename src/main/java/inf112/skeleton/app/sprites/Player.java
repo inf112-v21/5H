@@ -9,6 +9,7 @@ public class Player extends AbstractGameObject {
     private int points;
     private int hp;
     private int pc;
+    private boolean powerDown;
     private final Pair savePoint;   //Last registered savepoint coordinates
     private Board board;
     private boolean dead;
@@ -16,6 +17,7 @@ public class Player extends AbstractGameObject {
     private int playerNum; //The number for this player (1 for player1, 2 for player2...)
     private final ArrayList<String> visitedFlags; //List over flags (as shortname) that player has visited
     public static String texturePath = "src/main/resources/tex/player";
+
 
     /**
      * @param x X spawn location
@@ -31,6 +33,7 @@ public class Player extends AbstractGameObject {
         points = 0;
         hp = 3;
         pc = 9;
+        powerDown = false;
         dead = false;
         savePoint = new Pair(x, y); //Initialize save point
         dir = Direction.NORTH; //Set direction on spawn
@@ -226,5 +229,13 @@ public class Player extends AbstractGameObject {
 
     public void addFlag(String shortName){
         visitedFlags.add(shortName);
+    }
+
+    public boolean getPowerDown() {
+        return powerDown;
+    }
+
+    public void setPowerDown(boolean powerDown) {
+        this.powerDown = powerDown;
     }
 }

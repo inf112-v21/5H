@@ -67,6 +67,7 @@ public class Game implements ApplicationListener {
     private boolean lockedCards = false;
     private int amountLockedCards;
     private boolean setLockedCards = false;
+    private int moveCounter;
 
     /**
      * Constructor for the game class.
@@ -264,7 +265,8 @@ public class Game implements ApplicationListener {
                 amountLockedCards = 0;
             }
         } else if (phase == Phase.WAIT_FOR_CLIENT_MOVE) {
-            if (gameServerListener.numReceivedMoves == gameServerListener.getConnectedPlayers()) {
+            System.out.println(alivePlayerList.size());
+            if (gameServerListener.numReceivedMoves == Math.min(gameServerListener.getConnectedPlayers(), alivePlayerList.size()-1)) {
                 phase = Phase.SEND_CARDS;
                 statusMessage = "Sending cards to all clients.";
                 allMoves = gameServerListener.receivedMoves;
@@ -568,8 +570,19 @@ public class Game implements ApplicationListener {
      *                     Will change the needed objects to change the representation on the board
      */
     private void move(Player playerObject, Sprite playerSprite, String move) {
-        System.out.println(playerObject.getShortName() + " moved - " + move);
+        if(playerObject.getPowerDown()) {
+            System.out.println(playerObject.getShortName() + "is in PowerDown...");
+            move = "powerdown";
+        }
+        if(!move.equals("powerdown"))
+            System.out.println(playerObject.getShortName() + " moved - " + move);
+
         switch (move) {
+            case "powerdown":  //Powerdown for the player
+                if(!playerObject.getPowerDown())
+                    playerObject.setPowerDown(true);
+                endTurn();
+                break;
             case "move1":  //Move in the direction the player is facing
                 Direction dir = playerObject.getDirection();
                 Pair pair = dirMap.get(dir);
@@ -582,21 +595,27 @@ public class Game implements ApplicationListener {
                 dir = playerObject.getDirection();
                 pair = dirMap.get(dir);
                 for (int i = 0; i < 2; i++) {
+                    if (playerObject.isDead()) {
+                        break;
+                    }
                     if (collision(playerObject)) {
                         playerObject.move(pair.getX(), pair.getY());
                     }
-                    endTurn();
                 }
+                endTurn();
                 break;
             case "move3":  //Move in the direction the player is facing
                 dir = playerObject.getDirection();
                 pair = dirMap.get(dir);
                 for (int i = 0; i < 3; i++) {
+                    if (playerObject.isDead()) {
+                        break;
+                    }
                     if (collision(playerObject)) {
                         playerObject.move(pair.getX(), pair.getY());
                     }
-                    endTurn();
                 }
+                endTurn();
                 break;
             case "backUp":  //Move in the direction the player is facing
                 dir = playerObject.getDirection();
@@ -639,6 +658,9 @@ public class Game implements ApplicationListener {
         String move = card.getType();   //Get the move
         String shortName = card.getShortName(); //Get name of player to move
         Player player = (Player) board.getObjectMap().get(shortName); //Get Player
+        if(player.isDead()){
+            return;
+        }
         Sprite playerSprite = spriteMap.get(shortName); //Get player as Sprite
         move(player, playerSprite, move);   //Move player
     }
@@ -827,15 +849,30 @@ public class Game implements ApplicationListener {
             }
         }
         alivePlayerList.removeAll(toBeRemoved); //Remove dead players from list of alive players
+
+        //Call all functions supposed to run after every player has played one card
+        moveCounter += 1;
+        if(moveCounter >= alivePlayerList.size()){ //If we have moved enough time for all players to move
+            moveCounter = 0;
+            runExpressConveyorBelt();
+            runConveyorBelt();
+            runGear(false);
+            fireLasers(board.getLaserList());
+            fireLasers(getPlayerLasers());
+            for ( Player player : alivePlayerList) {
+                player.pickupFlag();
+            }
+        }
+
         if (alivePlayerList.size() == 1) { //If there is only one player left, the player wins.
             winner = alivePlayerList.get(0);
             phase = Phase.FINISHED;
         } else if (isServer) {
             if (playerMoves.getMoves().size() == 0) {
                 phase = Phase.DEAL_CARDS;
+                moveCounter = 0;
             }
         }
-
         //Pause between moves so the user can see whats happening.
         try {
             Thread.sleep(2000);
