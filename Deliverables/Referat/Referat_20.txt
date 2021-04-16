@@ -1,0 +1,37 @@
+Møte 16.04.2021
+Digitalt via Discord
+Tilstede
+  Skjalg Eide Hodneland
+  Emil Flatøy Hodneland
+  Jonas Svåsand
+  Håkon Mathias Hvidsten Høie
+  Hans Albert Biørn Terland
+
+
+
+Standup:
+
+Emil: Begynt på powerdown, lagt til slik at turen blir skippet hvis er i powerdown.
+
+Hadse: Begynt på stage, musikk spilles av i bakgrunn.
+
+Håkon: Laget laser, gear, rullebånd. + Brett
+
+Jonas: Skrevet litt user-stories
+
+Skjalg: Fikset endofregister phase konsept.
+
+Vi fortsatte å snakke litt om fremgang videre. Etter det tok vi å jobbet med å fikse en bug som gjorde
+at spillet ikke fungerte slik det skulle etter en spiller døde. Vi klarte å fikse den buggen + litt andre bugs
+
+Har blitt enig om siste fremdriftsplan:
+Møte mandag 12-14:
+Være ferdig med mesteparten til mandag slik at vi kan implementere det siste da, f.eks. knapper o.l.
+
+Møte onsdag 10-12:
+På onsdag tar vi å kjører spilletest hele timen og prøver å fikse errors som popper opp. 
+Vi tar også finpuss på koden, fjerner prints etc. som er unødvendige.
+
+Fredag møte i lab 10-12:
+Vi skriver ferdig innleveringsteksten og forbereder andre filer til innlevering f.eks. klassediagram.
+Vi tagger så innleveringen og lager en liten plan for fremføringen av det "ferdige" produktet. 
