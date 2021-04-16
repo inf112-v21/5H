@@ -265,7 +265,8 @@ public class Game implements ApplicationListener {
                 amountLockedCards = 0;
             }
         } else if (phase == Phase.WAIT_FOR_CLIENT_MOVE) {
-            if (gameServerListener.numReceivedMoves == gameServerListener.getConnectedPlayers()) {
+            System.out.println(alivePlayerList.size());
+            if (gameServerListener.numReceivedMoves == Math.min(gameServerListener.getConnectedPlayers(), alivePlayerList.size()-1)) {
                 phase = Phase.SEND_CARDS;
                 statusMessage = "Sending cards to all clients.";
                 allMoves = gameServerListener.receivedMoves;
@@ -594,21 +595,27 @@ public class Game implements ApplicationListener {
                 dir = playerObject.getDirection();
                 pair = dirMap.get(dir);
                 for (int i = 0; i < 2; i++) {
+                    if (playerObject.isDead()) {
+                        break;
+                    }
                     if (collision(playerObject)) {
                         playerObject.move(pair.getX(), pair.getY());
                     }
-                    endTurn();
                 }
+                endTurn();
                 break;
             case "move3":  //Move in the direction the player is facing
                 dir = playerObject.getDirection();
                 pair = dirMap.get(dir);
                 for (int i = 0; i < 3; i++) {
+                    if (playerObject.isDead()) {
+                        break;
+                    }
                     if (collision(playerObject)) {
                         playerObject.move(pair.getX(), pair.getY());
                     }
-                    endTurn();
                 }
+                endTurn();
                 break;
             case "backUp":  //Move in the direction the player is facing
                 dir = playerObject.getDirection();
@@ -651,6 +658,9 @@ public class Game implements ApplicationListener {
         String move = card.getType();   //Get the move
         String shortName = card.getShortName(); //Get name of player to move
         Player player = (Player) board.getObjectMap().get(shortName); //Get Player
+        if(player.isDead()){
+            return;
+        }
         Sprite playerSprite = spriteMap.get(shortName); //Get player as Sprite
         move(player, playerSprite, move);   //Move player
     }
