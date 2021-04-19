@@ -54,7 +54,8 @@ Teknisk produktoppsett:
 
 ### Spilleregler
 For hver Omgang får hver spiller utdelt 9 kort. Spilleren må så velge seg ut
-5 av disse kortene vha. nummertastene på tastaturet. 
+5 av disse kortene vha. nummertastene på tastaturet eller ved å klikke på dem. 
+Når du har valgt 5 kort, trykk på "submit cards" knappen.
 Hver omgang består av 5 runder. I hver runde beveger roboten din seg ut ifra programkortet 
 som du valgte ut for den runden. Hvis du står på ett flagg på slutten av runden er du nærmere å vinne.
 Vinn ved å være den første til å ha roboten sin innom alle tre flaggene vinner!
@@ -64,8 +65,5 @@ Vinn ved å være den første til å ha roboten sin innom alle tre flaggene vinn
 ### Kjente Feil og mangler
 
 - Powerdown mangler og dermed ingen måte å fjerne damage annet en å dø
-- Roboter skyter ikke laser
-- Brettet består bare av simple felt, ingen rullebånd, skiftenøkler osv.
 - Vegger tar opp ett helt felt på brettet
-- Hvis spiller mister alle 3 liv, så er det mulighet for at det oppstår en bug hvor feil spiller fjernes fra brettet og den spilleren som skulle være ute av spillet, fortsetter med negativ hp. Spillet vil da heller ikke kunne fortsette da serveren forventer kort fra denne spilleren som skulle vært død, men lokalt vet spillet at spilleren er død og ignorer kort.
 
