@@ -230,4 +230,8 @@ public class Player extends AbstractGameObject {
     public void setPowerDown(boolean powerDown) {
         this.powerDown = powerDown;
     }
+
+    public void setPc(int pc) {
+        this.pc = pc;
+    }
 }

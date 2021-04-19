@@ -44,6 +44,7 @@ public class Game implements ApplicationListener {
     private Hand hand;                          //The hand of this player
     private boolean hasPrintedState;            //true if player has been informed of current state of game, false otherwise.
     private String statusMessage;               //Status message to print to user.
+    private boolean powerDown;
 
     //Optimization/fixing memory leak issue from previous versions
     private Player thisPlayer; //The current instance's player object
@@ -154,6 +155,19 @@ public class Game implements ApplicationListener {
                 submittedCards = true;
             }
         });
+
+        //Powerdown button
+        //Submit cards button
+        Button powerDownButton = new Button();
+        powerDownButton.setSize(200, 70);
+        powerDownButton.setPosition(1070, 63);
+        stage.addActor(powerDownButton);
+        powerDownButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                powerDown = true;
+            }
+        });
     }
 
     /**
@@ -229,6 +243,7 @@ public class Game implements ApplicationListener {
             serverRenderLogic();
         } else {  //Else it runs client logic
             clientRenderLogic();
+            powerDownFinished();
         }
 
 
@@ -311,7 +326,10 @@ public class Game implements ApplicationListener {
             statusMessage = "Select cards to move. Click SUBMIT CARDS when ready (not implemented yet)";
             gameServerListener.resetReceivedMoves();
         } else if (phase == Phase.CARD_SELECT) { //If player should choose cards
-            if (hand.getNumberOfCardsSelected() != 5) { //If the player has not registered enough cards.
+            Hand beforeHand = hand.getCopy();
+            if(powerDown)
+                submittedCards = true;
+            if (hand.getNumberOfCardsSelected() != 5 && !powerDown) { //If the player has not registered enough cards.
                 if(submittedCards){
                     statusMessage = "You need to select 5 cards to submit!";
                     submittedCards = false;
@@ -319,7 +337,19 @@ public class Game implements ApplicationListener {
                 selectMove();
             }
             else if(submittedCards){
-                previousHand = hand.getCopy();
+                if(powerDown){
+                    for(int i = 0; i < hand.getNumberOfCardsSelected(); i++){
+                        hand.unSelect(i);
+                    }
+                    ArrayList<Card> powerDownCards = new ArrayList<>();
+                    for(int i = 0; i<5; i++){
+                        Card powerDownCard = new Card();
+                        powerDownCard.create("powerdown",i+1);
+                        powerDownCards.add(powerDownCard);
+                    }
+                    hand.setSelectedCards(powerDownCards);
+                }
+                previousHand = beforeHand.getCopy();
                 gameServerListener.receivedMoves.add(hand);
                 hand = previousHand; // To show in GUI
                 phase = Phase.WAIT_FOR_CLIENT_MOVE;
@@ -345,6 +375,7 @@ public class Game implements ApplicationListener {
             statusMessage = "Players moving!";
         } else if (phase == Phase.MOVE) {
             doOnePlayerMove(); //Advances moves by one
+            powerDownFinished();
         }
     }
 
@@ -387,16 +418,32 @@ public class Game implements ApplicationListener {
                 statusMessage = "Select cards to move. Click SUBMIT CARDS when ready (not implemented yet)";
                 moveMessagePrinted = true;
             }
-            if (!(hand.getNumberOfCardsSelected() == 5)) { //If the player has not registered enough cards.
+            if(powerDown)
+                submittedCards = true;
+            if (hand.getNumberOfCardsSelected() != 5 && !powerDown) { //If the player has not registered enough cards.
                 if(submittedCards){
                     statusMessage = "You need to select 5 cards to submit!";
                     submittedCards = false;
                 }
                 selectMove();
             } else if (submittedCards) { // If a move is registered it will start the sending process
+                Hand beforeHand = hand.getCopy();
                 if (network.getClient().isConnected()) { // Checks once more if a disconnect has happened
+                    if(powerDown){
+                        for(int i = 0; i < hand.getNumberOfCardsSelected(); i++){
+                            hand.unSelect(i);
+                        }
+                        ArrayList<Card> powerDownCards = new ArrayList<>();
+                        for(int i = 0; i<5; i++){
+                            Card powerDownCard = new Card();
+                            powerDownCard.create("powerdown",i+1);
+                            powerDownCards.add(powerDownCard);
+                        }
+                        hand.setSelectedCards(powerDownCards);
+                    }
                     network.getClient().sendTCP(hand); // Sends the move object to the server
-                    previousHand = hand;
+                    previousHand = beforeHand;
+                    hand = beforeHand;
                 } else { // reconnects if necessary
                     try {
                         network.reconnectClient();
@@ -430,6 +477,7 @@ public class Game implements ApplicationListener {
                     doOnePlayerMove(); //Do a move
                 }
             }
+
         }
     }
 
@@ -503,58 +551,61 @@ public class Game implements ApplicationListener {
      * Function for displaying all and selected cards in GUI.
      */
     private void renderCards() {
-        int allOffsetX = 0;   //Keep track of x offset of all cards
-        int allOffsetY = 0; //Keep track of y offset of all cards
-        int selectedOffsetX = 0;  //Keep track of x offset of selected cards
-        if (hand == null) return;
-        ArrayList<Card> allCards = hand.getAllCards();
-        ArrayList<Card> selectedCards = hand.getSelectedCards();
-        font.getData().setScale(1); //Reset font size to 1
-        for (Card c : allCards) { //Loop through all cards and print the ones not selected
-            Sprite cSprite = spriteMap.get(c.getType()); //Get sprite for current card
-            Button button = buttonMap.get(c);
-            if (!selectedCards.contains(c)) { //If card is selected draw it in the selectedCards box
-                if (allOffsetX > 500) {
-                    allOffsetX = 0;
-                    allOffsetY = 150;
+        if(!powerDown){
+            int allOffsetX = 0;   //Keep track of x offset of all cards
+            int allOffsetY = 0; //Keep track of y offset of all cards
+            int selectedOffsetX = 0;  //Keep track of x offset of selected cards
+            if (hand == null) return;
+            ArrayList<Card> allCards = hand.getAllCards();
+            ArrayList<Card> selectedCards = hand.getSelectedCards();
+            font.getData().setScale(1); //Reset font size to 1
+            for (Card c : allCards) { //Loop through all cards and print the ones not selected
+                Sprite cSprite = spriteMap.get(c.getType()); //Get sprite for current card
+                Button button = buttonMap.get(c);
+                if (!selectedCards.contains(c)) { //If card is selected draw it in the selectedCards box
+                    if (allOffsetX > 500) {
+                        allOffsetX = 0;
+                        allOffsetY = 150;
+                    }
+                    cSprite.setScale(1f);
+                    cSprite.setX(645 + allOffsetX);
+                    cSprite.setY(530 - allOffsetY);
+                    cSprite.draw(batch); //Draw card
+                    button.setPosition(645 + allOffsetX, 530 - allOffsetY);
+                    button.setSize(99, 153);
+                    font.setColor(Color.WHITE);
+                    font.draw(batch, "" + (allCards.indexOf(c) + 1), (690 + allOffsetX), (549 - allOffsetY)); //Draw number used to select card
+                    //Draw priority:
+                    font.setColor(Color.YELLOW);
+                    font.draw(batch, "" + c.getPriority(), (701 + allOffsetX), (666 - allOffsetY));
+                    font.setColor(Color.WHITE);
+                    allOffsetX += 100;
                 }
+            }
+            boolean addedSpaceLockedCards = false;
+            for (Card c : selectedCards) { //Loop through selected cards and draw them
+                if (lockedCards && !addedSpaceLockedCards && Objects.requireNonNull(getLockedCards()).contains(c)) {
+                    selectedOffsetX += 100 * (5 - selectedCards.size());
+                    addedSpaceLockedCards = true;
+                }
+                Sprite cSprite = spriteMap.get(c.getType()); //Get sprite for current card
+                Button button = buttonMap.get(c);
+                int indexOfCard = allCards.indexOf(c);
                 cSprite.setScale(1f);
-                cSprite.setX(645 + allOffsetX);
-                cSprite.setY(530 - allOffsetY);
-                cSprite.draw(batch); //Draw card
-                button.setPosition(645 + allOffsetX, 530 - allOffsetY);
+                cSprite.setX(645 + selectedOffsetX);
+                cSprite.setY(160);
+                button.setPosition(645 + selectedOffsetX, 160);
                 button.setSize(99, 153);
-                font.setColor(Color.WHITE);
-                font.draw(batch, "" + (allCards.indexOf(c) + 1), (690 + allOffsetX), (549 - allOffsetY)); //Draw number used to select card
+                cSprite.draw(batch);
+                font.draw(batch, "" + (indexOfCard + 1), (690 + selectedOffsetX), 179); //Draw number used to select card
                 //Draw priority:
                 font.setColor(Color.YELLOW);
-                font.draw(batch, "" + c.getPriority(), (701 + allOffsetX), (666 - allOffsetY));
+                font.draw(batch, "" + c.getPriority(), (701 + selectedOffsetX), 296);
                 font.setColor(Color.WHITE);
-                allOffsetX += 100;
+                selectedOffsetX += 100;
             }
         }
-        boolean addedSpaceLockedCards = false;
-        for (Card c : selectedCards) { //Loop through selected cards and draw them
-            if (lockedCards && !addedSpaceLockedCards && Objects.requireNonNull(getLockedCards()).contains(c)) {
-                selectedOffsetX += 100 * (5 - selectedCards.size());
-                addedSpaceLockedCards = true;
-            }
-            Sprite cSprite = spriteMap.get(c.getType()); //Get sprite for current card
-            Button button = buttonMap.get(c);
-            int indexOfCard = allCards.indexOf(c);
-            cSprite.setScale(1f);
-            cSprite.setX(645 + selectedOffsetX);
-            cSprite.setY(160);
-            button.setPosition(645 + selectedOffsetX, 160);
-            button.setSize(99, 153);
-            cSprite.draw(batch);
-            font.draw(batch, "" + (indexOfCard + 1), (690 + selectedOffsetX), 179); //Draw number used to select card
-            //Draw priority:
-            font.setColor(Color.YELLOW);
-            font.draw(batch, "" + c.getPriority(), (701 + selectedOffsetX), 296);
-            font.setColor(Color.WHITE);
-            selectedOffsetX += 100;
-        }
+
     }
 
     /**
@@ -630,7 +681,7 @@ public class Game implements ApplicationListener {
      */
     private void move(Player playerObject, Sprite playerSprite, String move) {
         if(playerObject.getPowerDown()) {
-            statusMessage = playerObject.getShortName() + "is in PowerDown...";
+            statusMessage = playerObject.getShortName() + " is in PowerDown...";
             move = "powerdown";
         }
         if(!move.equals("powerdown"))
@@ -638,8 +689,10 @@ public class Game implements ApplicationListener {
 
         switch (move) {
             case "powerdown":  //Powerdown for the player
-                if(!playerObject.getPowerDown())
+                if(!playerObject.getPowerDown()) {
                     playerObject.setPowerDown(true);
+                    playerObject.setPc(9);
+                }
                 endTurn();
                 break;
             case "move1":  //Move in the direction the player is facing
@@ -893,6 +946,8 @@ public class Game implements ApplicationListener {
      * able to see the final position of the player. (There is probably a cleaner way to do this than sleep the thread.)
      */
     private void endTurn() {
+        if(hand.getAllCards().size() == 0)
+            powerDownFinished();
         ArrayList<Player> toBeRemoved = new ArrayList<>(); //List of players that died this round
         for (Player player : alivePlayerList) {
             if (player.isDead() || player.getPlayerNum() > numPlayers) {    //If player died
@@ -1040,6 +1095,13 @@ public class Game implements ApplicationListener {
                     playerSprite.rotate90(gear.isClockwise());
                 }
             }
+        }
+    }
+
+    public void powerDownFinished(){
+        for(Player player : alivePlayerList){
+            player.setPowerDown(false);
+            powerDown = false;
         }
     }
 
