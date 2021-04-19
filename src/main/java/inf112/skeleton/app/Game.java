@@ -10,11 +10,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.esotericsoftware.kryonet.Connection;
 import inf112.skeleton.app.cards.Card;
@@ -66,7 +64,7 @@ public class Game implements ApplicationListener {
         put(Direction.EAST, new Pair(1, 0));
         put(Direction.SOUTH, new Pair(0, -1));
     }};
-    private HashMap<String, Sprite> spriteMap;    //Map for getting the corresponding sprite to a string, i.e. g => (Sprite) ground
+    private HashMap<String, Sprite> spriteMap; //Map for getting the corresponding sprite to a string, i.e. g => (Sprite) ground
     private Hand previousHand;
     private HashMap<Player, ArrayList<Card>> playerCardsHashMap;
     private boolean lockedCards = false;
@@ -81,7 +79,6 @@ public class Game implements ApplicationListener {
     //Buttons
     private ArrayList<Button> buttons;
     private HashMap<Card, Button> buttonMap;
-    private Button submit;
     private boolean submittedCards;
 
     /**
@@ -98,21 +95,20 @@ public class Game implements ApplicationListener {
         //Set network variables
         isServer = settings.getState().equals("server"); //True if instance is server
         network = new Network(settings, numPlayers);
-        if (settings.getState().equals("test")) {
-            //Do nothing as I don't want to connect to any servers for tests with this settings, only want a game object to call methods from.
-            System.out.println("Making a test game object!"); //This print statement is here to satisfy codacy so don't remove
-        } else if (isServer) { //If this instance of game is supposed to be a server it starts one
-            try {
-                network.startServer();
-                gameServerListener = network.getGameServerListener();
-            } catch (IOException e) { // Exception thrown if it cannot bind ports
-                e.printStackTrace();
-            }
-        } else {  //If this instance of game is not supposed to be a server it starts a client and (tries to) connect to a server
-            try {
-                network.startClient();
-            } catch (IOException e) { //Exception thrown if it cannot connect to given server in 5 seconds
-                e.printStackTrace();
+        if(!settings.getState().equals("test")) {
+            if (isServer) { //If this instance of game is supposed to be a server it starts one
+                try {
+                    network.startServer();
+                    gameServerListener = network.getGameServerListener();
+                } catch (IOException e) { // Exception thrown if it cannot bind ports
+                    e.printStackTrace();
+                }
+            } else {  //If this instance of game is not supposed to be a server it starts a client and (tries to) connect to a server
+                try {
+                    network.startClient();
+                } catch (IOException e) { //Exception thrown if it cannot connect to given server in 5 seconds
+                    e.printStackTrace();
+                }
             }
         }
         phase = Phase.WAIT_CONNECT;
@@ -147,8 +143,8 @@ public class Game implements ApplicationListener {
             buttons.add(button);
         }
 
-        //shit
-        submit = new Button();
+        //Submit cards button
+        Button submit = new Button();
         submit.setSize(200, 70);
         submit.setPosition(653, 63);
         stage.addActor(submit);
@@ -191,8 +187,6 @@ public class Game implements ApplicationListener {
             }
             if (rotate) {
                 switch (rotateDir) {
-                    case NORTH:
-                        break;
                     case WEST:
                         sprite.rotate90(false);
                         break;
@@ -335,7 +329,6 @@ public class Game implements ApplicationListener {
                 amountLockedCards = 0;
             }
         } else if (phase == Phase.WAIT_FOR_CLIENT_MOVE) {
-            System.out.println(alivePlayerList.size());
             if (gameServerListener.numReceivedMoves == Math.min(gameServerListener.getConnectedPlayers(), alivePlayerList.size()-1)) {
                 phase = Phase.SEND_CARDS;
                 statusMessage = "Sending cards to all clients.";
@@ -498,6 +491,7 @@ public class Game implements ApplicationListener {
         font.getData().setScale(5); //Size up font so its readable
         font.draw(batch, "" + thisPlayer.getHp(), 444, 709);
         font.draw(batch, "" + thisPlayer.getPc(), 574, 709);
+        font.draw(batch, "" + thisPlayer.getScore(), 990, 125);
     }
 
     /**
@@ -578,7 +572,6 @@ public class Game implements ApplicationListener {
                 } else if (object.getShortName().matches("p\\d+")) {
                     Player player = (Player) object;
                     player.damage();
-                    System.out.println(player.getPc());
                     break;
                 }
                 currentPos = new Pair(currentPos.getX() + dir.getX(), currentPos.getY() + dir.getY());
@@ -600,29 +593,26 @@ public class Game implements ApplicationListener {
     /**
      * Function for selecting which cards you want to use to move.
      *
-     * @return true if move was successfully submitted, false otherwise.
      */
-    private boolean selectMove() {
+    private void selectMove() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
-            return hand.selectCard(0);
+            hand.selectCard(0);
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
-            return hand.selectCard(1);
+            hand.selectCard(1);
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
-            return hand.selectCard(2);
+            hand.selectCard(2);
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) {
-            return hand.selectCard(3);
+            hand.selectCard(3);
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) {
-            return hand.selectCard(4);
+            hand.selectCard(4);
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)) {
-            return hand.selectCard(5);
+            hand.selectCard(5);
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) {
-            return hand.selectCard(6);
+            hand.selectCard(6);
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)) {
-            return hand.selectCard(7);
+            hand.selectCard(7);
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9)) {
-            return hand.selectCard(8);
-        }  else {
-            return false;
+            hand.selectCard(8);
         }
     }
 
@@ -635,11 +625,11 @@ public class Game implements ApplicationListener {
      */
     private void move(Player playerObject, Sprite playerSprite, String move) {
         if(playerObject.getPowerDown()) {
-            System.out.println(playerObject.getShortName() + "is in PowerDown...");
+            statusMessage = playerObject.getShortName() + "is in PowerDown...";
             move = "powerdown";
         }
         if(!move.equals("powerdown"))
-            System.out.println(playerObject.getShortName() + " moved - " + move);
+            statusMessage = playerObject.getShortName() + " moved - " + move;
 
         switch (move) {
             case "powerdown":  //Powerdown for the player
@@ -747,7 +737,7 @@ public class Game implements ApplicationListener {
             Player pushedPlayer = (Player) board.getPosition(newX, newY); //Get the player
             if (collision(pushedPlayer, dir)) { //Check if pushedPlayer is allowed to move, and if he also collides handle that collision recursively
                 pushedPlayer.move(dir.getX(), dir.getY()); // Move the pushed player to correct tile
-                System.out.println("Moved " + pushedPlayer.getShortName());
+                statusMessage = ("Pushed " + pushedPlayer.getShortName());
             } else { // If the pushed player can not move then this player is not allowed to either.
                 return false;
             }
@@ -766,7 +756,7 @@ public class Game implements ApplicationListener {
             Player pushedPlayer = (Player) board.getPosition(newX, newY); //Get the player
             if (collision(pushedPlayer, dir)) { //Check if pushedPlayer is allowed to move, and if he also collides handle that collision recursively
                 pushedPlayer.move(dir.getX(), dir.getY()); // Move the pushed player to correct tile
-                System.out.println("Moved " + pushedPlayer.getShortName());
+                statusMessage = ("Pushed " + pushedPlayer.getShortName());
             } else { // If the pushed player can not move then this player is not allowed to either.
                 return false;
             }
@@ -909,7 +899,7 @@ public class Game implements ApplicationListener {
                 } else {
                     board.updateCoordinate(board.getOriginalPosition(playerX, playerY).getShortName(), playerX, playerY);
                 }
-                System.out.println(player.getName() + " died!");
+                statusMessage = (player.getName() + " died!");
             }
         }
         alivePlayerList.removeAll(toBeRemoved); //Remove dead players from list of alive players

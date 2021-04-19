@@ -20,8 +20,6 @@ public class Main2 {
             playerCount = Integer.parseInt(setupData.get("playerCount"));
             boardNum = Integer.parseInt(setupData.get("board"));
         }
-        //check connection
-        System.out.println(settings.getState());
 
         //Application setup
         Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();

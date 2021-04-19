@@ -47,7 +47,6 @@ public class CollisionsTest {
         Pair pair = dirMap.get(dir);
         //Retrieving a copy of Player 3s coordinates
         Pair player3StartCoordinates = player3.getCoordinates().getCopy();
-        System.out.println(player3StartCoordinates);
         Pair player3ExpectedCoordinate = player3.getCoordinates().getCopy();
         assertTrue(game.collision(player2), "Player2 was not allowed to move"); //If this passes the method call should move player3
         Pair player3EndCoordinate = player3.getCoordinates();
