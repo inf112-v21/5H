@@ -10,6 +10,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.esotericsoftware.kryonet.Connection;
 import inf112.skeleton.app.cards.Card;
 import inf112.skeleton.app.cards.Deck;
@@ -38,7 +42,6 @@ public class Game implements ApplicationListener {
     private final boolean isServer;             // If true you start a server, if false you start a client and try to connect to server
     private Phase phase;                        //Phase the game is in.
     private Hand hand;                          //The hand of this player
-    private boolean hasPrintedHandInfo;          //true if player has been informed of the state of the hand and selected cards, false if changes has been made since last print.
     private boolean hasPrintedState;            //true if player has been informed of current state of game, false otherwise.
     private String statusMessage;               //Status message to print to user.
 
@@ -61,13 +64,22 @@ public class Game implements ApplicationListener {
         put(Direction.EAST, new Pair(1, 0));
         put(Direction.SOUTH, new Pair(0, -1));
     }};
-    private HashMap<String, Sprite> spriteMap;    //Map for getting the corresponding sprite to a string, i.e. g => (Sprite) ground
+    private HashMap<String, Sprite> spriteMap; //Map for getting the corresponding sprite to a string, i.e. g => (Sprite) ground
     private Hand previousHand;
     private HashMap<Player, ArrayList<Card>> playerCardsHashMap;
     private boolean lockedCards = false;
     private int amountLockedCards;
     private boolean setLockedCards = false;
     private int moveCounter;
+
+    //Board related
+    private int boardNum;
+    private boolean hasCreatedBoard;
+
+    //Buttons
+    private ArrayList<Button> buttons;
+    private HashMap<Card, Button> buttonMap;
+    private boolean submittedCards;
 
     /**
      * Constructor for the game class.
@@ -76,40 +88,84 @@ public class Game implements ApplicationListener {
      * @param numPlayers The number of players that this game should have, only necessary when the user is a server,
      *                   so it is hardcoded for client instances.
      */
-    public Game(NetworkSettings settings, int numPlayers) {
+    public Game(NetworkSettings settings, int numPlayers, int boardNum) {
         this.numPlayers = numPlayers;
+        this.boardNum = boardNum;
 
         //Set network variables
         isServer = settings.getState().equals("server"); //True if instance is server
         network = new Network(settings, numPlayers);
-        if (settings.getState().equals("test")) {
-            //Do nothing as I don't want to connect to any servers for tests with this settings, only want a game object to call methods from.
-            System.out.println("Making a test game object!"); //This print statement is here to satisfy codacy so don't remove
-        } else if (isServer) { //If this instance of game is supposed to be a server it starts one
-            try {
-                network.startServer();
-                gameServerListener = network.getGameServerListener();
-            } catch (IOException e) { // Exception thrown if it cannot bind ports
-                e.printStackTrace();
-            }
-        } else {  //If this instance of game is not supposed to be a server it starts a client and (tries to) connect to a server
-            try {
-                network.startClient();
-            } catch (IOException e) { //Exception thrown if it cannot connect to given server in 5 seconds
-                e.printStackTrace();
+        if(!settings.getState().equals("test")) {
+            if (isServer) { //If this instance of game is supposed to be a server it starts one
+                try {
+                    network.startServer();
+                    gameServerListener = network.getGameServerListener();
+                } catch (IOException e) { // Exception thrown if it cannot bind ports
+                    e.printStackTrace();
+                }
+            } else {  //If this instance of game is not supposed to be a server it starts a client and (tries to) connect to a server
+                try {
+                    network.startClient();
+                } catch (IOException e) { //Exception thrown if it cannot connect to given server in 5 seconds
+                    e.printStackTrace();
+                }
             }
         }
         phase = Phase.WAIT_CONNECT;
         hasPrintedState = false;
+        hasCreatedBoard = false;
+        buttonMap = new HashMap<>();
     }
 
     @Override
     public void create() {
         batch = new SpriteBatch();
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        font = new BitmapFont();
+        bgTexture = new Texture("src/main/resources/tex/background.png");
 
-        board = new Board();            //Initialize a board
-        board.readBoard(1);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
+        Stage stage = new Stage();
+        Gdx.input.setInputProcessor(stage);
+
+        //Set up buttons for cards
+        buttons = new ArrayList<>();
+        for(int i=0; i<10; i++){
+            Button button = new Button();
+            button.setSize(0, 0);
+            stage.addActor(button);
+            int finalI = i;
+            button.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent changeEvent, Actor actor) {
+                    hand.selectCard(finalI);
+                }
+            });
+            buttons.add(button);
+        }
+
+        //Submit cards button
+        Button submit = new Button();
+        submit.setSize(200, 70);
+        submit.setPosition(653, 63);
+        stage.addActor(submit);
+        submit.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                submittedCards = true;
+            }
+        });
+    }
+
+    /**
+     * Reads the board from boardNum, and creates all necessary sprites
+     */
+    public void createBoard(){
+        if(hasCreatedBoard){
+            return;
+        }
+        hasCreatedBoard = true;
+        board = new Board(); //Initialize a board
+        board.readBoard(boardNum);  //Read board info from file
 
         spriteMap = new HashMap<>();
         //For all game objects on map, add the identifying string and a corresponding sprite to spriteMap.
@@ -124,15 +180,13 @@ public class Game implements ApplicationListener {
             else if (ago instanceof ExpressConveyorBelt) {
                 rotate = true;
                 rotateDir = ((ExpressConveyorBelt) ago).getDir();
-                }
+            }
             else if (ago instanceof Laser) {
                 rotate = true;
                 rotateDir = ((Laser) ago).getDirection();
             }
             if (rotate) {
                 switch (rotateDir) {
-                    case NORTH:
-                        break;
                     case WEST:
                         sprite.rotate90(false);
                         break;
@@ -159,10 +213,6 @@ public class Game implements ApplicationListener {
 
         createAlivePlayerList();
         boardSize = board.getSize();
-        hasPrintedHandInfo = false;
-        font = new BitmapFont();
-        bgTexture = new Texture("src/main/resources/tex/background.png");
-        statusMessage = "";
     }
 
     @Override
@@ -181,9 +231,15 @@ public class Game implements ApplicationListener {
             clientRenderLogic();
         }
 
+
         //The rendering part of the function:
         batch.begin();
         batch.draw(bgTexture, 0, 0);
+        if (phase == Phase.WAIT_CONNECT){
+            renderUIElements();
+            batch.end();
+            return;
+        }
         if (phase == Phase.FINISHED) { //If the game is over
             Sprite winnerSprite = spriteMap.get(winner.getShortName());
             winnerSprite.setSize(camera.viewportWidth, camera.viewportHeight);
@@ -234,27 +290,35 @@ public class Game implements ApplicationListener {
             if (gameServerListener.getConnectedPlayers() + 1 == numPlayers) {
                 GameInfoTCP gi = new GameInfoTCP();
                 gi.setNumPlayers(numPlayers);
+                gi.setBoardNum(boardNum);
                 for (Connection connection : gameServerListener.getPlayers()) {
                     connection.sendTCP(gi);
                 }
                 phase = Phase.DEAL_CARDS;
+                createBoard();
                 statusMessage = "Dealing cards...";
             }
         } else if (phase == Phase.DEAL_CARDS) { //If we are in the DEAL_CARDS phase
             dealCardsToAllPlayers(); //Sends a hand of cards to all players
+            if(!buttonMap.isEmpty()){
+                buttonMap = new HashMap<>();
+            }
+            for(int i=0; i<hand.getAllCards().size(); i++){
+                buttonMap.put(hand.getAllCards().get(i), buttons.get(i));
+            }
             phase = Phase.CARD_SELECT;
+            submittedCards = false;
             statusMessage = "Select cards to move. Click SUBMIT CARDS when ready (not implemented yet)";
             gameServerListener.resetReceivedMoves();
         } else if (phase == Phase.CARD_SELECT) { //If player should choose cards
-            if ((hand.getNumberOfCardsSelected() != 5)) { //If the player has not registered enough cards.
-                if (!hasPrintedHandInfo) {
-                    printCardInfo();
-                    hasPrintedHandInfo = true;
+            if (hand.getNumberOfCardsSelected() != 5) { //If the player has not registered enough cards.
+                if(submittedCards){
+                    statusMessage = "You need to select 5 cards to submit!";
+                    submittedCards = false;
                 }
-                if (selectMove()) {
-                    hasPrintedHandInfo = false;
-                }
-            } else {
+                selectMove();
+            }
+            else if(submittedCards){
                 previousHand = hand.getCopy();
                 gameServerListener.receivedMoves.add(hand);
                 hand = previousHand; // To show in GUI
@@ -264,8 +328,10 @@ public class Game implements ApplicationListener {
                 lockedCards = false;
                 amountLockedCards = 0;
             }
+            else{
+                selectMove();
+            }
         } else if (phase == Phase.WAIT_FOR_CLIENT_MOVE) {
-            System.out.println(alivePlayerList.size());
             if (gameServerListener.numReceivedMoves == Math.min(gameServerListener.getConnectedPlayers(), alivePlayerList.size()-1)) {
                 phase = Phase.SEND_CARDS;
                 statusMessage = "Sending cards to all clients.";
@@ -296,10 +362,18 @@ public class Game implements ApplicationListener {
         }
         if (network.getGameClientListener().hasReceivedGameInfo()) {
             numPlayers = network.getGameClientListener().getGameInfo().getNumPlayers();
+            boardNum = network.getGameClientListener().getGameInfo().getBoardNum();
+            createBoard();
         }
         // Checks if this client has yet to submit moves
         if (network.getGameClientListener().hasReceivedHand()) {
             hand = network.getGameClientListener().getHand();
+            if(!buttonMap.isEmpty()){
+                buttonMap = new HashMap<>();
+            }
+            for(int i=0; i<hand.getAllCards().size(); i++){
+                buttonMap.put(hand.getAllCards().get(i), buttons.get(i));
+            }
             lockedCards = network.getGameClientListener().getLockedCards();
             if (lockedCards) {
                 amountLockedCards = network.getGameClientListener().getAmountLockedCards();
@@ -314,8 +388,12 @@ public class Game implements ApplicationListener {
                 moveMessagePrinted = true;
             }
             if (!(hand.getNumberOfCardsSelected() == 5)) { //If the player has not registered enough cards.
+                if(submittedCards){
+                    statusMessage = "You need to select 5 cards to submit!";
+                    submittedCards = false;
+                }
                 selectMove();
-            } else { // If a move is registered it will start the sending process
+            } else if (submittedCards) { // If a move is registered it will start the sending process
                 if (network.getClient().isConnected()) { // Checks once more if a disconnect has happened
                     network.getClient().sendTCP(hand); // Sends the move object to the server
                     previousHand = hand;
@@ -335,7 +413,9 @@ public class Game implements ApplicationListener {
                 network.getGameClientListener().resetHandReceived(); //Reset the bool for having received a hand of cards
                 network.getGameClientListener().resetLockedCardsAndAmountLockedCards();
                 setLockedCards = false;
-
+            }
+            else{
+                selectMove();
             }
         }
         if (phase == Phase.MOVE) {
@@ -375,30 +455,6 @@ public class Game implements ApplicationListener {
         return lockedCards;
     }
 
-    /**
-     * Prints info about the available cards and the selected cards.
-     */
-    private void printCardInfo() {
-        //Build a string of all cards and selected cards and print to user:
-        StringBuilder allCardsString = new StringBuilder();
-        StringBuilder selectedCardsString = new StringBuilder();
-        ArrayList<Card> allCards = hand.getAllCards();
-        ArrayList<Card> selectedCards = hand.getSelectedCards();
-        for (int i = 0; i < hand.getAllCards().size(); i++) {
-            if (!selectedCards.contains(allCards.get(i))) {
-                allCardsString.append(i + 1).append(". ").append(allCards.get(i).toString()).append(" | ");
-            }
-            if (selectedCards.size() > i) {
-                selectedCardsString.append(allCards.indexOf(selectedCards.get(i)) + 1).append(". ").append(selectedCards.get(i).toString()).append(" | ");
-            }
-        }
-        System.out.println("=============================");
-        System.out.println("Your cards:");
-        System.out.println(allCardsString);
-        System.out.println("Selected cards:");
-        System.out.println(selectedCardsString);
-        System.out.println("=============================");
-    }
 
     /**
      * Help function that sets the sprite to its correct size and position.
@@ -440,6 +496,7 @@ public class Game implements ApplicationListener {
         font.getData().setScale(5); //Size up font so its readable
         font.draw(batch, "" + thisPlayer.getHp(), 444, 709);
         font.draw(batch, "" + thisPlayer.getPc(), 574, 709);
+        font.draw(batch, "" + thisPlayer.getScore(), 990, 125);
     }
 
     /**
@@ -455,6 +512,7 @@ public class Game implements ApplicationListener {
         font.getData().setScale(1); //Reset font size to 1
         for (Card c : allCards) { //Loop through all cards and print the ones not selected
             Sprite cSprite = spriteMap.get(c.getType()); //Get sprite for current card
+            Button button = buttonMap.get(c);
             if (!selectedCards.contains(c)) { //If card is selected draw it in the selectedCards box
                 if (allOffsetX > 500) {
                     allOffsetX = 0;
@@ -464,6 +522,8 @@ public class Game implements ApplicationListener {
                 cSprite.setX(645 + allOffsetX);
                 cSprite.setY(530 - allOffsetY);
                 cSprite.draw(batch); //Draw card
+                button.setPosition(645 + allOffsetX, 530 - allOffsetY);
+                button.setSize(99, 153);
                 font.setColor(Color.WHITE);
                 font.draw(batch, "" + (allCards.indexOf(c) + 1), (690 + allOffsetX), (549 - allOffsetY)); //Draw number used to select card
                 //Draw priority:
@@ -480,10 +540,13 @@ public class Game implements ApplicationListener {
                 addedSpaceLockedCards = true;
             }
             Sprite cSprite = spriteMap.get(c.getType()); //Get sprite for current card
+            Button button = buttonMap.get(c);
             int indexOfCard = allCards.indexOf(c);
             cSprite.setScale(1f);
-            cSprite.setX(645 + (selectedOffsetX));
+            cSprite.setX(645 + selectedOffsetX);
             cSprite.setY(160);
+            button.setPosition(645 + selectedOffsetX, 160);
+            button.setSize(99, 153);
             cSprite.draw(batch);
             font.draw(batch, "" + (indexOfCard + 1), (690 + selectedOffsetX), 179); //Draw number used to select card
             //Draw priority:
@@ -514,7 +577,6 @@ public class Game implements ApplicationListener {
                 } else if (object.getShortName().matches("p\\d+")) {
                     Player player = (Player) object;
                     player.damage();
-                    System.out.println(player.getPc());
                     break;
                 }
                 currentPos = new Pair(currentPos.getX() + dir.getX(), currentPos.getY() + dir.getY());
@@ -536,29 +598,26 @@ public class Game implements ApplicationListener {
     /**
      * Function for selecting which cards you want to use to move.
      *
-     * @return true if move was successfully submitted, false otherwise.
      */
-    private boolean selectMove() {
+    private void selectMove() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
-            return hand.selectCard(0);
+            hand.selectCard(0);
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
-            return hand.selectCard(1);
+            hand.selectCard(1);
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
-            return hand.selectCard(2);
+            hand.selectCard(2);
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) {
-            return hand.selectCard(3);
+            hand.selectCard(3);
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) {
-            return hand.selectCard(4);
+            hand.selectCard(4);
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)) {
-            return hand.selectCard(5);
+            hand.selectCard(5);
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) {
-            return hand.selectCard(6);
+            hand.selectCard(6);
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)) {
-            return hand.selectCard(7);
+            hand.selectCard(7);
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9)) {
-            return hand.selectCard(8);
-        } else {
-            return false;
+            hand.selectCard(8);
         }
     }
 
@@ -571,11 +630,11 @@ public class Game implements ApplicationListener {
      */
     private void move(Player playerObject, Sprite playerSprite, String move) {
         if(playerObject.getPowerDown()) {
-            System.out.println(playerObject.getShortName() + "is in PowerDown...");
+            statusMessage = playerObject.getShortName() + "is in PowerDown...";
             move = "powerdown";
         }
         if(!move.equals("powerdown"))
-            System.out.println(playerObject.getShortName() + " moved - " + move);
+            statusMessage = playerObject.getShortName() + " moved - " + move;
 
         switch (move) {
             case "powerdown":  //Powerdown for the player
@@ -683,7 +742,7 @@ public class Game implements ApplicationListener {
             Player pushedPlayer = (Player) board.getPosition(newX, newY); //Get the player
             if (collision(pushedPlayer, dir)) { //Check if pushedPlayer is allowed to move, and if he also collides handle that collision recursively
                 pushedPlayer.move(dir.getX(), dir.getY()); // Move the pushed player to correct tile
-                System.out.println("Moved " + pushedPlayer.getShortName());
+                statusMessage = ("Pushed " + pushedPlayer.getShortName());
             } else { // If the pushed player can not move then this player is not allowed to either.
                 return false;
             }
@@ -702,7 +761,7 @@ public class Game implements ApplicationListener {
             Player pushedPlayer = (Player) board.getPosition(newX, newY); //Get the player
             if (collision(pushedPlayer, dir)) { //Check if pushedPlayer is allowed to move, and if he also collides handle that collision recursively
                 pushedPlayer.move(dir.getX(), dir.getY()); // Move the pushed player to correct tile
-                System.out.println("Moved " + pushedPlayer.getShortName());
+                statusMessage = ("Pushed " + pushedPlayer.getShortName());
             } else { // If the pushed player can not move then this player is not allowed to either.
                 return false;
             }
@@ -845,7 +904,7 @@ public class Game implements ApplicationListener {
                 } else {
                     board.updateCoordinate(board.getOriginalPosition(playerX, playerY).getShortName(), playerX, playerY);
                 }
-                System.out.println(player.getName() + " died!");
+                statusMessage = (player.getName() + " died!");
             }
         }
         alivePlayerList.removeAll(toBeRemoved); //Remove dead players from list of alive players

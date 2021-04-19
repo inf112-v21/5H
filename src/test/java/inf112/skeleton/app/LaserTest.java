@@ -24,7 +24,7 @@ public class LaserTest {
 
     public void setUpBoard(int boardNum) {
         NetworkSettings networkSettings = new NetworkSettings("test", "localhost", 2, 2);
-        game = new Game(networkSettings, 4);
+        game = new Game(networkSettings, 4, boardNum);
         board = new Board();
         board.readBoard(boardNum);
         game.board = board;

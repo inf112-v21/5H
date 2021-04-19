@@ -60,24 +60,20 @@ public class Player extends AbstractGameObject {
         if(updatedX > board.getSize()-1 || updatedX < 0){
             resetTile(currentX, currentY);
             die();
-            System.out.println("X out of bounds");
             return;
         }
         else if(updatedY > board.getSize()-1 || updatedY < 0){
             resetTile(currentX, currentY);
             die();
-            System.out.println("Y out of bounds");
             return;
         }
         else if(board.getPosition(updatedX, updatedY).getName().equals("Hole")){
             setCoordinates(updatedX, updatedY);
             resetTile(currentX, currentY);
             die();
-            System.out.println("Fell into hole");
             return;
         }
         else if(board.getPosition(updatedX, updatedY).getName().equals("Wall")){
-            System.out.println("Hit a wall.");
             return;
         }
 
@@ -92,9 +88,6 @@ public class Player extends AbstractGameObject {
             if (flag.pickUp(this)) {
                 addScore(1);
                 visitedFlags.add(flag.getShortName());
-                System.out.println("+1 point, " + points + " total.");
-            } else {
-                System.out.println("Flag already picked up! / Previous flag not picked up");
             }
         }
     }
@@ -141,7 +134,6 @@ public class Player extends AbstractGameObject {
         }
         resetPosition();
         pc = 9;
-        System.out.println(getName() + " died and now has: " + hp + " HP");
     }
 
     /**

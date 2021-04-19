@@ -33,7 +33,6 @@ public class GameClientListener extends Listener {
             String currentRequest = receivedRequest.getRequestType(); // Retrieves the type of request as a String
             if (currentRequest.equals("Move")) { //If it is a moveRequest:
                 needMoveInput = true; // Sets needMoveInput to true so that the Game.java class will realize its this clients turn to move
-                System.out.println("I should move");
             }
         }
         if(receivedObject instanceof PlayerMoves){

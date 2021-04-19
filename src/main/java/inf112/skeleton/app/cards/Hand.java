@@ -30,20 +30,16 @@ public class Hand {
      */
     public boolean selectCard(int cardNum){
         if (cardNum > fullHand.size()-1) {
-            System.out.println("Card selection outside current hand size");
             return false;
         }
-        if(selectedCards.size() >= 5){
-            System.out.println("Max amount selected!");
-            return false;
-        }
-        else if(playerSelectedCards.contains(fullHand.get(cardNum))){
+        if(playerSelectedCards.contains(fullHand.get(cardNum))){
             unSelect(cardNum);
-            System.out.println("Unselected");
+        }
+        else if(selectedCards.size() >= 5){
+            return false;
         }
         else{
             playerSelectedCards.add(fullHand.get(cardNum));
-            System.out.println("Card: "+ fullHand.get(cardNum).getType() + " selected.");
         }
         if (hasLockedCards) {
             selectedCards = new ArrayList<>();

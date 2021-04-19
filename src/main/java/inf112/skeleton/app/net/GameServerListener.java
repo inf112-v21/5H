@@ -77,7 +77,6 @@ public class GameServerListener extends Listener {
     public void received (Connection connection, Object receivedObject){
         if (receivedObject instanceof MoveResponse) { // checks if the message contains a move if it does:
             MoveResponse moveResponse = (MoveResponse) receivedObject; // Typecasts the moveResponse for some reason
-            System.out.println(moveResponse.move); // prints the received move
             this.receivedMove = moveResponse.move; // registers the move from received object to local variable
         }
         if(receivedObject instanceof Hand){

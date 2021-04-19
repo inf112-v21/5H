@@ -11,14 +11,15 @@ public class Main2 {
         HashMap<String, String> setupData = GameSetup.setup(); //Set up all game settings
         NetworkSettings settings = new NetworkSettings(setupData.get("state"), setupData.get("ip"), Integer.parseInt(setupData.get("tcp")), Integer.parseInt(setupData.get("udp")));
         int playerCount;
+        int boardNum;
         if(setupData.get("state").equals("client")){
             playerCount = 0;
+            boardNum = 0;
         }
         else{
             playerCount = Integer.parseInt(setupData.get("playerCount"));
+            boardNum = Integer.parseInt(setupData.get("board"));
         }
-        //check connection
-        System.out.println(settings.getState());
 
         //Application setup
         Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
@@ -27,7 +28,7 @@ public class Main2 {
         cfg.setResizable(false);
         cfg.useVsync(true);
         cfg.setIdleFPS(60);
-        new Lwjgl3Application(new Game(settings, playerCount), cfg);
+        new Lwjgl3Application(new Game(settings, playerCount, boardNum), cfg);
         System.exit(0);
     }
 }
