@@ -328,6 +328,9 @@ public class Game implements ApplicationListener {
                 lockedCards = false;
                 amountLockedCards = 0;
             }
+            else{
+                selectMove();
+            }
         } else if (phase == Phase.WAIT_FOR_CLIENT_MOVE) {
             if (gameServerListener.numReceivedMoves == Math.min(gameServerListener.getConnectedPlayers(), alivePlayerList.size()-1)) {
                 phase = Phase.SEND_CARDS;
@@ -410,7 +413,9 @@ public class Game implements ApplicationListener {
                 network.getGameClientListener().resetHandReceived(); //Reset the bool for having received a hand of cards
                 network.getGameClientListener().resetLockedCardsAndAmountLockedCards();
                 setLockedCards = false;
-
+            }
+            else{
+                selectMove();
             }
         }
         if (phase == Phase.MOVE) {
