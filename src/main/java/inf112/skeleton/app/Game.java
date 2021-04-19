@@ -21,6 +21,7 @@ import inf112.skeleton.app.cards.Hand;
 import inf112.skeleton.app.net.*;
 import inf112.skeleton.app.sprites.*;
 import org.lwjgl.opengl.GL20;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -154,6 +155,18 @@ public class Game implements ApplicationListener {
                 submittedCards = true;
             }
         });
+
+        //Submit mutebutton
+        Button mute = new Button();
+        mute.setSize(16, 7);
+        mute.setPosition(1249, 14);
+        stage.addActor(mute);
+        mute.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                System.out.println("Mute button");
+            }
+        });
     }
 
     /**
@@ -221,6 +234,7 @@ public class Game implements ApplicationListener {
 
     @Override
     public void render() {
+        //System.out.println(Gdx.input.getX() + "," + Gdx.input.getY());
         camera.update();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -491,6 +505,9 @@ public class Game implements ApplicationListener {
         drawPlayer.setY(647);
         drawPlayer.setSize(68, 68);
         drawPlayer.draw(batch); //Draw player object in the GUI
+
+        Sprite showMute = new Sprite(new Texture("src/main/resources/tex/symbols/muteButton.png"));
+        showMute.draw(batch);
 
         //Draw HP and PC
         font.getData().setScale(5); //Size up font so its readable
