@@ -45,6 +45,7 @@ public class Game implements ApplicationListener {
     private boolean hasPrintedState;            //true if player has been informed of current state of game, false otherwise.
     private String statusMessage;               //Status message to print to user.
     private boolean powerDown;
+    private boolean powerDownNextRound;
 
     //Optimization/fixing memory leak issue from previous versions
     private Player thisPlayer; //The current instance's player object
@@ -165,7 +166,7 @@ public class Game implements ApplicationListener {
         powerDownButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
-                powerDown = true;
+                powerDownNextRound = true;
             }
         });
     }
@@ -243,7 +244,6 @@ public class Game implements ApplicationListener {
             serverRenderLogic();
         } else {  //Else it runs client logic
             clientRenderLogic();
-            powerDownFinished();
         }
 
 
@@ -323,16 +323,15 @@ public class Game implements ApplicationListener {
             }
             phase = Phase.CARD_SELECT;
             submittedCards = false;
-            statusMessage = "Select cards to move. Click SUBMIT CARDS when ready (not implemented yet)";
+            statusMessage = "Select cards to move. Click SUBMIT CARDS when ready";
             gameServerListener.resetReceivedMoves();
         } else if (phase == Phase.CARD_SELECT) { //If player should choose cards
             Hand beforeHand = hand.getCopy();
             if(powerDown)
                 submittedCards = true;
-            if (hand.getNumberOfCardsSelected() != 5 && !powerDown) { //If the player has not registered enough cards.
+            else if (hand.getNumberOfCardsSelected() != 5) { //If the player has not registered enough cards.
                 if(submittedCards){
                     statusMessage = "You need to select 5 cards to submit!";
-                    submittedCards = false;
                 }
                 selectMove();
             }
@@ -375,7 +374,26 @@ public class Game implements ApplicationListener {
             statusMessage = "Players moving!";
         } else if (phase == Phase.MOVE) {
             doOnePlayerMove(); //Advances moves by one
-            powerDownFinished();
+        }
+    }
+
+    private void changePowerDownVariables() {
+        if(powerDownNextRound){
+            powerDown = true;
+            submittedCards = true;
+            powerDownNextRound = false;
+        }
+        else if(powerDown){
+            for(int i = 0; i < hand.getNumberOfCardsSelected(); i++){
+                hand.unSelect(i);
+            }
+            ArrayList<Card> powerDownCards = new ArrayList<>();
+            for(int i = 0; i<5; i++){
+                Card powerDownCard = new Card();
+                powerDownCard.create("powerdown", i+1);
+                powerDownCards.add(powerDownCard);
+            }
+            hand.setSelectedCards(powerDownCards);
         }
     }
 
@@ -420,13 +438,14 @@ public class Game implements ApplicationListener {
             }
             if(powerDown)
                 submittedCards = true;
-            if (hand.getNumberOfCardsSelected() != 5 && !powerDown) { //If the player has not registered enough cards.
+            else if (hand.getNumberOfCardsSelected() != 5) { //If the player has not registered enough cards.
                 if(submittedCards){
                     statusMessage = "You need to select 5 cards to submit!";
                     submittedCards = false;
                 }
                 selectMove();
-            } else if (submittedCards) { // If a move is registered it will start the sending process
+            }
+            if (submittedCards) { // If a move is registered it will start the sending process
                 Hand beforeHand = hand.getCopy();
                 if (network.getClient().isConnected()) { // Checks once more if a disconnect has happened
                     if(powerDown){
@@ -686,6 +705,8 @@ public class Game implements ApplicationListener {
         }
         if(!move.equals("powerdown"))
             statusMessage = playerObject.getShortName() + " moved - " + move;
+        else
+            statusMessage = playerObject.getShortName() + " is in PowerDown";
 
         switch (move) {
             case "powerdown":  //Powerdown for the player
@@ -1097,12 +1118,4 @@ public class Game implements ApplicationListener {
             }
         }
     }
-
-    public void powerDownFinished(){
-        for(Player player : alivePlayerList){
-            player.setPowerDown(false);
-            powerDown = false;
-        }
-    }
-
 }
