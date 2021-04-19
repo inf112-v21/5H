@@ -16,7 +16,9 @@ import inf112.skeleton.app.cards.Deck;
 import inf112.skeleton.app.cards.Hand;
 import inf112.skeleton.app.net.*;
 import inf112.skeleton.app.sprites.*;
+import inf112.skeleton.app.stages.ButtonStage;
 import org.lwjgl.opengl.GL20;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +39,7 @@ public class Game implements ApplicationListener {
     private int numPlayers;                     //Amount of players expected
     private final boolean isServer;             // If true you start a server, if false you start a client and try to connect to server
     private Phase phase;                        //Phase the game is in.
-    private Hand hand;                          //The hand of this player
+    public Hand hand;                          //The hand of this player
     private boolean hasPrintedHandInfo;          //true if player has been informed of the state of the hand and selected cards, false if changes has been made since last print.
     private boolean hasPrintedState;            //true if player has been informed of current state of game, false otherwise.
     private String statusMessage;               //Status message to print to user.
@@ -53,6 +55,9 @@ public class Game implements ApplicationListener {
     private boolean moveMessagePrinted = false; // Holds whether a moveMessage has been printed to console or not
     private PlayerMoves playerMoves;
     private ArrayList<Hand> allMoves; //All moves received by server from Client(s)
+
+    //Stage variables
+    ButtonStage buttonStage;
 
     //Map that holds Direction and the corresponding movement. I.e. north should move player x += 0, y += 1
     private final HashMap<Direction, Pair> dirMap = new HashMap<>() {{
@@ -110,6 +115,9 @@ public class Game implements ApplicationListener {
 
         board = new Board();            //Initialize a board
         board.readBoard(1);  //Read board info from file (for now hardcoded to 1 since we only have Board1.txt)
+
+        //Inisialiserer buttonstagen
+        buttonStage = new ButtonStage();
 
         spriteMap = new HashMap<>();
         //For all game objects on map, add the identifying string and a corresponding sprite to spriteMap.
@@ -217,6 +225,7 @@ public class Game implements ApplicationListener {
         }
         renderUIElements();
         renderCards();
+        buttonStage.draw();
         batch.flush();
         batch.end();
     }
