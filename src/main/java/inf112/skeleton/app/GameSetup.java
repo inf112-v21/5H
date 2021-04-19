@@ -11,6 +11,7 @@ public class GameSetup {
     }
 
     private static String playerCount;
+    private static String board;
     /**
      * Function for querying the user for connection settings.
      * @return NetworkSettings object containing connection information
@@ -26,12 +27,13 @@ public class GameSetup {
         else{
             selection.put("ip", "localhost");
             playerCount = selectPlayerCount();
-
+            board = selectBoard();
         }
         ArrayList<String> ports = portConfig();
         selection.put("tcp", ports.get(0));
         selection.put("udp", ports.get(1));
         selection.put("playerCount", playerCount);
+        selection.put("board", board);
 
         //Create networkSettings
         return selection;
@@ -44,6 +46,29 @@ public class GameSetup {
     private static String selectPlayerCount() {
         Object[] possibilities = {"1","2", "3", "4"};
         String prompt = "Please select the amount of players for this game";
+
+        Object result = JOptionPane.showInputDialog(
+                null,
+                prompt,
+                "",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                possibilities,
+                possibilities[0]);
+        if(result == null){
+            System.err.println("Program ended by user.");
+            System.exit(-1);
+        }
+        return result.toString();
+    }
+
+    /**
+     * Query the Server user for board number.
+     * @return the board name as string
+     */
+    private static String selectBoard() {
+        Object[] possibilities = {"1", "2", "3"};
+        String prompt = "Please select the board you want to play on.";
 
         Object result = JOptionPane.showInputDialog(
                 null,
