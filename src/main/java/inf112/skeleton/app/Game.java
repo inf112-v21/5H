@@ -10,9 +10,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.esotericsoftware.kryonet.Connection;
 import inf112.skeleton.app.cards.Card;
@@ -42,7 +44,6 @@ public class Game implements ApplicationListener {
     private final boolean isServer;             // If true you start a server, if false you start a client and try to connect to server
     private Phase phase;                        //Phase the game is in.
     private Hand hand;                          //The hand of this player
-    private boolean hasPrintedHandInfo;          //true if player has been informed of the state of the hand and selected cards, false if changes has been made since last print.
     private boolean hasPrintedState;            //true if player has been informed of current state of game, false otherwise.
     private String statusMessage;               //Status message to print to user.
 
@@ -80,6 +81,8 @@ public class Game implements ApplicationListener {
     //Buttons
     private ArrayList<Button> buttons;
     private HashMap<Card, Button> buttonMap;
+    private Button submit;
+    private boolean submittedCards;
 
     /**
      * Constructor for the game class.
@@ -143,6 +146,18 @@ public class Game implements ApplicationListener {
             });
             buttons.add(button);
         }
+
+        //shit
+        submit = new Button();
+        submit.setSize(200, 70);
+        submit.setPosition(653, 63);
+        stage.addActor(submit);
+        submit.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                submittedCards = true;
+            }
+        });
     }
 
     /**
@@ -204,7 +219,6 @@ public class Game implements ApplicationListener {
 
         createAlivePlayerList();
         boardSize = board.getSize();
-        hasPrintedHandInfo = false;
     }
 
     @Override
@@ -292,29 +306,25 @@ public class Game implements ApplicationListener {
             }
         } else if (phase == Phase.DEAL_CARDS) { //If we are in the DEAL_CARDS phase
             dealCardsToAllPlayers(); //Sends a hand of cards to all players
-
-
             if(!buttonMap.isEmpty()){
                 buttonMap = new HashMap<>();
             }
             for(int i=0; i<hand.getAllCards().size(); i++){
                 buttonMap.put(hand.getAllCards().get(i), buttons.get(i));
             }
-
-
             phase = Phase.CARD_SELECT;
+            submittedCards = false;
             statusMessage = "Select cards to move. Click SUBMIT CARDS when ready (not implemented yet)";
             gameServerListener.resetReceivedMoves();
         } else if (phase == Phase.CARD_SELECT) { //If player should choose cards
-            if ((hand.getNumberOfCardsSelected() != 5)) { //If the player has not registered enough cards.
-                if (!hasPrintedHandInfo) {
-                    printCardInfo();
-                    hasPrintedHandInfo = true;
+            if (hand.getNumberOfCardsSelected() != 5) { //If the player has not registered enough cards.
+                if(submittedCards){
+                    statusMessage = "You need to select 5 cards to submit!";
+                    submittedCards = false;
                 }
-                if (selectMove()) {
-                    hasPrintedHandInfo = false;
-                }
-            } else {
+                selectMove();
+            }
+            else if(submittedCards){
                 previousHand = hand.getCopy();
                 gameServerListener.receivedMoves.add(hand);
                 hand = previousHand; // To show in GUI
@@ -382,8 +392,12 @@ public class Game implements ApplicationListener {
                 moveMessagePrinted = true;
             }
             if (!(hand.getNumberOfCardsSelected() == 5)) { //If the player has not registered enough cards.
+                if(submittedCards){
+                    statusMessage = "You need to select 5 cards to submit!";
+                    submittedCards = false;
+                }
                 selectMove();
-            } else { // If a move is registered it will start the sending process
+            } else if (submittedCards) { // If a move is registered it will start the sending process
                 if (network.getClient().isConnected()) { // Checks once more if a disconnect has happened
                     network.getClient().sendTCP(hand); // Sends the move object to the server
                     previousHand = hand;
@@ -443,30 +457,6 @@ public class Game implements ApplicationListener {
         return lockedCards;
     }
 
-    /**
-     * Prints info about the available cards and the selected cards.
-     */
-    private void printCardInfo() {
-        //Build a string of all cards and selected cards and print to user:
-        StringBuilder allCardsString = new StringBuilder();
-        StringBuilder selectedCardsString = new StringBuilder();
-        ArrayList<Card> allCards = hand.getAllCards();
-        ArrayList<Card> selectedCards = hand.getSelectedCards();
-        for (int i = 0; i < hand.getAllCards().size(); i++) {
-            if (!selectedCards.contains(allCards.get(i))) {
-                allCardsString.append(i + 1).append(". ").append(allCards.get(i).toString()).append(" | ");
-            }
-            if (selectedCards.size() > i) {
-                selectedCardsString.append(allCards.indexOf(selectedCards.get(i)) + 1).append(". ").append(selectedCards.get(i).toString()).append(" | ");
-            }
-        }
-        System.out.println("=============================");
-        System.out.println("Your cards:");
-        System.out.println(allCardsString);
-        System.out.println("Selected cards:");
-        System.out.println(selectedCardsString);
-        System.out.println("=============================");
-    }
 
     /**
      * Help function that sets the sprite to its correct size and position.
