@@ -53,7 +53,7 @@ public class Game implements ApplicationListener {
     private Texture bgTexture;
 
     //Sound variables
-    Sound sound;
+    private Sound sound;
 
     //Network related variables:
     private final Network network;
@@ -130,7 +130,6 @@ public class Game implements ApplicationListener {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         font = new BitmapFont();
         bgTexture = new Texture("src/main/resources/tex/background.png");
-
         Stage stage = new Stage();
         Gdx.input.setInputProcessor(stage);
 
@@ -161,7 +160,7 @@ public class Game implements ApplicationListener {
                 submittedCards = true;
             }
         });
-
+      
         //Start looping theme music
         sound = Gdx.audio.newSound(Gdx.files.internal("src/main/resources/music/roboRallyTheme.wav"));
         sound.loop();
@@ -237,7 +236,11 @@ public class Game implements ApplicationListener {
         spriteMap.put("turnLeft", new Sprite(new Texture("src/main/resources/tex/cards/turnLeft.png")));
         spriteMap.put("turnRight", new Sprite(new Texture("src/main/resources/tex/cards/turnRight.png")));
         spriteMap.put("uTurn", new Sprite(new Texture("src/main/resources/tex/cards/uTurn.png")));
-
+        //Create sprites for showing score/hp/pc as text scales badly to the required size
+        for (int i = 0; i<10; i++) {
+            String textureString = "src/main/resources/numbers/" + i + ".png";
+            spriteMap.put(String.valueOf(i),new Sprite(new Texture(textureString)));
+        }
         createAlivePlayerList();
         boardSize = board.getSize();
     }
@@ -336,7 +339,7 @@ public class Game implements ApplicationListener {
             }
             phase = Phase.CARD_SELECT;
             submittedCards = false;
-            statusMessage = "Select cards to move. Click SUBMIT CARDS when ready (not implemented yet)";
+            statusMessage = "Select cards to move. Click SUBMIT CARDS when ready";
             gameServerListener.resetReceivedMoves();
         } else if (phase == Phase.CARD_SELECT) { //If player should choose cards
             if (hand.getNumberOfCardsSelected() != 5) { //If the player has not registered enough cards.
@@ -520,6 +523,7 @@ public class Game implements ApplicationListener {
         drawPlayer.setSize(68, 68);
         drawPlayer.draw(batch); //Draw player object in the GUI
 
+
         //Draw HP and PC
         font.getData().setScale(5); //Size up font so its readable
         font.draw(batch, "" + thisPlayer.getHp(), 444, 709);
@@ -532,7 +536,22 @@ public class Game implements ApplicationListener {
         showMute.setY(690);
         showMute.setSize(32,32);
         showMute.draw(batch);
+      
+        // Put correct hp/pc/score sprites onto board
+        Sprite hpSprite = spriteMap.get(String.valueOf(thisPlayer.getHp()));
+        hpSprite.setPosition(430, 650);
+        hpSprite.setSize(60,60);
+        hpSprite.draw(batch);
 
+        Sprite pcSprite = spriteMap.get(String.valueOf(thisPlayer.getPc()));
+        pcSprite.setPosition(565, 650);
+        pcSprite.setSize(60,60);
+        pcSprite.draw(batch);
+
+        Sprite scoreSprite = spriteMap.get(String.valueOf(thisPlayer.getScore()));
+        scoreSprite.setPosition(965, 68);
+        scoreSprite.setSize(60,60);
+        scoreSprite.draw(batch);
     }
 
     /**
