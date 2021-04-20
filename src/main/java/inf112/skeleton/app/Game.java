@@ -3,6 +3,7 @@ package inf112.skeleton.app;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -51,6 +52,9 @@ public class Game implements ApplicationListener {
     private BitmapFont font; //Font for rendering text to gui
     private Texture bgTexture;
 
+    //Sound variables
+    Sound sound;
+
     //Network related variables:
     private final Network network;
     private GameServerListener gameServerListener;
@@ -81,6 +85,8 @@ public class Game implements ApplicationListener {
     private ArrayList<Button> buttons;
     private HashMap<Card, Button> buttonMap;
     private boolean submittedCards;
+    //counter for pause or resume when clicking the mute button.
+    private int count = 0;
 
     /**
      * Constructor for the game class.
@@ -156,6 +162,10 @@ public class Game implements ApplicationListener {
             }
         });
 
+        //Start looping theme music
+        sound = Gdx.audio.newSound(Gdx.files.internal("src/main/resources/music/roboRallyTheme.wav"));
+        sound.loop();
+
         //Submit mutebutton
         Button mute = new Button();
         mute.setSize(32, 32);
@@ -164,9 +174,13 @@ public class Game implements ApplicationListener {
         mute.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
-                System.out.println("Mute button");
-            }
-        });
+                if ((count % 2) == 0){
+                    sound.pause();
+                    count = count +1;
+                } else {
+                    sound.resume();
+                    count = count + 1;
+                }}});
     }
 
     /**
@@ -506,6 +520,12 @@ public class Game implements ApplicationListener {
         drawPlayer.setSize(68, 68);
         drawPlayer.draw(batch); //Draw player object in the GUI
 
+        //Draw HP and PC
+        font.getData().setScale(5); //Size up font so its readable
+        font.draw(batch, "" + thisPlayer.getHp(), 444, 709);
+        font.draw(batch, "" + thisPlayer.getPc(), 574, 709);
+        font.draw(batch, "" + thisPlayer.getScore(), 990, 125);
+
         //sprite for mutebutton
         Sprite showMute = new Sprite(new Texture("src/main/resources/tex/symbols/muteButton.png"));
         showMute.setX(1245);
@@ -513,11 +533,6 @@ public class Game implements ApplicationListener {
         showMute.setSize(32,32);
         showMute.draw(batch);
 
-        //Draw HP and PC
-        font.getData().setScale(5); //Size up font so its readable
-        font.draw(batch, "" + thisPlayer.getHp(), 444, 709);
-        font.draw(batch, "" + thisPlayer.getPc(), 574, 709);
-        font.draw(batch, "" + thisPlayer.getScore(), 990, 125);
     }
 
     /**
