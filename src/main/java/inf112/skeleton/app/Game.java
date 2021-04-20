@@ -158,8 +158,8 @@ public class Game implements ApplicationListener {
 
         //Submit mutebutton
         Button mute = new Button();
-        mute.setSize(16, 7);
-        mute.setPosition(1249, 14);
+        mute.setSize(32, 32);
+        mute.setPosition(1245, 690);
         stage.addActor(mute);
         mute.addListener(new ChangeListener() {
             @Override
@@ -506,7 +506,11 @@ public class Game implements ApplicationListener {
         drawPlayer.setSize(68, 68);
         drawPlayer.draw(batch); //Draw player object in the GUI
 
+        //sprite for mutebutton
         Sprite showMute = new Sprite(new Texture("src/main/resources/tex/symbols/muteButton.png"));
+        showMute.setX(1245);
+        showMute.setY(690);
+        showMute.setSize(32,32);
         showMute.draw(batch);
 
         //Draw HP and PC
