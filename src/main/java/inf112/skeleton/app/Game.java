@@ -3,6 +3,7 @@ package inf112.skeleton.app;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -21,6 +22,7 @@ import inf112.skeleton.app.cards.Hand;
 import inf112.skeleton.app.net.*;
 import inf112.skeleton.app.sprites.*;
 import org.lwjgl.opengl.GL20;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +51,9 @@ public class Game implements ApplicationListener {
     private Player thisPlayer; //The current instance's player object
     private BitmapFont font; //Font for rendering text to gui
     private Texture bgTexture;
+
+    //Sound variables
+    private Sound sound;
 
     //Network related variables:
     private final Network network;
@@ -80,6 +85,8 @@ public class Game implements ApplicationListener {
     private ArrayList<Button> buttons;
     private HashMap<Card, Button> buttonMap;
     private boolean submittedCards;
+    //counter for pause or resume when clicking the mute button.
+    private int count = 0;
 
     /**
      * Constructor for the game class.
@@ -153,8 +160,26 @@ public class Game implements ApplicationListener {
                 submittedCards = true;
             }
         });
+      
+        //Start looping theme music
+        sound = Gdx.audio.newSound(Gdx.files.internal("src/main/resources/music/roboRallyTheme.wav"));
+        sound.loop();
 
-
+        //Submit mutebutton
+        Button mute = new Button();
+        mute.setSize(32, 32);
+        mute.setPosition(1245, 690);
+        stage.addActor(mute);
+        mute.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                if ((count % 2) == 0){
+                    sound.pause();
+                    count = count +1;
+                } else {
+                    sound.resume();
+                    count = count + 1;
+                }}});
     }
 
     /**
@@ -226,6 +251,7 @@ public class Game implements ApplicationListener {
 
     @Override
     public void render() {
+        //System.out.println(Gdx.input.getX() + "," + Gdx.input.getY());
         camera.update();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -497,6 +523,20 @@ public class Game implements ApplicationListener {
         drawPlayer.setSize(68, 68);
         drawPlayer.draw(batch); //Draw player object in the GUI
 
+
+        //Draw HP and PC
+        font.getData().setScale(5); //Size up font so its readable
+        font.draw(batch, "" + thisPlayer.getHp(), 444, 709);
+        font.draw(batch, "" + thisPlayer.getPc(), 574, 709);
+        font.draw(batch, "" + thisPlayer.getScore(), 990, 125);
+
+        //sprite for mutebutton
+        Sprite showMute = new Sprite(new Texture("src/main/resources/tex/symbols/muteButton.png"));
+        showMute.setX(1245);
+        showMute.setY(690);
+        showMute.setSize(32,32);
+        showMute.draw(batch);
+      
         // Put correct hp/pc/score sprites onto board
         Sprite hpSprite = spriteMap.get(String.valueOf(thisPlayer.getHp()));
         hpSprite.setPosition(430, 650);
@@ -512,7 +552,6 @@ public class Game implements ApplicationListener {
         scoreSprite.setPosition(965, 68);
         scoreSprite.setSize(60,60);
         scoreSprite.draw(batch);
-
     }
 
     /**
