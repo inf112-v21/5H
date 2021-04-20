@@ -415,7 +415,7 @@ public class Game implements ApplicationListener {
             }
             phase = Phase.CARD_SELECT;
             if (!moveMessagePrinted) { // If it has not printed that it's your move yet, it will
-                statusMessage = "Select cards to move. Click SUBMIT CARDS when ready (not implemented yet)";
+                statusMessage = "Select cards to move. Click SUBMIT CARDS when ready";
                 moveMessagePrinted = true;
             }
             if (!(hand.getNumberOfCardsSelected() == 5)) { //If the player has not registered enough cards.
@@ -522,13 +522,6 @@ public class Game implements ApplicationListener {
         drawPlayer.setY(647);
         drawPlayer.setSize(68, 68);
         drawPlayer.draw(batch); //Draw player object in the GUI
-
-
-        //Draw HP and PC
-        font.getData().setScale(5); //Size up font so its readable
-        font.draw(batch, "" + thisPlayer.getHp(), 444, 709);
-        font.draw(batch, "" + thisPlayer.getPc(), 574, 709);
-        font.draw(batch, "" + thisPlayer.getScore(), 990, 125);
 
         //sprite for mutebutton
         Sprite showMute = new Sprite(new Texture("src/main/resources/tex/symbols/muteButton.png"));
