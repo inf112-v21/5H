@@ -85,8 +85,12 @@ public class Game implements ApplicationListener {
     private ArrayList<Button> buttons;
     private HashMap<Card, Button> buttonMap;
     private boolean submittedCards;
-    //counter for pause or resume when clicking the mute button.
+
+    //counter1 for pause or resume when clicking the mute button.
+    //counter2 for show or hide infoscreen.
     private int count = 0;
+    private int count2 = 0;
+    private boolean showInfoScreen = false;
 
     /**
      * Constructor for the game class.
@@ -160,12 +164,30 @@ public class Game implements ApplicationListener {
                 submittedCards = true;
             }
         });
+
+        //Insert an info button at the top corner
+        Button infoButton = new Button();
+        infoButton.setSize(32, 32);
+        infoButton.setPosition(1213, 690);
+        stage.addActor(infoButton);
+        infoButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                if ((count2 % 2) == 0){
+                    showInfoScreen = true;
+                    count2 = count2 +1;
+                } else {
+                    showInfoScreen = false;
+                    count2 = count2 + 1;
+                }
+            }
+        });
       
         //Start looping theme music
         sound = Gdx.audio.newSound(Gdx.files.internal("src/main/resources/music/roboRallyTheme.wav"));
         sound.loop();
 
-        //Submit mutebutton
+        //Insert mutebutton
         Button mute = new Button();
         mute.setSize(32, 32);
         mute.setPosition(1245, 690);
@@ -304,8 +326,17 @@ public class Game implements ApplicationListener {
         }
         renderUIElements();
         renderCards();
+        if (showInfoScreen){ displayInfo();}
         batch.flush();
         batch.end();
+    }
+    private void displayInfo(){
+        Sprite displayRules = new Sprite(new Texture("src/main/resources/tex/infoScreen.png"));
+        displayRules.setSize(800,600);
+        displayRules.setOriginCenter();
+        displayRules.setX(275);
+        displayRules.setY(100);
+        displayRules.draw(batch);
     }
 
     /**
@@ -536,6 +567,14 @@ public class Game implements ApplicationListener {
         showMute.setY(690);
         showMute.setSize(32,32);
         showMute.draw(batch);
+
+        //sprite for infobutton
+        Sprite showInfo = new Sprite(new Texture("src/main/resources/tex/symbols/infoButton.png"));
+        showInfo.setX(1213);
+        showInfo.setY(690);
+        showInfo.setSize(32,32);
+        showInfo.draw(batch);
+
       
         // Put correct hp/pc/score sprites onto board
         Sprite hpSprite = spriteMap.get(String.valueOf(thisPlayer.getHp()));
