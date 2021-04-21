@@ -89,6 +89,10 @@ public class Game implements ApplicationListener {
     private ArrayList<Button> buttons;
     private HashMap<Card, Button> buttonMap;
     private boolean submittedCards;
+    private Sprite showMute;
+    private Texture muteTex;
+    private Texture unMuteTex;
+    private Sprite showInfo;
 
     //counter1 for pause or resume when clicking the mute button.
     //counter2 for show or hide infoscreen.
@@ -138,6 +142,12 @@ public class Game implements ApplicationListener {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         font = new BitmapFont();
         bgTexture = new Texture("src/main/resources/tex/background.png");
+
+        muteTex = new Texture("src/main/resources/tex/symbols/muteButton.png");
+        unMuteTex = new Texture("src/main/resources/tex/symbols/unMuteButton.png");
+        showMute = new Sprite(unMuteTex);
+        showInfo = new Sprite(new Texture("src/main/resources/tex/symbols/infoButton.png"));
+
         Stage stage = new Stage();
         Gdx.input.setInputProcessor(stage);
 
@@ -215,9 +225,12 @@ public class Game implements ApplicationListener {
                 if ((count % 2) == 0){
                     sound.pause();
                     count = count +1;
+                    showMute.setTexture(muteTex);
                 } else {
                     sound.resume();
                     count = count + 1;
+
+                    showMute.setTexture(unMuteTex);
                 }}});
     }
 
@@ -407,6 +420,7 @@ public class Game implements ApplicationListener {
             else if (!powerDown && hand.getNumberOfCardsSelected() != 5) { //If the player has not registered enough cards.
                 if(submittedCards){
                     statusMessage = "You need to select 5 cards to submit!";
+                    submittedCards = false;
                 }
                 selectMove();
             }
@@ -611,29 +625,14 @@ public class Game implements ApplicationListener {
         drawPlayer.setSize(68, 68);
         drawPlayer.draw(batch); //Draw player object in the GUI
 
-        //sprite for mutebutton
-        Sprite showMute = new Sprite(new Texture("src/main/resources/tex/symbols/muteButton.png"));
-        showMute.setX(1245);
-        showMute.setY(690);
-        showMute.setSize(32,32);
-        showMute.draw(batch);
-
-        //sprite for infobutton
-        Sprite showInfo = new Sprite(new Texture("src/main/resources/tex/symbols/infoButton.png"));
-        showInfo.setX(1213);
-        showInfo.setY(690);
-        showInfo.setSize(32,32);
-        showInfo.draw(batch);
-
-      
         // Put correct hp/pc/score sprites onto board
         Sprite hpSprite = spriteMap.get(String.valueOf(thisPlayer.getHp()));
-        hpSprite.setPosition(430, 650);
+        hpSprite.setPosition(432, 650);
         hpSprite.setSize(60,60);
         hpSprite.draw(batch);
 
         Sprite pcSprite = spriteMap.get(String.valueOf(thisPlayer.getPc()));
-        pcSprite.setPosition(565, 650);
+        pcSprite.setPosition(563, 650);
         pcSprite.setSize(60,60);
         pcSprite.draw(batch);
 
@@ -641,6 +640,18 @@ public class Game implements ApplicationListener {
         scoreSprite.setPosition(965, 68);
         scoreSprite.setSize(60,60);
         scoreSprite.draw(batch);
+
+        //sprite for infobutton
+        showInfo.setX(1213);
+        showInfo.setY(690);
+        showInfo.setSize(30,30);
+        showInfo.draw(batch);
+
+        //sprite for mutebutton
+        showMute.setX(1245);
+        showMute.setY(690);
+        showMute.setSize(30,30);
+        showMute.draw(batch);
     }
 
     /**
