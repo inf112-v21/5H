@@ -1,0 +1,22 @@
+Møte 19.04.2021
+Digitalt via Discord
+Tilstede
+  Skjalg Eide Hodneland
+  Emil Flatøy Hodneland
+  Jonas Svåsand
+  >>>>Håkon Mathias Hvidsten Høie
+  Hans Albert Biørn Terland
+
+
+
+Standup:
+Emil: Ferdig med powerdown, trenger en knapp for å aktivere den
+Hans:Knapper sett litt på det 
+Skjalg: Skrevet om game og main til å tåle brett innputt (altså si brettnummer man ønsker.
+
+
+Iløpet av møtet kjørte vi parprogrammering på å fikse buttons, da for å sende kort og at man kan velge
+kort med klikk i tillegg til tastatur. 
+La også til score på brettet  + vi cleanet opp koden med å fjeren unødvendige print statements.
+
+Neste møte onsdag er siste spilletest + fikse bugs som popper opp.

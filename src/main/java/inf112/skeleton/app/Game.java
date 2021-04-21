@@ -3,6 +3,7 @@ package inf112.skeleton.app;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -21,6 +22,7 @@ import inf112.skeleton.app.cards.Hand;
 import inf112.skeleton.app.net.*;
 import inf112.skeleton.app.sprites.*;
 import org.lwjgl.opengl.GL20;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,6 +54,9 @@ public class Game implements ApplicationListener {
     private BitmapFont font; //Font for rendering text to gui
     private Texture bgTexture;
 
+    //Sound variables
+    private Sound sound;
+
     //Network related variables:
     private final Network network;
     private GameServerListener gameServerListener;
@@ -82,6 +87,12 @@ public class Game implements ApplicationListener {
     private ArrayList<Button> buttons;
     private HashMap<Card, Button> buttonMap;
     private boolean submittedCards;
+
+    //counter1 for pause or resume when clicking the mute button.
+    //counter2 for show or hide infoscreen.
+    private int count = 0;
+    private int count2 = 0;
+    private boolean showInfoScreen = false;
 
     /**
      * Constructor for the game class.
@@ -125,7 +136,6 @@ public class Game implements ApplicationListener {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         font = new BitmapFont();
         bgTexture = new Texture("src/main/resources/tex/background.png");
-
         Stage stage = new Stage();
         Gdx.input.setInputProcessor(stage);
 
@@ -157,6 +167,7 @@ public class Game implements ApplicationListener {
             }
         });
 
+
         //Powerdown button
         //Submit cards button
         Button powerDownButton = new Button();
@@ -169,6 +180,43 @@ public class Game implements ApplicationListener {
                 powerDownNextRound = true;
             }
         });
+        //Insert an info button at the top corner
+        Button infoButton = new Button();
+        infoButton.setSize(32, 32);
+        infoButton.setPosition(1213, 690);
+        stage.addActor(infoButton);
+        infoButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                if ((count2 % 2) == 0){
+                    showInfoScreen = true;
+                    count2 = count2 +1;
+                } else {
+                    showInfoScreen = false;
+                    count2 = count2 + 1;
+                }
+            }
+        });
+      
+        //Start looping theme music
+        sound = Gdx.audio.newSound(Gdx.files.internal("src/main/resources/music/roboRallyTheme.wav"));
+        sound.loop();
+
+        //Insert mutebutton
+        Button mute = new Button();
+        mute.setSize(32, 32);
+        mute.setPosition(1245, 690);
+        stage.addActor(mute);
+        mute.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                if ((count % 2) == 0){
+                    sound.pause();
+                    count = count +1;
+                } else {
+                    sound.resume();
+                    count = count + 1;
+                }}});
     }
 
     /**
@@ -225,7 +273,11 @@ public class Game implements ApplicationListener {
         spriteMap.put("turnLeft", new Sprite(new Texture("src/main/resources/tex/cards/turnLeft.png")));
         spriteMap.put("turnRight", new Sprite(new Texture("src/main/resources/tex/cards/turnRight.png")));
         spriteMap.put("uTurn", new Sprite(new Texture("src/main/resources/tex/cards/uTurn.png")));
-
+        //Create sprites for showing score/hp/pc as text scales badly to the required size
+        for (int i = 0; i<10; i++) {
+            String textureString = "src/main/resources/numbers/" + i + ".png";
+            spriteMap.put(String.valueOf(i),new Sprite(new Texture(textureString)));
+        }
         createAlivePlayerList();
         boardSize = board.getSize();
     }
@@ -236,6 +288,7 @@ public class Game implements ApplicationListener {
 
     @Override
     public void render() {
+        //System.out.println(Gdx.input.getX() + "," + Gdx.input.getY());
         camera.update();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -288,8 +341,17 @@ public class Game implements ApplicationListener {
         }
         renderUIElements();
         renderCards();
+        if (showInfoScreen){ displayInfo();}
         batch.flush();
         batch.end();
+    }
+    private void displayInfo(){
+        Sprite displayRules = new Sprite(new Texture("src/main/resources/tex/infoScreen.png"));
+        displayRules.setSize(800,600);
+        displayRules.setOriginCenter();
+        displayRules.setX(275);
+        displayRules.setY(100);
+        displayRules.draw(batch);
     }
 
     /**
@@ -433,7 +495,7 @@ public class Game implements ApplicationListener {
             }
             phase = Phase.CARD_SELECT;
             if (!moveMessagePrinted) { // If it has not printed that it's your move yet, it will
-                statusMessage = "Select cards to move. Click SUBMIT CARDS when ready (not implemented yet)";
+                statusMessage = "Select cards to move. Click SUBMIT CARDS when ready";
                 moveMessagePrinted = true;
             }
             if(powerDown)
@@ -559,11 +621,36 @@ public class Game implements ApplicationListener {
         drawPlayer.setSize(68, 68);
         drawPlayer.draw(batch); //Draw player object in the GUI
 
-        //Draw HP and PC
-        font.getData().setScale(5); //Size up font so its readable
-        font.draw(batch, "" + thisPlayer.getHp(), 444, 709);
-        font.draw(batch, "" + thisPlayer.getPc(), 574, 709);
-        font.draw(batch, "" + thisPlayer.getScore(), 990, 125);
+        //sprite for mutebutton
+        Sprite showMute = new Sprite(new Texture("src/main/resources/tex/symbols/muteButton.png"));
+        showMute.setX(1245);
+        showMute.setY(690);
+        showMute.setSize(32,32);
+        showMute.draw(batch);
+
+        //sprite for infobutton
+        Sprite showInfo = new Sprite(new Texture("src/main/resources/tex/symbols/infoButton.png"));
+        showInfo.setX(1213);
+        showInfo.setY(690);
+        showInfo.setSize(32,32);
+        showInfo.draw(batch);
+
+      
+        // Put correct hp/pc/score sprites onto board
+        Sprite hpSprite = spriteMap.get(String.valueOf(thisPlayer.getHp()));
+        hpSprite.setPosition(430, 650);
+        hpSprite.setSize(60,60);
+        hpSprite.draw(batch);
+
+        Sprite pcSprite = spriteMap.get(String.valueOf(thisPlayer.getPc()));
+        pcSprite.setPosition(565, 650);
+        pcSprite.setSize(60,60);
+        pcSprite.draw(batch);
+
+        Sprite scoreSprite = spriteMap.get(String.valueOf(thisPlayer.getScore()));
+        scoreSprite.setPosition(965, 68);
+        scoreSprite.setSize(60,60);
+        scoreSprite.draw(batch);
     }
 
     /**
