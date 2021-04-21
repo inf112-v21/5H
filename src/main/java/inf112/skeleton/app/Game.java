@@ -79,7 +79,6 @@ public class Game implements ApplicationListener {
     private int amountLockedCards;
     private boolean setLockedCards = false;
     private int moveCounter;
-    private int pdCounter = 0;
 
     //Board related
     private int boardNum;
@@ -200,13 +199,8 @@ public class Game implements ApplicationListener {
         infoButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
-                if ((count2 % 2) == 0){
-                    showInfoScreen = true;
-                    count2 = count2 +1;
-                } else {
-                    showInfoScreen = false;
-                    count2 = count2 + 1;
-                }
+                showInfoScreen = (count2 % 2) == 0;
+                count2 = count2 +1;
             }
         });
       
@@ -403,8 +397,8 @@ public class Game implements ApplicationListener {
             statusMessage = "Select cards to move. Click SUBMIT CARDS when ready";
             gameServerListener.resetReceivedMoves();
         } else if (phase == Phase.CARD_SELECT) { //If player should choose cards
-            Hand beforeHand = hand.getCopy();
             if(powerDown && !submittedCards) {
+                previousHand = hand.getCopy();
                 submittedCards = true;
                 for(int i = 0; i < hand.getNumberOfCardsSelected(); i++){
                     hand.unSelect(i);
@@ -428,8 +422,9 @@ public class Game implements ApplicationListener {
                 if(powerDownNextRound){
                     heal = true;
                 }
-
-                previousHand = beforeHand.getCopy();
+                if (!powerDown) {
+                    previousHand = hand.getCopy();
+                }
                 gameServerListener.receivedMoves.add(hand);
                 hand = previousHand; // To show in GUI
                 phase = Phase.WAIT_FOR_CLIENT_MOVE;
@@ -499,7 +494,7 @@ public class Game implements ApplicationListener {
                 moveMessagePrinted = true;
             }
             if(powerDown && !submittedCards) {
-                Hand beforeHand = hand.getCopy();
+                previousHand = hand.getCopy();
                 submittedCards = true;
                 for(int i = 0; i < hand.getNumberOfCardsSelected(); i++){
                     hand.unSelect(i);
@@ -521,14 +516,14 @@ public class Game implements ApplicationListener {
                 selectMove();
             }
             if (submittedCards) { // If a move is registered it will start the sending process
-                Hand beforeHand = hand.getCopy();
                 if(powerDownNextRound){
                     heal = true;
                 }
                 if (network.getClient().isConnected()) { // Checks once more if a disconnect has happened
                     network.getClient().sendTCP(hand); // Sends the move object to the server
-                    previousHand = beforeHand;
-                    hand = beforeHand;
+                    if (!powerDown) {
+                        previousHand = hand.getCopy();
+                    }
                 } else { // reconnects if necessary
                     try {
                         network.reconnectClient();
@@ -986,7 +981,6 @@ public class Game implements ApplicationListener {
                     playerDamage++;
                     index--;
                 }
-                }
             }
         }
         // Loop over players again to deal cards
@@ -1095,7 +1089,7 @@ public class Game implements ApplicationListener {
             else if(powerDown) {
                 powerDown = false;
                 hand = new Hand();
-                hand.create(new ArrayList<Card>(), thisPlayer.getShortName());
+                hand.create(new ArrayList<>(), thisPlayer.getShortName());
             }
         }
 
