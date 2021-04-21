@@ -495,7 +495,7 @@ public class Game implements ApplicationListener {
             }
             phase = Phase.CARD_SELECT;
             if (!moveMessagePrinted) { // If it has not printed that it's your move yet, it will
-                statusMessage = "Select cards to move. Click SUBMIT CARDS when ready";
+                statusMessage = "Select cards to move. Click SUBMIT CARDS when ready (not implemented yet)";
                 moveMessagePrinted = true;
             }
             if(powerDown)
@@ -786,10 +786,6 @@ public class Game implements ApplicationListener {
      *                     Will change the needed objects to change the representation on the board
      */
     private void move(Player playerObject, Sprite playerSprite, String move) {
-        if(playerObject.getPowerDown()) {
-            statusMessage = playerObject.getShortName() + " is in PowerDown...";
-            move = "powerdown";
-        }
         if(!move.equals("powerdown"))
             statusMessage = playerObject.getShortName() + " moved - " + move;
         else
@@ -797,10 +793,7 @@ public class Game implements ApplicationListener {
 
         switch (move) {
             case "powerdown":  //Powerdown for the player
-                if(!playerObject.getPowerDown()) {
-                    playerObject.setPowerDown(true);
-                    playerObject.setPc(9);
-                }
+                playerObject.setPc(9);
                 endTurn();
                 break;
             case "move1":  //Move in the direction the player is facing
@@ -1054,8 +1047,6 @@ public class Game implements ApplicationListener {
      * able to see the final position of the player. (There is probably a cleaner way to do this than sleep the thread.)
      */
     private void endTurn() {
-        if(hand.getAllCards().size() == 0)
-            powerDownFinished();
         ArrayList<Player> toBeRemoved = new ArrayList<>(); //List of players that died this round
         for (Player player : alivePlayerList) {
             if (player.isDead() || player.getPlayerNum() > numPlayers) {    //If player died
