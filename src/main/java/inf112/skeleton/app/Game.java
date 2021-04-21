@@ -48,6 +48,7 @@ public class Game implements ApplicationListener {
     private String statusMessage;               //Status message to print to user.
     private boolean powerDown;
     private boolean powerDownNextRound;
+    private boolean heal;
 
     //Optimization/fixing memory leak issue from previous versions
     private Player thisPlayer; //The current instance's player object
@@ -78,6 +79,7 @@ public class Game implements ApplicationListener {
     private int amountLockedCards;
     private boolean setLockedCards = false;
     private int moveCounter;
+    private int pdCounter = 0;
 
     //Board related
     private int boardNum;
@@ -389,27 +391,30 @@ public class Game implements ApplicationListener {
             gameServerListener.resetReceivedMoves();
         } else if (phase == Phase.CARD_SELECT) { //If player should choose cards
             Hand beforeHand = hand.getCopy();
-            if(powerDown)
+            if(powerDown && !submittedCards) {
                 submittedCards = true;
-            else if (hand.getNumberOfCardsSelected() != 5) { //If the player has not registered enough cards.
+                for(int i = 0; i < hand.getNumberOfCardsSelected(); i++){
+                    hand.unSelect(i);
+                }
+                ArrayList<Card> powerDownCards = new ArrayList<>();
+                for(int i = 0; i<5; i++){
+                    Card powerDownCard = new Card();
+                    powerDownCard.create("powerdown", i+1);
+                    powerDownCards.add(powerDownCard);
+                }
+                hand.setSelectedCards(powerDownCards);
+            }
+            else if (!powerDown && hand.getNumberOfCardsSelected() != 5) { //If the player has not registered enough cards.
                 if(submittedCards){
                     statusMessage = "You need to select 5 cards to submit!";
                 }
                 selectMove();
             }
             else if(submittedCards){
-                if(powerDown){
-                    for(int i = 0; i < hand.getNumberOfCardsSelected(); i++){
-                        hand.unSelect(i);
-                    }
-                    ArrayList<Card> powerDownCards = new ArrayList<>();
-                    for(int i = 0; i<5; i++){
-                        Card powerDownCard = new Card();
-                        powerDownCard.create("powerdown",i+1);
-                        powerDownCards.add(powerDownCard);
-                    }
-                    hand.setSelectedCards(powerDownCards);
+                if(powerDownNextRound){
+                    heal = true;
                 }
+
                 previousHand = beforeHand.getCopy();
                 gameServerListener.receivedMoves.add(hand);
                 hand = previousHand; // To show in GUI
@@ -439,25 +444,6 @@ public class Game implements ApplicationListener {
         }
     }
 
-    private void changePowerDownVariables() {
-        if(powerDownNextRound){
-            powerDown = true;
-            submittedCards = true;
-            powerDownNextRound = false;
-        }
-        else if(powerDown){
-            for(int i = 0; i < hand.getNumberOfCardsSelected(); i++){
-                hand.unSelect(i);
-            }
-            ArrayList<Card> powerDownCards = new ArrayList<>();
-            for(int i = 0; i<5; i++){
-                Card powerDownCard = new Card();
-                powerDownCard.create("powerdown", i+1);
-                powerDownCards.add(powerDownCard);
-            }
-            hand.setSelectedCards(powerDownCards);
-        }
-    }
 
     /**
      * Function for handling the logic specific to clients.
@@ -498,8 +484,21 @@ public class Game implements ApplicationListener {
                 statusMessage = "Select cards to move. Click SUBMIT CARDS when ready (not implemented yet)";
                 moveMessagePrinted = true;
             }
-            if(powerDown)
+            if(powerDown && !submittedCards) {
+                Hand beforeHand = hand.getCopy();
                 submittedCards = true;
+                for(int i = 0; i < hand.getNumberOfCardsSelected(); i++){
+                    hand.unSelect(i);
+                }
+                ArrayList<Card> powerDownCards = new ArrayList<>();
+                for(int i = 0; i<5; i++){
+                    Card powerDownCard = new Card();
+                    powerDownCard.create("powerdown", i+1);
+                    powerDownCards.add(powerDownCard);
+                }
+                hand.setSelectedCards(powerDownCards);
+
+            }
             else if (hand.getNumberOfCardsSelected() != 5) { //If the player has not registered enough cards.
                 if(submittedCards){
                     statusMessage = "You need to select 5 cards to submit!";
@@ -509,19 +508,10 @@ public class Game implements ApplicationListener {
             }
             if (submittedCards) { // If a move is registered it will start the sending process
                 Hand beforeHand = hand.getCopy();
+                if(powerDownNextRound){
+                    heal = true;
+                }
                 if (network.getClient().isConnected()) { // Checks once more if a disconnect has happened
-                    if(powerDown){
-                        for(int i = 0; i < hand.getNumberOfCardsSelected(); i++){
-                            hand.unSelect(i);
-                        }
-                        ArrayList<Card> powerDownCards = new ArrayList<>();
-                        for(int i = 0; i<5; i++){
-                            Card powerDownCard = new Card();
-                            powerDownCard.create("powerdown",i+1);
-                            powerDownCards.add(powerDownCard);
-                        }
-                        hand.setSelectedCards(powerDownCards);
-                    }
                     network.getClient().sendTCP(hand); // Sends the move object to the server
                     previousHand = beforeHand;
                     hand = beforeHand;
@@ -793,7 +783,10 @@ public class Game implements ApplicationListener {
 
         switch (move) {
             case "powerdown":  //Powerdown for the player
-                playerObject.setPc(9);
+                if(heal) {
+                    playerObject.setPc(9);
+                    heal = false;
+                }
                 endTurn();
                 break;
             case "move1":  //Move in the direction the player is facing
@@ -1075,20 +1068,35 @@ public class Game implements ApplicationListener {
             for ( Player player : alivePlayerList) {
                 player.pickupFlag();
             }
+
+        }
+
+        if (playerMoves.getMoves().size() == 0) {
+            if(powerDownNextRound) {
+                powerDown = true;
+                powerDownNextRound = false;
+            }
+            else if(powerDown) {
+                powerDown = false;
+                hand = new Hand();
+                hand.create(new ArrayList<Card>(), thisPlayer.getShortName());
+            }
         }
 
         if (alivePlayerList.size() == 1) { //If there is only one player left, the player wins.
             winner = alivePlayerList.get(0);
             phase = Phase.FINISHED;
-        } else if (isServer) {
+        }
+        else if (isServer) {
             if (playerMoves.getMoves().size() == 0) {
                 phase = Phase.DEAL_CARDS;
                 moveCounter = 0;
             }
         }
+
         //Pause between moves so the user can see whats happening.
         try {
-            Thread.sleep(2000);
+            Thread.sleep(20);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
