@@ -412,7 +412,7 @@ public class Game implements ApplicationListener {
                 ArrayList<Card> powerDownCards = new ArrayList<>();
                 for(int i = 0; i<5; i++){
                     Card powerDownCard = new Card();
-                    powerDownCard.create("powerdown", i+1);
+                    powerDownCard.create("powerdown", 1000);
                     powerDownCards.add(powerDownCard);
                 }
                 hand.setSelectedCards(powerDownCards);
@@ -507,7 +507,7 @@ public class Game implements ApplicationListener {
                 ArrayList<Card> powerDownCards = new ArrayList<>();
                 for(int i = 0; i<5; i++){
                     Card powerDownCard = new Card();
-                    powerDownCard.create("powerdown", i+1);
+                    powerDownCard.create("powerdown", 1000);
                     powerDownCards.add(powerDownCard);
                 }
                 hand.setSelectedCards(powerDownCards);
@@ -978,9 +978,14 @@ public class Game implements ApplicationListener {
                 ArrayList<Card> playerCards = playerCardsHashMap.get(player); // Get the cards player had last turn
                 int index = 4;
                 while (playerDamage < 5 && index >= 0) {
-                    deck.removeCardFromDeck(playerCards.get(index)); // Removes card from deck starting with last card in hand which is locked first.
+                    Card c = playerCards.get(index);
+                    if (c.getType().equals("powerdown")){
+                        continue;
+                    }
+                    deck.removeCardFromDeck(c); // Removes card from deck starting with last card in hand which is locked first.
                     playerDamage++;
                     index--;
+                }
                 }
             }
         }
