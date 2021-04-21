@@ -9,7 +9,6 @@ public class Player extends AbstractGameObject {
     private int points;
     private int hp;
     private int pc;
-    private boolean powerDown;
     private final Pair savePoint;   //Last registered savepoint coordinates
     private Board board;
     private boolean dead;
@@ -33,7 +32,6 @@ public class Player extends AbstractGameObject {
         points = 0;
         hp = 3;
         pc = 9;
-        powerDown = false;
         dead = false;
         savePoint = new Pair(x, y); //Initialize save point
         dir = Direction.NORTH; //Set direction on spawn
@@ -223,11 +221,7 @@ public class Player extends AbstractGameObject {
         visitedFlags.add(shortName);
     }
 
-    public boolean getPowerDown() {
-        return powerDown;
-    }
-
-    public void setPowerDown(boolean powerDown) {
-        this.powerDown = powerDown;
+    public void setPc(int pc) {
+        this.pc = pc;
     }
 }
