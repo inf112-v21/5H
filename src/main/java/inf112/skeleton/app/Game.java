@@ -92,6 +92,9 @@ public class Game implements ApplicationListener {
     private Texture muteTex;
     private Texture unMuteTex;
     private Sprite showInfo;
+    private Texture powerDownOn;
+    private Texture powerDownOff;
+    private Sprite powerDownSprite;
 
     //counter1 for pause or resume when clicking the mute button.
     //counter2 for show or hide infoscreen.
@@ -146,6 +149,10 @@ public class Game implements ApplicationListener {
         unMuteTex = new Texture("src/main/resources/tex/symbols/unMuteButton.png");
         showMute = new Sprite(unMuteTex);
         showInfo = new Sprite(new Texture("src/main/resources/tex/symbols/infoButton.png"));
+        powerDownOff = new Texture("src/main/resources/tex/powerDownOff.png");
+        powerDownOn = new Texture("src/main/resources/tex/powerDownOn.png");
+        powerDownSprite = new Sprite(powerDownOff);
+        powerDownSprite.setPosition(1059, 55);
 
         Stage stage = new Stage();
         Gdx.input.setInputProcessor(stage);
@@ -188,7 +195,15 @@ public class Game implements ApplicationListener {
         powerDownButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
-                powerDownNextRound = true;
+                if(powerDownNextRound){
+                    powerDownNextRound = false;
+                    powerDownSprite.setTexture(powerDownOff);
+                }
+                else if (!powerDown){
+                    powerDownNextRound = true;
+                    powerDownSprite.setTexture(powerDownOn);
+                }
+
             }
         });
         //Insert an info button at the top corner
@@ -647,6 +662,8 @@ public class Game implements ApplicationListener {
         showMute.setY(690);
         showMute.setSize(30,30);
         showMute.draw(batch);
+
+        powerDownSprite.draw(batch);
     }
 
     /**
@@ -1085,6 +1102,7 @@ public class Game implements ApplicationListener {
             if(powerDownNextRound) {
                 powerDown = true;
                 powerDownNextRound = false;
+                powerDownSprite.setTexture(powerDownOff);
             }
             else if(powerDown) {
                 powerDown = false;
