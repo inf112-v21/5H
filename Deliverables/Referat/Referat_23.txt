@@ -19,3 +19,6 @@ Vi diskuterte rundt Oblig4.md
 vi gikk gjennom den sammen og oppdaterte der det trengtes.
 Vi lagde noen ekstra manuelle tester for å dekke det som junit testene ikke dekker.
 Ellers fikset vi det siste som trengtes før innleveringer.
+
+Vi testet spillet og fannt en del kritiske bugs og fikset de. Vi klarte ikke å fikse alle helt komplett.
+Men spillet er kjørbart og vi ville ikke risikere å ødelegge mer med å prøve å fikse. 
