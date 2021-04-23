@@ -523,14 +523,14 @@ public class Game implements ApplicationListener {
                 hand.setSelectedCards(powerDownCards);
 
             }
-            else if (hand.getNumberOfCardsSelected() != 5) { //If the player has not registered enough cards.
+            else if (!powerDown && hand.getNumberOfCardsSelected() != 5) { //If the player has not registered enough cards.
                 if(submittedCards){
                     statusMessage = "You need to select 5 cards to submit!";
                     submittedCards = false;
                 }
                 selectMove();
             }
-            if (submittedCards) { // If a move is registered it will start the sending process
+            else if (submittedCards) { // If a move is registered it will start the sending process
                 if(powerDownNextRound){
                     heal = true;
                 }
@@ -1124,7 +1124,7 @@ public class Game implements ApplicationListener {
 
         //Pause between moves so the user can see whats happening.
         try {
-            Thread.sleep(20);
+            Thread.sleep(1200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
