@@ -241,6 +241,7 @@ public class Game implements ApplicationListener {
 
                     showMute.setTexture(unMuteTex);
                 }}});
+        statusMessage = "Awaiting players";
     }
 
     /**
