@@ -195,11 +195,14 @@ public class Game implements ApplicationListener {
         powerDownButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
+                if(phase != Phase.CARD_SELECT){
+                    return;
+                }
                 if(powerDownNextRound){
                     powerDownNextRound = false;
                     powerDownSprite.setTexture(powerDownOff);
                 }
-                else if (!powerDown){
+                else{
                     powerDownNextRound = true;
                     powerDownSprite.setTexture(powerDownOn);
                 }
@@ -521,7 +524,6 @@ public class Game implements ApplicationListener {
                     powerDownCards.add(powerDownCard);
                 }
                 hand.setSelectedCards(powerDownCards);
-
             }
             else if (!powerDown && hand.getNumberOfCardsSelected() != 5) { //If the player has not registered enough cards.
                 if(submittedCards){
@@ -956,7 +958,6 @@ public class Game implements ApplicationListener {
                 }
                 if (hand.getNumberOfCardsSelected() == handToMove.getNumberOfCardsSelected() && hand.getSelectedCards().size() > 0 && hand.getFirstCard().getPriority() > handToMove.getFirstCard().getPriority()) { //If they are on equal amounts of cards && If the new hand has higher priority on first card
                     handToMove = hand; //Select the new hand.
-
                 }
             }
             Card card = handToMove.getSelectedCards().remove(0);    //Get the move Card
@@ -1101,6 +1102,7 @@ public class Game implements ApplicationListener {
         if (playerMoves.getMoves().size() == 0) {
             if(powerDownNextRound) {
                 powerDown = true;
+                submittedCards = false;
                 powerDownNextRound = false;
                 powerDownSprite.setTexture(powerDownOff);
             }
@@ -1124,7 +1126,7 @@ public class Game implements ApplicationListener {
 
         //Pause between moves so the user can see whats happening.
         try {
-            Thread.sleep(1200);
+            Thread.sleep(2);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
