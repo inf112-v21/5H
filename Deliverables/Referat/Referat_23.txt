@@ -8,7 +8,10 @@ Tilstede
   Hans Albert Biørn Terland
 
 Standup:
-
-
+Emil: Fikset powerdown etter merge error.
+Hans: Musikken looper. 
+Håkon: N/A
+Jonas: Skrevet på obligteksten. Fikset på powerdown etter merge error.
+Skjalg: Fikset powerdown etter merge error, + oppgraderte powerdown knappen.
 
 Møte:

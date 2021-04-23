@@ -71,6 +71,9 @@ Vinn ved å være den første til å ha roboten sin innom alle tre flaggene vinn
 - Har bare et stort 12x12 brett, kan ikke ha to slike brett eller brettet med startpunkter til robotene slik instruksjoneen viser.
 - Det er noen restriksjoner rundt rullebånd, to av dem kan ikke peke mot hverandre / på samme felt.
 - Det er ingen timer som starter når en person er den eneste som ikke har submittet kort
+- Spillet kan krasje i noen få tilfeller. Vi klarer ikke å reprodusere feilen og er dermed ikke helt sikker på hvorfor. 
+- Når du respawner beholder du retningen du hadde før du døde. Denne burde bli satt tilbake til samme retning som du hadde i starten av spillet.
+- Win screen kan se dårlig ut. Denne er beholdt med full viten, da vi finner sjarmerende og føler at spillets sjel er sterkt koblet sammen med win-screen.
 
 
 

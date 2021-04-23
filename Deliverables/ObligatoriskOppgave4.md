@@ -16,21 +16,25 @@ selvom ingen delegerte direkte. Vi føler at vi nå har blitt veldig komfortable
 #### Kommunikasjon og gruppedynamikk:
 - Vi har hatt litt andre møtetider + ekstra møter i forhold til i forrige obliger og det har fungert bra.
 - Vi kommuniserer veldig bra nå da vi har blitt bedre kjent med hverandre og mer komfortable og alle har lettere for å ta opp noe, hvis det trengs.
+- Vi klarer fint å kommunisere hva som spesifikt trengs av arbeid modifikasjoner for å utføre en arbeidsoppgave, da fra en person som har jobbet med denne delen av
+kodebasen til den som skal utføre oppgavene.
 
 ### Retrospektiv av hele prosessen:
 
-Hva som gått bra:
+**Hva som gått bra:**
 - Kanban og standup har gått bra.
 - Løsning av tekniske problemer i felles har gått bra.
 - God kommunikasjon fra start
 - Prioriteringer har gått bra. At vi fullførte MVP først og fokuserte senere på andre ting
 f.eks. GUI.
-Hva vi ville gjort annerledes:
+  
+**Hva vi ville gjort annerledes:**
 - Litt mer parprogrammering
-- Burde brukt stages og tiledmap
+- Burde brukt stages og tiledmap fra begynnelsen. (for stages vi brukte aldri tiledmap)
 - Gått igjennom tutorials i libgdx (og KryoNet) i felles slik at alle hadde lik forståelse. 
     - Da kunne vi også kanskje ha funnet ut av stages og tiledmap tidligere som hadde gjort noen av implementasjonene senere i prosjektet lettere
 - Tatt med en debug mode / beholdt noen av tastatur inputsene vi hadde fra først oblig til å bruke til testing / debugging.
+- Prøvd å fordele arbeidsooppgavene jevnere.
 
 
 ---
@@ -38,7 +42,7 @@ Hva vi ville gjort annerledes:
 
 ### Prioriteringer
 
-Våre prioteringer for denne innleveringen var å fikse alt som ikke fungerte helt og gjøre ferdige de siste funksjonene slik at vi  hadde et gankse ferdig spill, med de fleste funksjoner
+Våre prioteringer for denne innleveringen var å fikse alt som ikke fungerte helt og gjøre ferdige de siste funksjonene slik at vi  hadde et ganske ferdig spill, med de fleste funksjoner
 som er forklart i spillereglene. Våre prioriteringer var derfor slik:
 
 1. Prioritet:
@@ -66,6 +70,7 @@ som er forklart i spillereglene. Våre prioriteringer var derfor slik:
 
 ### Brukerhistorier
 Merk at ikke alle punkter nevnt ovenfor har sin egen brukerhistorie da de er bugfixes / forbedringer på oppgaver med userstories fra tidligere innleveringer.
+F.eks. vi hadde brukerhistorie på grafiske representasjon av bretteti oblig1, så forbedringer av grafikk trenger ikke egen brukerhistorie her.
 
 
 **Kort reflekterer skade og låses hvis man får utdelt < 5 kort**
@@ -91,7 +96,7 @@ Merk at ikke alle punkter nevnt ovenfor har sin egen brukerhistorie da de er bug
 - Som en spiller ønsker jeg at rullebånd er i spillet slik at jeg kan planlegge mer avanserte bevegelser
 
 *Arbeidsoppgaver:*
-- lage grafikk (midlertidig?)
+- lage grafikk (midlertidig)
 - Implementere en rullebånd klasse
 - Implementere en ekspress rullebån klasse
 - La spillet lese rullebånd felt fra brett
@@ -113,7 +118,7 @@ Merk at ikke alle punkter nevnt ovenfor har sin egen brukerhistorie da de er bug
 - Som en spiller ønsker jeg at tannhjul er i spillet slik at jeg kan planlegge mer avanserte bevegelser
 
 *Arbeidsoppgaver:*
-- Lage grafikk som også indikerer retning(midlertidig?)
+- Lage grafikk som også indikerer retning(midlertidig)
 - Implementere en tannhjul klasse
 - La spillet lese tannhjul (inkludert retning) felt fra brett
 - Implementere en metode for å kunne kjøre tannhjul slik at spillere på dem roteres.
@@ -139,11 +144,12 @@ Merk at ikke alle punkter nevnt ovenfor har sin egen brukerhistorie da de er bug
 - Finne en måte å vite når alle spillere har bevegd seg x ganger, og kalle de nødvendige funksjonene her.
 
 **Vise score/flagg i GUI**
+
 *Userstory:*
 - Som bruker har jeg lyst til å se hvor mye poeng jeg har slik at jeg kan vite om jeg ligger godt an til å vinne eller ikke.
 
 *Akseptansekrav:*
--Må kunne se score i GUI
+- Må kunne se score i GUI
 
 *Arbeidsoppgaver:*
 - Oppdater GUI til å ha plass til score
@@ -185,10 +191,12 @@ Merk at ikke alle punkter nevnt ovenfor har sin egen brukerhistorie da de er bug
 - Legg til listener på hver button som velger/velger vekk kortet
 
 **Powerdown**
+
 *Userstory:*
 - Som [spiller] ønsker jeg å kunne ta en powerdown for å få nye liv slik at jeg ikke dør og/eller kan planlegge hvordan jeg skal vinne.
 *Akseptansekrav:*
 - Klikk på powerdown knappen for å aktivere powerdown neste runde.
+
 *Arbeidsoppgaver:*
 - Gjøre knappen klikkbar
 - Fikse logikken
@@ -205,6 +213,7 @@ Merk at ikke alle punkter nevnt ovenfor har sin egen brukerhistorie da de er bug
 - Lage en ny screen der reglene displayes.
 
 **Musikk**
+
 *Brukerhistorie:*
 - Som [spiller] ønsker jeg å høre en bakgrunnsmusikk når spillet starter og ha mulighet til å mute musikken.
 *Akseptansekrav:*
@@ -267,7 +276,8 @@ Klassediagramene er laget for de ulike pakkene: skeleton.app, skeleton.app.cards
 
 De automatiske testene våre dekker store deler av kodebasen. For mer detaljert forklaring av hva de automatiske testene dekker, se ObligatoriskOppgave2.md og ObligatoriskOppgave3.md .
 
-Fra forrige gang har det ikke skjedd store endringer. Det har vært noen forandringer for testen av score i PlayerTest da flagg nå plukkes opp litt annerledes.
+Fra forrige gang har det ikke skjedd store endringer. Det har vært noen forandringer for testen av score i PlayerTest da flagg nå plukkes opp litt annerledes. Det har også vært små
+forandringer i testene for kortutdeling som nå tar høyde for skade.
 
 Det er laget noen basic junit tester for den nye brett feltene, ConveyorBelt, ExpressConveyorBelt og Gear. De andre implementerte brett-funksjoner som f.eks. laser hadde allerede tester
 implementert. 
@@ -282,30 +292,59 @@ kortvalgene tilsier.
 *@BeforeEach*
 - Setup:
     - Start the game (se teknisk produkt oppsett for instrukser)
+    - For GUI the specified amount of players(chosen during launch) needs to join before GUI is rendered. 
 
 *MoveForwardTest:*
 - Select the move card. The player Sprite should then move forward.
 
-*RotateClockwiseTest*:
-- Select a clockwise rotation card. The player Sprite should then rotate 90 degrees clockwise.
+*RotateRightTest*:
+- Select a rotate right card. The player Sprite should then rotate 90 degrees clockwise.
 
-*RotateCounterClockwiseTest*:
-- Select a clockwise rotation card. The player Sprite should then rotate 90 degrees counterclockwise.
+*RotateLeftTest*:
+- Select a rotate left card. The player Sprite should then rotate 90 degrees counterclockwise.
 
 *OutOfBoundsTest*
-- Select cards so that the player goes out of bounds. The HP should then go down 1. (Check output in console)
+- Select cards so that the player goes out of bounds. The HP should then go down 1. (Check HP in GUI)
+- Out of bounds is either a hole or outside the playing board.
 
-*HoleTest*
-- Select cards so that the player goes in a hole. The HP should then go down 1. (Check output in console)
+*Flag/win Test*
+- Select cards so that the player goes on all the 3 flags. The player should then win. PLayer needs on flag at end of register.
 
-*FlagTest*
-- Select cards so that the player goes on all the 3 flags. The player should then win (Order does not matter yet)
+*Cards tests*
+- You should be able to click cards to select/unselect them. 
+- You should be able to use keyboard to select/unselect cards.
+- The submit cards button should submit your cards when you click it if you have 5 cards selected.
+
+*PowerDown test*
+- During card select you should be able to click powerdown button, to announce a powerdown next turn.
+- The next turn you should be dealt no cards and PC should be set to 9 (check pc in GUI).
+- After a turn of powerdown you should receive cards again.
+-
+*Mute button test*
+- Mute button should be clickable and toggle on and off music.
+
+*Info button test*
+- Info button renders an image that displays the rules of the game. Clicking it again removes the image and shows the standard UI again.
+
+*End-of register tests*
+- When every player has done one move, the following should happen:
+    - Express ConveyorBelt should move players on them one
+    - All conveyorbelts should move players on them one
+    - Gears should rotate players on them
+    - Lasers should be fired
+    - Flag picked up if you stand on them now.
+- This should happen after each time each player has executed one move (one card).
+- This test is to test that the conveyorbelts etc. are actually called, not that their function is correct as junit tests exist for that.
+
+*Start of game GUI test*
+- HP and PC should be rendered and HP=3, PC=9. Score should also be rendered and set to 0.
+
+
 
 #### Produktets funksjonalitet:
 Vårt produkt har nå tilnærmet all funksjonalitet som er forventet av RoboRally slik det er beskrevet i reglene.
 
 Vi har føløgende mangler fra forventet oppførsel:
-
 - Vegger tar opp ett helt felt på brettet
 - Mangler nye respawn points / skiftenøkkel
 - Har bare et stort 12x12 brett, kan ikke ha to slike brett eller brettet med startpunkter til robotene slik instruksjoneen viser.
@@ -326,4 +365,4 @@ Bortsett fra dette har vi et spill som vi føler er et godt eksempel på RoboRal
 I denne innleveringen er commits igjenn ujevne. Dette er til dels pga. forksjellige gruppemedlemmer committer oftere enn andre. Noen (f.eks. Jonas) gjorde flere mindre implementasjoner
 mens andre gjorde større implementasjoner (her er det snakk om kompleksitet ikke antall linjer kode). Noen bidro også f.eks. med grafikk som vil bare reflekteres som en commit selvom det
 står mange timers arbeid bak grafikken. Team-lead (Jonas) får også en del ekstra commimts, da han fører referat og skriver innelverings tekstene.
-Når det gjelder det faktiske arbeidet som er gjennomført for denne obligen er det mye jevnere enn commit historien tilviser.
+Når det gjelder det faktiske arbeidet som er gjennomført for denne obligen er det mye jevnere enn commit historien tilsier.
