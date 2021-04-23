@@ -57,13 +57,20 @@ For hver Omgang får hver spiller utdelt 9 kort. Spilleren må så velge seg ut
 5 av disse kortene vha. nummertastene på tastaturet eller ved å klikke på dem. 
 Når du har valgt 5 kort, trykk på "submit cards" knappen.
 Hver omgang består av 5 runder. I hver runde beveger roboten din seg ut ifra programkortet 
-som du valgte ut for den runden. Hvis du står på ett flagg på slutten av runden er du nærmere å vinne.
+som du valgte ut for den runden. 
+Obs! På enden av hver runde Vil rullebånd og tannhjul kjøre og laserne fyres av! Husk at alle roboter har en innebygd laser.
+Hvis du står på ett flagg på slutten av runden er du nærmere å vinne.
 Vinn ved å være den første til å ha roboten sin innom alle tre flaggene vinner!
 
 
 
-### Kjente Feil og mangler
+### Kjente Feil og mangler + Bugs.
 
-- Powerdown mangler og dermed ingen måte å fjerne damage annet en å dø
 - Vegger tar opp ett helt felt på brettet
+- Mangler nye respawn points / skiftenøkkel
+- Har bare et stort 12x12 brett, kan ikke ha to slike brett eller brettet med startpunkter til robotene slik instruksjoneen viser.
+- Det er noen restriksjoner rundt rullebånd, to av dem kan ikke peke mot hverandre / på samme felt.
+- Det er ingen timer som starter når en person er den eneste som ikke har submittet kort
+
+
 
