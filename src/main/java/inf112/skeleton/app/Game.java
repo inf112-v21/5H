@@ -220,7 +220,7 @@ public class Game implements ApplicationListener {
         });
       
         //Start looping theme music
-        sound = Gdx.audio.newSound(Gdx.files.internal("src/main/resources/music/roboRallyTheme.wav"));
+        sound = Gdx.audio.newSound(Gdx.files.internal("src/main/resources/music/rbTheme.wav"));
         sound.loop();
 
         //Insert mutebutton
@@ -370,11 +370,10 @@ public class Game implements ApplicationListener {
         batch.end();
     }
     private void displayInfo(){
-        Sprite displayRules = new Sprite(new Texture("src/main/resources/tex/infoScreen.png"));
-        displayRules.setSize(800,600);
-        displayRules.setOriginCenter();
-        displayRules.setX(275);
-        displayRules.setY(100);
+        Sprite displayRules = new Sprite(new Texture("src/main/resources/tex/infoAndCredcc.png"));
+        displayRules.setSize(698,763);
+        displayRules.setX(325);
+        displayRules.setY(-40);
         displayRules.draw(batch);
     }
 
