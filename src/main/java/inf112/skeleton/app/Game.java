@@ -159,7 +159,7 @@ public class Game implements ApplicationListener {
 
         //Set up buttons for cards
         buttons = new ArrayList<>();
-        for(int i=0; i<10; i++){
+        for(int i=0; i<9; i++){
             Button button = new Button();
             button.setSize(0, 0);
             stage.addActor(button);
@@ -1126,7 +1126,7 @@ public class Game implements ApplicationListener {
 
         //Pause between moves so the user can see whats happening.
         try {
-            Thread.sleep(2);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -1189,7 +1189,7 @@ public class Game implements ApplicationListener {
            else{
                 if (collision(player, cbDir)) {
                     player.move(cbDir.getX(), cbDir.getY());
-                    }
+                }
            }
         }
     }
