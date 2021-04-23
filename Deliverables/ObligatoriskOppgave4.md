@@ -214,7 +214,7 @@ F.eks. vi hadde brukerhistorie på grafiske representasjon av bretteti oblig1, s
 
 **Musikk**
 
-*Brukerhistorie:*
+*Userstory:*
 - Som [spiller] ønsker jeg å høre en bakgrunnsmusikk når spillet starter og ha mulighet til å mute musikken.
 *Akseptansekrav:*
 - En theme låt begynner ved oppstart av spillet. En visuell knapp er også tilgjengelig for å stoppe den samme musikken.
@@ -223,6 +223,19 @@ F.eks. vi hadde brukerhistorie på grafiske representasjon av bretteti oblig1, s
 - Få orden på knapp logikken.
 - Lage en Sprite til mute knappen
 - Legge theme sangen til i programmet.
+
+**Brett**
+*Userstory:*
+- Som spiller vil jeg ha et større utvalg av brett fordi jeg ønsker en progresjon i spillet
+- Som spiller ønsker jeg at det kommer nye utfordringer for hvert brett slik at spillet ikke blir for kjedelig og repeterende
+
+*Akseptansekrav:* 
+- Få flere brett slik at spillerene får et større utvalg
+- Hvert brett skal være unikt
+
+*Arbeidsoppgave:* 
+- Lag flere brett slik at spillerene får et større utvalg
+- Tilpass hvert brett med de unike objektene
 
 
 #### Bugs
@@ -338,6 +351,11 @@ kortvalgene tilsier.
 
 *Start of game GUI test*
 - HP and PC should be rendered and HP=3, PC=9. Score should also be rendered and set to 0.
+
+*Locked card test*
+- When dealt less than 5 cards, some of the cards from last round should be held back for you (locked). So that you can have 5 selected cards.
+- Should test that the locked cards are removed from deck. This will be hard to test manually as the only way you can test it is to see that no one got dealt the locked cards.
+    - This has been tested with some print-statements but can not make junit tests for this as it relies to heavily on the libgdx part of the code.
 
 
 

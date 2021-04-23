@@ -1183,7 +1183,7 @@ public class Game implements ApplicationListener {
                 player.move(cbDir.getX(), cbDir.getY());
             }
            else{
-                if (collision(player)) {
+                if (collision(player, cbDir)) {
                     player.move(cbDir.getX(), cbDir.getY());
                     }
            }
@@ -1207,7 +1207,7 @@ public class Game implements ApplicationListener {
                     player.move(cbDir.getX(), cbDir.getY());
                 }
                 else{
-                    if (collision(player)) {
+                    if (collision(player, cbDir)) {
                         player.move(cbDir.getX(), cbDir.getY());
                     }
                 }
