@@ -1,0 +1,19 @@
+Møte 21.04.2021
+Digitalt via Discord
+Tilstede
+  Skjalg Eide Hodneland
+  Emil Flatøy Hodneland
+  Jonas Svåsand
+  Håkon Mathias Hvidsten Høie
+  Hans Albert Biørn Terland
+
+
+Standup: 
+Emil : Gjort ferdig powerdown.
+Hans : Lagt til music med muteknapp + knapp som viser frem regler.
+Skjalg: Fikset klikkbare kort og submit cards knapp.
+Jonas: parprogrammerte delvis med skjalg.
+
+I møtet tok vi og fikset merges for de forskjellige forandringene. Det skjedde desverre noe galt under
+mergingen av Emils arbeid og vi brukte mesteparten av laben til å fikse dette istedetfor å gjøre spilltest 
+slik det var tenkt.
