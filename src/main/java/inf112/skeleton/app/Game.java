@@ -692,18 +692,10 @@ public class Game implements ApplicationListener {
                     cSprite.setX(645 + allOffsetX);
                     cSprite.setY(530 - allOffsetY);
                     cSprite.draw(batch); //Draw card
-
                     if(button != null){
                         button.setPosition(645 + allOffsetX, 530 - allOffsetY);
                         button.setSize(99, 153);
                     }
-                    else{
-                        System.out.println("Wow this button does not exist");
-                        System.out.println(c.toString());
-                        System.out.println(buttonMap.keySet().toString());
-                        System.out.println(buttonMap.values().toString());
-                    }
-
                     font.setColor(Color.WHITE);
                     font.draw(batch, "" + (allCards.indexOf(c) + 1), (690 + allOffsetX), (549 - allOffsetY)); //Draw number used to select card
                     //Draw priority:
@@ -728,12 +720,6 @@ public class Game implements ApplicationListener {
                 if(button != null){
                     button.setPosition(645 + selectedOffsetX, 160);
                     button.setSize(99, 153);
-                }
-                else{
-                    System.out.println("Wow this button does not exist");
-                    System.out.println(c.toString());
-                    System.out.println(buttonMap.keySet().toString());
-                    System.out.println(buttonMap.values().toString());
                 }
                 cSprite.draw(batch);
                 font.draw(batch, "" + (indexOfCard + 1), (690 + selectedOffsetX), 179); //Draw number used to select card

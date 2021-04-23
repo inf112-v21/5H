@@ -74,6 +74,8 @@ Vinn ved å være den første til å ha roboten sin innom alle tre flaggene vinn
 - Spillet kan krasje i noen få tilfeller. Vi klarer ikke å reprodusere feilen og er dermed ikke helt sikker på hvorfor. 
 - Når du respawner beholder du retningen du hadde før du døde. Denne burde bli satt tilbake til samme retning som du hadde i starten av spillet.
 - Win screen kan se dårlig ut. Denne er beholdt med full viten, da vi finner sjarmerende og føler at spillets sjel er sterkt koblet sammen med win-screen.
+- Hvis en spiller dør og en annen spiller står på respawn punktet, kan to spillere okkupere samme felt selv om dette ikke skal være lov. En av de vil da ikke se spriten sin.
+- Det kan forekomme situasjoner hvor kortene ikke er klikkbare. I disse tilfeller kan du fortsatt velge kort med tastaturet.
 
 
 
