@@ -1164,19 +1164,20 @@ public class Game implements ApplicationListener {
     public void runConveyorBelt() {
         for (Player player : alivePlayerList) {
             Pair cbDir;
-            if (board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("ConveyorBelt")) {
-                ConveyorBelt conveyorBelt = (ConveyorBelt) board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
-                cbDir = dirMap.get(conveyorBelt.getDir());
+            Pair playerCords = player.getCoordinates().getCopy();
+            if (board.getOriginalPosition(playerCords.getX(), playerCords.getY()).getName().matches("ConveyorBelt")) {
+                ConveyorBelt conveyorBelt = (ConveyorBelt) board.getOriginalPosition(playerCords.getX(), playerCords.getY());
+                cbDir = dirMap.get(conveyorBelt.getDir()).getCopy();
             }
-            else if (board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("ExpressConveyorBelt")) {
-                ExpressConveyorBelt ExpressConveyorBelt = (ExpressConveyorBelt) board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
-                cbDir = dirMap.get(ExpressConveyorBelt.getDir());
+            else if (board.getOriginalPosition(playerCords.getX(), playerCords.getY()).getName().matches("ExpressConveyorBelt")) {
+                ExpressConveyorBelt ExpressConveyorBelt = (ExpressConveyorBelt) board.getOriginalPosition(playerCords.getX(), playerCords.getY());
+                cbDir = dirMap.get(ExpressConveyorBelt.getDir()).getCopy();
             }
             else {
                 continue;
             }
-            int newX = player.getCoordinates().getX() + cbDir.getX();
-            int newY = player.getCoordinates().getY() + cbDir.getY();
+            int newX = playerCords.getX() + cbDir.getX();
+            int newY = playerCords.getY() + cbDir.getY();
             if (board.getPosition(newX, newY).getName().matches("ConveyorBelt")) {
                 //If moving to  new conveyorBelt position should not need to think about collision
                 // If theres a player there they will also be moved by the conveyorbelt so no collision should occur!
@@ -1196,12 +1197,13 @@ public class Game implements ApplicationListener {
      */
     public void runExpressConveyorBelt() {
         for (Player player : alivePlayerList) {
-            if (board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY()).getName().matches("ExpressConveyorBelt")) {
-                ExpressConveyorBelt ExpressConveyorBelt = (ExpressConveyorBelt) board.getOriginalPosition(player.getCoordinates().getX(), player.getCoordinates().getY());
-                Pair cbDir = dirMap.get(ExpressConveyorBelt.getDir());
-                int newX = player.getCoordinates().getX() + cbDir.getX();
-                int newY = player.getCoordinates().getY() + cbDir.getY();
-                if (board.getPosition(newX, newY).getName().matches("ExpressConveyorBelt")) {
+            Pair playerCords = player.getCoordinates().getCopy();
+            if (board.getOriginalPosition(playerCords.getX(), playerCords.getY()).getName().matches("ExpressConveyorBelt")) {
+                ExpressConveyorBelt ExpressConveyorBelt = (ExpressConveyorBelt) board.getOriginalPosition(playerCords.getX(), playerCords.getY());
+                Pair cbDir = dirMap.get(ExpressConveyorBelt.getDir()).getCopy();
+                int newX = playerCords.getX() + cbDir.getX();
+                int newY = playerCords.getY() + cbDir.getY();
+                if (board.getOriginalPosition(newX, newY).getName().matches("ExpressConveyorBelt")) {
                     //If moving to  new expressconveyorBelt position should not need to think about collision
                     // If theres a player there they will also be moved by the expressconveyorbelt so no collision should occur!
                     player.move(cbDir.getX(), cbDir.getY());
