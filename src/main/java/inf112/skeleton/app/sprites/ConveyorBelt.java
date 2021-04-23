@@ -10,8 +10,8 @@ public class ConveyorBelt extends AbstractGameObject {
 
     public ConveyorBelt(String texturePath, String dir) {
         super(texturePath);
-        setName("ConveyorBelt");
-        setShortName("cb");
+        setName("ConveyorBelt" + dir);
+        setShortName("cb" + dir);
         setDirection(dir);
     }
 
