@@ -64,7 +64,7 @@ Vinn ved å være den første til å ha roboten sin innom alle tre flaggene vinn
 
 
 
-### Kjente Feil og mangler + Bugs.
+### Kjente Feil og mangler + Bugs.  
 
 - Vegger tar opp ett helt felt på brettet
 - Mangler nye respawn points / skiftenøkkel

@@ -10,7 +10,7 @@ public class ExpressConveyorBelt extends AbstractGameObject {
     public ExpressConveyorBelt(String texturePath, String dir) {
         super(texturePath);
         setName("ExpressConveyorBelt" + dir);
-        setShortName("ecb"+dir);
+        setShortName("eb"+dir);
         setDirection(dir);
     }
 
