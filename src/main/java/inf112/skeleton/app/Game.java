@@ -1185,7 +1185,7 @@ public class Game implements ApplicationListener {
             }
             int newX = playerCords.getX() + cbDir.getX();
             int newY = playerCords.getY() + cbDir.getY();
-            if(newX > boardSize || newY > boardSize){
+            if(newX > (boardSize-1) || newY >= (boardSize-1)){
                 player.move(cbDir.getX(), cbDir.getY());
                 return;
             }
@@ -1214,7 +1214,7 @@ public class Game implements ApplicationListener {
                 Pair cbDir = dirMap.get(ExpressConveyorBelt.getDir()).getCopy();
                 int newX = playerCords.getX() + cbDir.getX();
                 int newY = playerCords.getY() + cbDir.getY();
-                if(newX > boardSize || newY > boardSize){
+                if(newX > (boardSize-1) || newY > (boardSize-1)){
                     player.move(cbDir.getX(), cbDir.getY());
                     return;
                 }
