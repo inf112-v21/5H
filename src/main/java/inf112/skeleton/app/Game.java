@@ -889,6 +889,9 @@ public class Game implements ApplicationListener {
      * Progresses the game 1 single move at a time, and fetches the necessary information for the move() function to use.
      */
     private void doOnePlayerMove() {
+        if(playerMoves.getMoves().size() == 0){
+            return;
+        }
         Card card = playerMoves.getMoves().remove(0);    //Get the move Card
         String move = card.getType();   //Get the move
         String shortName = card.getShortName(); //Get name of player to move
