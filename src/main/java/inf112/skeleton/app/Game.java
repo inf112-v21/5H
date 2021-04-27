@@ -812,10 +812,7 @@ public class Game implements ApplicationListener {
 
         switch (move) {
             case "powerdown":  //Powerdown for the player
-                if(heal) {
-                    playerObject.setPc(9);
-                    heal = false;
-                }
+                playerObject.setPc(9);
                 endTurn();
                 break;
             case "move1":  //Move in the direction the player is facing
