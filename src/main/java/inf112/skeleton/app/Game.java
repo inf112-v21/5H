@@ -857,7 +857,7 @@ public class Game implements ApplicationListener {
                 pair = dirMap.get(dir);
                 Pair reversedDirection = pair.getReverseDirection();
                 if (collision(playerObject, reversedDirection)) {
-                    playerObject.move(pair.getX(), pair.getY());
+                    playerObject.move(reversedDirection.getX(), reversedDirection.getY());
                 }
                 endTurn();
                 break;
