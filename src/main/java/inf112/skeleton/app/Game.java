@@ -1130,7 +1130,7 @@ public class Game implements ApplicationListener {
 
         //Pause between moves so the user can see whats happening.
         try {
-            Thread.sleep(1000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -1185,6 +1185,10 @@ public class Game implements ApplicationListener {
             }
             int newX = playerCords.getX() + cbDir.getX();
             int newY = playerCords.getY() + cbDir.getY();
+            if(newX > boardSize || newY > boardSize){
+                player.move(cbDir.getX(), cbDir.getY());
+                return;
+            }
             if (board.getPosition(newX, newY).getName().matches("ConveyorBelt")) {
                 //If moving to  new conveyorBelt position should not need to think about collision
                 // If theres a player there they will also be moved by the conveyorbelt so no collision should occur!
@@ -1210,6 +1214,10 @@ public class Game implements ApplicationListener {
                 Pair cbDir = dirMap.get(ExpressConveyorBelt.getDir()).getCopy();
                 int newX = playerCords.getX() + cbDir.getX();
                 int newY = playerCords.getY() + cbDir.getY();
+                if(newX > boardSize || newY > boardSize){
+                    player.move(cbDir.getX(), cbDir.getY());
+                    return;
+                }
                 if (board.getOriginalPosition(newX, newY).getName().matches("ExpressConveyorBelt")) {
                     //If moving to  new expressconveyorBelt position should not need to think about collision
                     // If theres a player there they will also be moved by the expressconveyorbelt so no collision should occur!
